@@ -5,7 +5,7 @@
 
 <library-specification>
     <description>Flow Library</description>
-    <meta key="org.apache.tapestry.component-class-packages" value="com.amplafi.flow.web.components"/>
+    <meta key="org.apache.tapestry.component-class-packages" value="org.amplafi.flow.web.components"/>
 
     <!--
        FlowBorder, FlowControl, FlowDebug, FlowEntryPoint, FlowEntryCollection, AttachFlowValidators
