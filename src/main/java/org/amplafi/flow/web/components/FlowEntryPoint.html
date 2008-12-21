@@ -1,0 +1,51 @@
+<link rel="stylesheet" type="text/css" href="../../../../../../webapp/css/standard.css"/>
+<span jwcid="$content$">
+<span jwcid="@If" condition="ognl:showEntryPoint" renderTag="false">
+    <span jwcid="guts@Block">
+    <span jwcid="@If" condition="ognl:renderBody && !bodyPartOfLink" renderTag="false"><span jwcid="@RenderBody"/></span>
+    <span jwcid="@If" condition="ognl:! renderedAsSubmit" renderTag="false">
+        <span jwcid="@If" condition="ognl:sameAsActive" renderTag="false" volatile="true">
+            <a href="#" class="ognl:className" jwcid="entryP@PageLink" page="ognl:activePage" stateful="ognl:statefulSetting"
+                alt="ognl:actualFlowTypeName"><span 
+                jwcid="@If" condition="ognl:bodyPartOfLink" renderTag="false"><span jwcid="@RenderBody"/></span>
+                    <span jwcid="@Else" renderTag="false"><span 
+                    jwcid="@Insert" value="ognl:flowLabel">Flow Label</span></span></a>
+        </span>
+        <span jwcid="@Else" renderTag="false">
+                <a href="#" class="ognl:className" jwcid="fepLink" stateful="ognl:statefulSetting"
+                listener="listener:doEnterFlow" alt="ognl:actualFlowTypeName"
+                disabled="ognl:renderAsDisabled"
+                parameters="ognl:parameters"><span 
+                jwcid="@If" condition="ognl:bodyPartOfLink" renderTag="false"><span jwcid="@RenderBody"/></span>
+                    <span jwcid="@Else" renderTag="false"><span 
+                    jwcid="@Insert" value="ognl:flowLabel">Flow Label</span></span></a>
+        </span>
+    </span>
+    <span jwcid="@If" condition="ognl:renderedAsSubmit" renderTag="false">
+        <span jwcid="@If" condition="ognl:renderAsButton" renderTag="false">
+            <input jwcid="fepSubm" value="ognl:flowLabel" type="submit" alt="ognl:actualFlowTypeName"
+                disabled="ognl:renderAsDisabled" stateful="ognl:statefulSetting"
+                class="asButton" action="listener:doEnterFlow"
+                parameters="ognl:parameters"/>
+        </span>            
+        <span jwcid="@Else" renderTag="false">
+            <a href="#" class="ognl:className" jwcid="fepLiSubm" alt="ognl:actualFlowTypeName"
+                disabled="ognl:renderAsDisabled" stateful="ognl:statefulSetting"
+                action="listener:doEnterFlow"
+                parameters="ognl:parameters"><span 
+                jwcid="@If" condition="ognl:bodyPartOfLink" renderTag="false"><span jwcid="@RenderBody"/></span>
+                    <span jwcid="@Else" renderTag="false"><span 
+                    jwcid="@Insert" value="ognl:flowLabel">Flow Label</span></span></a>
+        </span>
+    </span>
+    </span>
+    <span jwcid="@If" condition="ognl:flowEntryPointIsForm" renderTag="false">
+        <form jwcid="innerForm">
+            <span jwcid="@RenderBlock" block="component:guts"/>
+        </form>
+    </span>
+    <span jwcid="@Else" renderTag="false">
+        <span jwcid="@RenderBlock" block="component:guts"/>
+    </span>
+</span>
+</span>

@@ -1,0 +1,36 @@
+<link rel="stylesheet" type="text/css" href="../../../../../../webapp/css/standard.css"/>
+<span jwcid="$content$">
+<div jwcid="flowDebug@If" condition="ognl:!disabled" volatile="true">
+    <table class="reportData">
+        <tr>
+            <th jwcid="@Insert" value="ognl:currentFlowState.flowTypeName" renderTag="true"
+                     colspan="2">FlowType</th>
+        </tr>
+        <tr>
+            <td>ActivityIndex</td>
+            <td jwcid="index@Insert" value="ognl:currentFlowState.currentActivityIndex" renderTag="true">1</td>
+        </tr>
+        <tr>
+            <td>ActivityName</td>
+            <td>
+            <span jwcid="@Insert" value="ognl:currentFlowState.currentActivity.activityName">name</span>
+                (<span jwcid="@Insert" value="ognl:currentFlowState.currentActivity.class.simpleName">class</span>)
+            </td>
+        </tr>
+        <tr>
+            <td>ComponentName</td>
+            <td>
+            <span jwcid="@Insert" value="ognl:currentFlowState.currentActivity.componentName">compName</span>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2">Properties</th>
+        </tr>
+        <tr>
+            <td colspan="2">
+            <span jwcid="flowValuesMapComponent"></span>
+            </td>
+        </tr>
+    </table>
+</div>
+</span>

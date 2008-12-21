@@ -1,0 +1,54 @@
+<link rel="stylesheet" type="text/css" href="../../../../../../webapp/css/standard.css"/>
+<span jwcid="$content$">
+<span jwcid="FlowBorder_AttachedFlowState@If" condition="ognl:attachedFlowState != null" renderTag="false">
+    <div jwcid="refresh@Any" class="flow">
+        <h3><span jwcid="@Insert" value="ognl:flowTitle">Registration Flow</span></h3>
+        <div jwcid="FlowBorder_includeFlowControl@If" condition="ognl:includeFlowControl" renderTag="false">
+            <span jwcid="flowControl">[FlowControl]</span>
+        </div>
+
+        <div class="flowBody">
+            <span jwcid="@RenderBody">[Flow Body]</span>
+        </div>
+
+        <div class="flowButtons">
+            <span jwcid="FlowBorder_BlowButtons_NLS@If" condition="ognl:! usingLinkSubmit" renderTag="false">
+                <span jwcid="iCanc_NLS@If" condition="ognl:hasCancel" renderTag="false">
+                    <input type="submit" jwcid="@Submit"
+                        value="ognl:cancelText" submitType="cancel" action="listener:onCancel" updateComponents="ognl:componentsToRefresh"/></span>
+                <span jwcid="iPrev_NLS@If" condition="ognl:hasPrevious" renderTag="false">
+                    <input type="submit" jwcid="@Submit"
+                        value="ognl:previousLabel" action="listener:onPrevious" async="ognl:async"
+                        updateComponents="ognl:componentsToRefresh"/></span>
+            </span>
+            <span jwcid="FlowBorder_BlowButtons_LS@If" condition="ognl:usingLinkSubmit" renderTag="false">
+                <span jwcid="iCanc_LS@If" condition="ognl:hasCancel" renderTag="false">
+                    <a href="#" jwcid="@LinkSubmit"
+                        submitType="cancel" action="listener:onCancel" updateComponents="ognl:componentsToRefresh"><span jwcid="@Insert" value="ognl:cancelText">Cancel</span></a></span>
+                <span jwcid="iPrev_LS@If" condition="ognl:hasPrevious" renderTag="false">
+                    <a href="#" jwcid="@LinkSubmit"
+                        action="listener:onPrevious" async="ognl:async"
+                        updateComponents="ognl:componentsToRefresh"><span jwcid="@Insert" value="ognl:previousLabel" raw="true">Prev</span></a></span>
+            </span>
+            <span jwcid="iUpdate@If" condition="ognl:hasUpdate" renderTag="false"><input type="submit" jwcid="update@Submit"
+                value="ognl:updateLabel" action="listener:onUpdate" async="ognl:async"
+                    updateComponents="ognl:componentsToRefresh"/></span>
+            <span jwcid="iNext@If" condition="ognl:hasNext" renderTag="false"><input type="submit" jwcid="next@Submit"
+                value="ognl:nextLabel" action="listener:onNext" async="ognl:async"
+                    updateComponents="ognl:componentsToRefresh"/></span>
+            <span jwcid="iOneAltFlow@If" condition="ognl:hasOneAlternateFlow" renderTag="false">
+                <input type="submit" jwcid="OneAltFlow@Submit" value="ognl:oneAlternateFlowText" action="listener:onOneAlternateFlow" 
+                    updateComponents="ognl:componentsToRefresh"/>
+            </span>
+            <span jwcid="iMultipleAltFlow@If" condition="ognl:hasMultipleAlternateFlows" renderTag="false">
+                <select jwcid="MultipleAltFlow@application:utils/MultiSubmit" model="ognl:flowTransitionModel"
+                        value="ognl:flowTransition" id="selector"
+                        action="listener:onMultipleAlternateFlow" updateComponents="ognl:componentsToRefresh"/>
+            </span>            
+        </div>
+        <div jwcid="@application:utils/ShowErrors" delegate="ognl:form.delegate" hideFieldErrors="true">[Errors]</div>
+        <span jwcid="@application:ext/DefaultButton" button="ognl:defaultButtonId"/>        
+        <div jwcid="flowDebug">[FlowDebug]</div>
+    </div>                                                           
+</span>
+</span>
