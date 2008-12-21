@@ -153,10 +153,6 @@
             <groupId>org.apache.tapestry</groupId>
             <artifactId>tapestry-annotations</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-contrib</artifactId>
-        </dependency>
         <!-- END Tapestry 4.1.x -->
         <dependency>
             <groupId>hivemind</groupId>
@@ -183,14 +179,6 @@
             <artifactId>commons-lang</artifactId>
         </dependency>
         <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>hivemind</groupId>
-            <artifactId>hivemind-jmx</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <scope>test</scope>
@@ -198,11 +186,6 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
