@@ -6,7 +6,8 @@ package org.amplafi.flow.web.resolvers;
 
 
 import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityImpl;
+import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
@@ -247,7 +248,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         flow.addPropertyDefinition(globalOverlap);
         FlowPropertyDefinition overlap  = new FlowPropertyDefinition("overlap");
         overlap.setParameterName("componentOverlapParameter");
-        flow.getActivity(0).addPropertyDefinitions(overlap);
+        ((FlowActivityImplementor)flow.getActivity(0)).addPropertyDefinitions(overlap);
         return flow;
     }
 
@@ -260,7 +261,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         Flow simple = new FlowImpl(flowTypeName);
 
         for (int i = 0; i < size; i++) {
-            FlowActivity activity = new FlowActivity();
+            FlowActivityImpl activity = new FlowActivityImpl();
             activity.setComponentName("comp#"+i);
             simple.addActivity(activity);
         }
