@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>AmpFlow</title>
+</head>
+<body>
+<h1>AmpFlow</h1>
+
+<h2>Why is AmpFlow needed?</h2>
+<p>As has been noted, numerous times Tapestry is missing an easy-to-use wizard mechanism.
+The wizard concept is fundamental to modern web design. Tapestry's failing here is the reason for
+AmpFlow's existence.</p>
+<h3>Why not use Seam? Why yet-another-library?</h3>
+<p><a href="http://jboss.org/seam">Seam</a> is not seam-less. The developer has to be very aware of 
+the decision to use seam in many areas. [[TODO expand with examples]]
+
+<ol>
+<li>Seam includes decision logic with the xml definitions. 
+
+problems with seam
+
+* seam has decision branching
+  * java code that makes decisions will b e blended with seam declarations that make decisions.
+  * branching makes it hard to read what the true sequence of steps really is.
+  * hard to create a visual wizard representation if earlier steps can include entirely different subsequewnt steps
+  * how to handle the user backing up through a decision point? seam doesn't handle this issue.
+  * over time some decisions will be in java code others in the xml definition. since seam's hello world example
+      shows (suggests) putting branching logic in the xml - it is reasonable that there will be a mix
+      of branching decisions in java code and in xml with no clear consistency in a projecet.
+
+* seam doesn't help with the ui representation of the step sequence.
+  * seam will integrate with the ui component java code but provides no support for the developer to create the control
+     ui pieces for a user to go forward and back through the flow.
+
+* seam uses the idea of conversational tx boundaries. 
+  * means that the developer faces the real possibility of a 'partial' merge. which happens if multiple dbo's are changed
+       and another user changes some of those dbos.
+  * no clear transaction boundary symantics.
+ * conversation symantics encourges the anti-pattern of including dbos with potentially large object graphs in the session.
+  * this creates problems with large sessions that csannot be easily transfered between servers, nor cached to disk.
+  * it also can easily result in session size balloning uncontrollably. and even when the root case is known, 
+        correcting the problem usually results in major code reworking.
+  * keeping the session size down is usually a game of whack-a-mole everytime new code is added. The session size is at
+    continous risk every time the object structure changes. Even with lazy evaluation, 
+
+* it looks a lot like struts
+
+* does little to nothing to manage session state. Being able to selective gabage-collect session data is extremely valuable.
+
+* does not provide any support for cancelling a series of operations.
+
+* does not provide a serialization mechanism to reduce session size.
+
+
+what does ampflow do
+
+ * connects tapestry ui components to business logic.
+ * segments session data allowing portions of the session to be garbage-collected.
+ * seamless manages conversion of the serialized representation.
+ * automatic API creation
+   * provides a standard mechanism to invoke a flow directly with a browser call.
+   * this means that as a developer defines a ui wizard flow they are defining a API call that does the same thing.
+   * every step of a sequence of steps can be represented by a unique uri that is not tied to the session. 
+   * provides a standard way of returning the result of the flow.
+
+ * provides a standardize way of managing changes so that cancel operations are trivial to support.
+
+* various operations can be segmented into different  flows that can all be active at the same time. 
+  [[ note: have a url query parameter to determine which flow is active?]      
+
+* ampflow tracks which fields have changed. 
+  * this makes it easy to merge changes when multiple users are making changes.
+  * it also makes it possible to discard changes and resotre the original values without 
+     hitting the database. This presevese transaction isolation without involving the datase resources.
+      the cumulated changes should be applied. 
+      
+      This project manages program (usually web) flow and web page /web component generation. Currently this project is only integrated with Tapestry 4. However, the code is separated out and implementing different web UI frameworks should be possible. 
+
+Amplafi-flow is different from other solutions (Seam and Spring Web Flow):
+ 1) Amplafi-flow does not expect to be the "controller"
+ 2) Amplafi-flow does not expect/require that the code is being called as part of a http request.
+ 3) Amplafi-flow does not support any conditionals in the xml flow definitions.
+ 4) Amplafi-flow separates the edit/modification operations from the persist operations.
+
+Benefits:
+ 1) can be easily retrofitted to an existing codebase without a global rearchitecture.
+ 2) can be used in a client java application or a "headless" server.
+ 3) fully supports and enables forward/back browser actions without explicit defintions by the end-developer
+ 4) enables user "in-progress" changes to be saved in without changing the database-persisted copy.
+ 5) enables cancel operations on a multi-page flow.
+</body>
+</span>
+</html>
