@@ -346,7 +346,6 @@ public class FlowAwareTemplateSourceDelegate implements ITemplateSourceDelegate 
      * @param componentName TODO
      * @param matchedParameters
      * @param foundParameters
-     * @param definition
      */
     private void writeConnection(IExtendedMarkupWriter writer, String componentName, Set<String> matchedParameters,
             Map<String, Parameter> foundParameters, String name, String parameterName) {

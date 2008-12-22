@@ -155,7 +155,6 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
     }
     /**
      * @param csr
-     * @param compSpec
      * @param cycle
      */
     private void programFlowBorder(ComponentSpecificationResolver csr, IRequestCycle cycle) {

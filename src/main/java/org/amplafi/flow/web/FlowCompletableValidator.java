@@ -19,7 +19,7 @@ public class FlowCompletableValidator extends BaseValidator {
     public void validate(IFormComponent field, ValidationMessages messages, Object object)
             throws ValidatorException {
         IRequestCycle cycle = field.getPage().getRequestCycle();
-        FlowBorder border = FlowBorder.get(cycle);
+        FlowAware border = FlowBorder.get(cycle);
         if (border==null) {
             return;
         }

@@ -135,26 +135,25 @@ public abstract class FlowBorder extends BaseFlowComponent {
 
     @Cached(resetAfterRewind=true)
     public List<FlowTransition> getFlowTransitions() {
-        ArrayList<FlowTransition> l = new ArrayList<FlowTransition>(getFsFlowTransitions().values());
+        List<FlowTransition> transitions = new ArrayList<FlowTransition>(getFsFlowTransitions().values());
         if ( !getHasFinish()) {
-            for(Iterator<FlowTransition> iterator = l.iterator(); iterator.hasNext();) {
+            for(Iterator<FlowTransition> iterator = transitions.iterator(); iterator.hasNext();) {
                 if (iterator.next().isCompletingFlow()) {
                     iterator.remove();
                 }
             }
         } else {
             // find the normal finish and put that first
-            FlowTransition defaultTransition = null;
-            for(Iterator<FlowTransition> iterator = l.iterator(); iterator.hasNext();) {
-                defaultTransition = iterator.next();
+            for(Iterator<FlowTransition> iterator = transitions.iterator(); iterator.hasNext();) {
+                FlowTransition defaultTransition = iterator.next();
                 if ( defaultTransition.getTransitionType() == TransitionType.normal) {
                     iterator.remove();
-                    l.add(0, defaultTransition);
+                    transitions.add(0, defaultTransition);
                     break;
                 }
             }
         }
-        return l;
+        return transitions;
     }
     /**
      * Contained components can reference the flow border and modify the
