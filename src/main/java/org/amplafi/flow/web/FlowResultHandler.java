@@ -2,10 +2,8 @@ package org.amplafi.flow.web;
 
 import java.util.List;
 
-import org.amplafi.flow.validation.FlowValidationResult;
-import org.amplafi.flow.validation.FlowValidationTracking;
-import org.amplafi.flow.web.BaseFlowComponent;
-
+import org.amplafi.flow.FlowValidationResult;
+import org.amplafi.flow.FlowValidationTracking;
 
 /**
  * Handles {@link FlowValidationResult}s in the ui layer.

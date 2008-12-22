@@ -11,7 +11,7 @@ import net.sf.tacos.annotations.Cached;
 
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.web.BaseFlowComponent;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.apache.tapestry.IAsset;

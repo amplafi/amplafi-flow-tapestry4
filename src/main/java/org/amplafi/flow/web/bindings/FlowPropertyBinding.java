@@ -6,7 +6,7 @@ package org.amplafi.flow.web.bindings;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.web.FlowProvider;
 import org.apache.hivemind.Location;
 import org.apache.hivemind.util.Defense;

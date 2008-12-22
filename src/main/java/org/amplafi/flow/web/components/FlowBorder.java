@@ -11,7 +11,7 @@ import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.TransitionType;
-import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.web.BaseFlowComponent;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.amplafi.flow.web.FlowWebUtils;

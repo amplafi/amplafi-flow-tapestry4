@@ -18,7 +18,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManager;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.web.FlowWebUtils;
 import org.amplafi.flow.web.components.FullFlowComponent;
 import org.apache.commons.collections.CollectionUtils;

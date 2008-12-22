@@ -6,14 +6,13 @@ package org.amplafi.flow.web.resolvers;
 
 
 import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivityImpl;
+import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowDefinitionsManager;
-import org.amplafi.flow.FlowImpl;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.web.components.FlowBorder;
 import org.amplafi.flow.web.components.FullFlowComponent;
-import org.amplafi.flow.web.resolvers.FlowAwareTemplateSourceDelegate;
 import org.apache.tapestry.IComponent;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.annotations.Parameter;
@@ -239,13 +238,13 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
     private Flow createFlowWithProperties(String componentName) {
         Flow flow = createFlow2(componentName, 1);
-        FlowPropertyDefinition globalDef = new FlowPropertyDefinition("globaldef1");
+        FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl("globaldef1");
         globalDef.setParameterName("componentGlobaldef1");
         flow.addPropertyDefinition(globalDef);
-        FlowPropertyDefinition globalOverlap = new FlowPropertyDefinition("overlap");
+        FlowPropertyDefinitionImpl globalOverlap = new FlowPropertyDefinitionImpl("overlap");
         globalOverlap.setParameterName("globalOverlapParameter");
         flow.addPropertyDefinition(globalOverlap);
-        FlowPropertyDefinition overlap  = new FlowPropertyDefinition("overlap");
+        FlowPropertyDefinitionImpl overlap  = new FlowPropertyDefinitionImpl("overlap");
         overlap.setParameterName("componentOverlapParameter");
         ((FlowActivityImplementor)flow.getActivity(0)).addPropertyDefinitions(overlap);
         return flow;
