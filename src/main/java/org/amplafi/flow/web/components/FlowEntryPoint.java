@@ -329,8 +329,8 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     @Cached
     public Boolean isSameAsActive() {
         FlowState flowState = getFlowManagement().getCurrentFlowState();
-        if (flowState != null &&
-                getActualFlowLauncher() != null && flowState.getFlowTypeName().equals(getActualFlowLauncher().getFlowTypeName())) {
+        FlowLauncher actualFlowLauncher = getActualFlowLauncher();
+        if (flowState != null && actualFlowLauncher != null && flowState.getFlowTypeName().equals(actualFlowLauncher.getFlowTypeName())) {
             return true;
         } else {
             return false;
@@ -356,7 +356,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             flowLauncher.setFlowManagement(getFlowManagement());
             if ( initialValues != null && flowLauncher instanceof StartFromDefinitionFlowLauncher) {
                 ((StartFromDefinitionFlowLauncher)flowLauncher).setPropertyRoot(getContainer());
-                ((StartFromDefinitionFlowLauncher)flowLauncher).setInitialValues(initialValues);
+                ((StartFromDefinitionFlowLauncher)flowLauncher).addInitialValues(initialValues);
             }
         }
         try {
