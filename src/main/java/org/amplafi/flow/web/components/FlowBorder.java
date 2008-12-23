@@ -228,6 +228,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
         FlowState attachedFlow = getAttachedFlowState();
         FlowTransition flowTransition = getFlowTransition();
         String nextFlow = flowTransition.getNextFlow();
+        /// HACK should be calling flowTransition.getFlowLauncher()
         if (flowTransition.isMorphingFlow()) {
             String page = attachedFlow.morphFlow(nextFlow, flowTransition.getInitialValues());
             FlowWebUtils.activatePageIfNotNull(cycle, page, attachedFlow);
