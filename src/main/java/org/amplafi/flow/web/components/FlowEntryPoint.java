@@ -7,11 +7,12 @@ package org.amplafi.flow.web.components;
 import static org.apache.commons.lang.StringUtils.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.amplafi.flow.FlowConstants;
+import static org.amplafi.flow.FlowConstants.*;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.launcher.FlowLauncher;
@@ -256,8 +257,11 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     // can not easily specify maps.
     @Cached(resetAfterRewind=true)
     @SuppressWarnings("unchecked")
-    protected Iterable<String> getValues() {
-        ArrayList<String> values = new ArrayList<String>();
+    protected List<String> getValues() {
+        List<String> values = null;
+        Object initialValues = getInitialValues();
+        if (initialValues != null ) {
+            values = new ArrayList<String>();
 //        boolean b = /* !isFormValuesNotUsed() &&*/ isInsideForm();
 //        if (isFlowEntryPointIsForm() || b) {
 //            // WRONG ... ANDY how to get access to the body components?
@@ -276,8 +280,6 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
 //                }
 //            }
 //        }
-        Object initialValues = getInitialValues();
-        if (initialValues != null ) {
             if (initialValues instanceof Iterable) {
                 for(String s: (Iterable<String>)initialValues) {
                     values.add(s);
@@ -291,18 +293,26 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             } else {
                 values.add(initialValues.toString());
             }
-        }
-        //  so the currently active flow can be returned to after the newly started flow completes.
-        FlowState flowState = getFlowManagement().getCurrentFlowState();
-        if ( isReturnToCurrentFlow() && flowState != null) {
-            FlowUtils.addInitialValues(values,FlowConstants.FSRETURN_TO_FLOW, flowState.getLookupKey());
+            //  so the currently active flow can be returned to after the newly started flow completes.
+            // if initialValues is null then modify the launcher's parameters.
+            // only really needed to construct the getActualFlowLauncher()
+            FlowState flowState = getFlowManagement().getCurrentFlowState();
+            if ( isReturnToCurrentFlow() && flowState != null) {
+                FlowUtils.addInitialValues(values,FSRETURN_TO_FLOW, flowState.getLookupKey());
+            }
         }
         return values;
     }
 
+    // only called when rendering ... not from the listener.
     public FlowLauncher getActualFlowLauncher() {
         FlowLauncher launcher = getFlowLauncher();
-        if ( launcher == null && StringUtils.isNotBlank(getActualFlowTypeName())) {
+        if ( launcher != null ) {
+            FlowState flowState = getFlowManagement().getCurrentFlowState();
+            if ( isReturnToCurrentFlow() && flowState != null) {
+                launcher.putIfAbsent(FSRETURN_TO_FLOW, flowState.getLookupKey());
+            }
+        } else if ( StringUtils.isNotBlank(getActualFlowTypeName())) {
             launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), getContainer(), getValues(), getFlowManagement(), null);
         }
         return launcher;
@@ -411,8 +421,9 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             // <input type="submit" value="label"/>
             label = getValue();
         }
-        if ( isBlank(label) && getActualFlowLauncher() != null ) {
-            label = getActualFlowLauncher().getFlowLabel();
+        FlowLauncher actualFlowLauncher = getActualFlowLauncher();
+        if ( isBlank(label) && actualFlowLauncher != null ) {
+            label = actualFlowLauncher.getFlowLabel();
         }
         if ( isBlank(label) ) {
             label = isBlank(getActualFlowTypeName())?"{no flow type}":"["+getActualFlowTypeName()+"]";
@@ -440,8 +451,11 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             return null;
         }
     }
+
+    // HACK should probably not modify the parameters
     public Object[] getParameters() {
-        return new Object[] {getActualFlowLauncher(), getFlowToFinish(), getValues()};
+        FlowLauncher actualFlowLauncher = getActualFlowLauncher();
+        return new Object[] {actualFlowLauncher, getFlowToFinish(), getValues()};
     }
 
     /**
