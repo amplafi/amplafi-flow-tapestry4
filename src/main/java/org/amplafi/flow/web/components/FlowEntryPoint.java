@@ -288,7 +288,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
                 for(Map.Entry<Object, Object> entry: ((Map<Object, Object>)initialValues).entrySet()) {
                     String key = ObjectUtils.toString(entry.getKey(), null);
                     String value = ObjectUtils.toString(entry.getValue(), null);
-                    FlowUtils.addInitialValues(values, key, value);
+                    FlowUtils.INSTANCE.addInitialValues(values, key, value);
                 }
             } else {
                 values.add(initialValues.toString());
@@ -298,7 +298,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             // only really needed to construct the getActualFlowLauncher()
             FlowState flowState = getFlowManagement().getCurrentFlowState();
             if ( isReturnToCurrentFlow() && flowState != null) {
-                FlowUtils.addInitialValues(values,FSRETURN_TO_FLOW, flowState.getLookupKey());
+                FlowUtils.INSTANCE.addInitialValues(values,FSRETURN_TO_FLOW, flowState.getLookupKey());
             }
         }
         return values;
