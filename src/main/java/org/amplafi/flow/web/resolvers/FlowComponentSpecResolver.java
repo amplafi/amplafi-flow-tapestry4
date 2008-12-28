@@ -1,6 +1,7 @@
 package org.amplafi.flow.web.resolvers;
 
-import org.amplafi.flow.web.components.FullFlowComponent;
+import java.util.Map;
+
 import org.apache.tapestry.spec.IComponentSpecification;
 import org.apache.tapestry.spec.ComponentSpecification;
 import org.apache.tapestry.IRequestCycle;
@@ -15,35 +16,58 @@ import net.sf.tacos.resolvers.ClasspathComponentSpecResolver;
 
 /**
  * A {@link org.apache.tapestry.resolver.ComponentSpecificationResolver} that is
- * aware of flow components.
+ * maps component type name suffixes to types.
+ *
+ * Any component that ends in one of the suffixes ( templateMap.values() ) is a
+ * suffix-mapped template.
+ *
+ * Example:
+ *   &lt;span jwcid="@fooFullFlow"/&gt; inserts the template for the "foo" flow.
  */
 public class FlowComponentSpecResolver extends ClasspathComponentSpecResolver {
-    public static final String FULL_FLOW_SUFFIX = "FullFlow";
+    private Map<Class<?>, String> templateMap;
 
     @Override
     @SuppressWarnings("unused")
     protected IComponentSpecification doCustomSearch(IRequestCycle cycle) {
-        if (getType().endsWith(FULL_FLOW_SUFFIX)) {
-            return installFlowComponent();
-        } else {
-            return null;
+        for (Map.Entry<Class<?>, String> entry: templateMap.entrySet()) {
+            Class<?> clazz = entry.getKey();
+            String suffix = entry.getValue();
+            if (getType().endsWith(suffix)) {
+                return installFlowComponent(clazz, suffix);
+            }
         }
+        return null;
     }
 
-    private IComponentSpecification installFlowComponent() {
+    private IComponentSpecification installFlowComponent(Class<?> clazz, String suffix) {
         String type = getType();
         Resource componentResource = new ClasspathResource(
                 new DefaultClassResolver(), type);
 
         Location location = new LocationImpl(componentResource);
-        String flowName = type.substring(0, type.length() - FULL_FLOW_SUFFIX.length());
+        String flowName = type.substring(0, type.length() - suffix.length());
 
         IComponentSpecification spec = new ComponentSpecification();
         spec.setLocation(location);
         spec.setDescription(flowName);
         spec.setSpecificationLocation(componentResource);
-        spec.setComponentClassName(FullFlowComponent.class.getName());
+        spec.setComponentClassName(clazz.getName());
 
         return spec;
+    }
+
+    /**
+     * @param templateMap the templateMap to set
+     */
+    public void setTemplateMap(Map<Class<?>, String> templateMap) {
+        this.templateMap = templateMap;
+    }
+
+    /**
+     * @return the templateMap
+     */
+    public Map<Class<?>, String> getTemplateMap() {
+        return templateMap;
     }
 }

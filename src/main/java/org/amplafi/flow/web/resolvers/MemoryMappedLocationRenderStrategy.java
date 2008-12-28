@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Map;
 
 import org.apache.tapestry.IMarkupWriter;
 import org.apache.tapestry.IRequestCycle;
@@ -18,6 +19,7 @@ import org.apache.hivemind.Location;
  * Strategy for describing a {@link org.amplafi.flow.web.resolvers.MemoryMappedLocation}.
  */
 public class MemoryMappedLocationRenderStrategy implements RenderStrategy {
+    private Map<Class<?>, String> templateMap;
     /**
      * Lines before and after the actual location to display.
      */
@@ -58,21 +60,24 @@ public class MemoryMappedLocationRenderStrategy implements RenderStrategy {
     }
 
     private Location enhancedLocation(Location location, INamespace containerNamespace) {
-        if (location.getResource()!=null
-                && location.getResource().getPath().endsWith(FlowComponentSpecResolver.FULL_FLOW_SUFFIX)) {
-            String flowCompName = location.getResource().getPath();
-            Location flowLocation = containerNamespace.getComponentSpecification(flowCompName).getLocation();
-            Location result;
-            if (flowLocation ==null || !(flowLocation instanceof MemoryMappedLocation)) {
-                result = location;
-            } else {
-                MemoryMappedLocation extra = (MemoryMappedLocation) flowLocation;
-                result = new MemoryMappedLocation(location, extra.getContent());
+        for(Map.Entry<Class<?>, String>entry:this.templateMap.entrySet()) {
+            String suffix = entry.getValue();
+            if (location.getResource()!=null
+                    && location.getResource().getPath().endsWith(suffix)) {
+                String flowCompName = location.getResource().getPath();
+                Location flowLocation = containerNamespace.getComponentSpecification(flowCompName).getLocation();
+                Location result;
+                if (flowLocation ==null || !(flowLocation instanceof MemoryMappedLocation)) {
+                    result = location;
+                } else {
+                    MemoryMappedLocation extra = (MemoryMappedLocation) flowLocation;
+                    result = new MemoryMappedLocation(location, extra.getContent());
+                }
+                location = result;
             }
-            location = result;
         }
         return location;
-    }    
+    }
 
     private void handleMemoryLocation(MemoryMappedLocation location, IMarkupWriter writer, int lineNumber) {
         String content = location.getContent();
@@ -155,5 +160,19 @@ public class MemoryMappedLocationRenderStrategy implements RenderStrategy {
         catch (IOException ex) {
             // Ignore
         }
+    }
+
+    /**
+     * @param templateMap the templateMap to set
+     */
+    public void setTemplateMap(Map<Class<?>, String> templateMap) {
+        this.templateMap = templateMap;
+    }
+
+    /**
+     * @return the templateMap
+     */
+    public Map<Class<?>, String> getTemplateMap() {
+        return templateMap;
     }
 }

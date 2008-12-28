@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,13 +16,10 @@ import net.sf.tacos.markup.IExtendedMarkupWriter;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowConstants;
-import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.web.FlowWebUtils;
 import org.amplafi.flow.web.components.FullFlowComponent;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
 import org.apache.hivemind.ApplicationRuntimeException;
 import org.apache.hivemind.Location;
 import org.apache.hivemind.Resource;
@@ -33,7 +29,6 @@ import org.apache.tapestry.INamespace;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.annotations.AnnotationUtils;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.engine.ITemplateSourceDelegate;
 import org.apache.tapestry.markup.MarkupWriterImpl;
 import org.apache.tapestry.markup.UTFMarkupFilter;
 import org.apache.tapestry.parse.ComponentTemplate;
@@ -71,7 +66,7 @@ import static org.apache.commons.lang.StringUtils.*;
  *
  * @see org.amplafi.flow.web.components.FullFlowComponent
  */
-public class FlowAwareTemplateSourceDelegate implements ITemplateSourceDelegate {
+public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate {
 
     /**
      *
@@ -131,8 +126,6 @@ public class FlowAwareTemplateSourceDelegate implements ITemplateSourceDelegate 
     private static final String[] FIXED_PARAMETERS = { ASYNC, UPDATE_COMPONENTS };
     private ITemplateParser parser;
     private ComponentSpecificationResolver componentSpecificationResolver;
-    private FlowDefinitionsManager flowDefinitionsManager;
-    private Log log;
     private String debugCondition;
     private String additionalUpdateComponents;
 
@@ -144,10 +137,6 @@ public class FlowAwareTemplateSourceDelegate implements ITemplateSourceDelegate 
         this.componentSpecificationResolver = componentSpecificationResolver;
     }
 
-    public void setFlowDefinitionsManager(FlowDefinitionsManager flowDefinitionsManager) {
-        this.flowDefinitionsManager = flowDefinitionsManager;
-    }
-
     public void setDebugCondition(String debugCondition) {
         this.debugCondition = debugCondition;
     }
@@ -156,31 +145,8 @@ public class FlowAwareTemplateSourceDelegate implements ITemplateSourceDelegate 
         this.additionalUpdateComponents = additionalUpdateComponents;
     }
 
-    public ComponentTemplate findTemplate(IRequestCycle cycle, IComponent component, Locale locale) {
-        ComponentTemplate ret = null;
-        IComponentSpecification spec = component.getSpecification();
-        if (spec.getComponentClassName().equals(FullFlowComponent.class.getName())) {
-            String type = spec.getDescription();
-            Flow flow = flowDefinitionsManager.getFlowDefinition(type);
-            // build the content for this full flow component
-            String content;
-            if (flow == null) {
-                content = "<div>[Flow " + type + " not found]</div>";
-            } else if ( CollectionUtils.isEmpty(flow.getActivities())) {
-                content = "<div>[Flow " + type + " has no activites]</div>";
-            } else {
-                content = createTemplate(flow, cycle, component.getNamespace(), component.getLocation());
-            }
-            // now that we have the content, enhance the location assigned to the spec
-            spec.setLocation(new MemoryMappedLocation(spec.getLocation(), content));
-            // finally, create the template
-            ret = constructTemplateInstance(cycle, content.toCharArray(),
-                    spec.getSpecificationLocation(), component);
-        }
-        return ret;
-    }
-
-    private String createTemplate(Flow flow, IRequestCycle cycle, INamespace containerNamespace, Location location) {
+    @Override
+    protected String createTemplate(Flow flow, IRequestCycle cycle, INamespace containerNamespace, Location location) {
         String flowName = flow.getFlowTypeName();
         StringWriter sw = new StringWriter();
         IExtendedMarkupWriter writer = new ExtendedMarkupWriterImpl(createMarkupWriter(new PrintWriter(sw)));
@@ -366,7 +332,8 @@ public class FlowAwareTemplateSourceDelegate implements ITemplateSourceDelegate 
         return new MarkupWriterImpl("text/html", printWriter, new UTFMarkupFilter());
     }
 
-    private synchronized ComponentTemplate constructTemplateInstance(IRequestCycle cycle, char[] templateData,
+    @Override
+    protected synchronized ComponentTemplate constructTemplateInstance(IRequestCycle cycle, char[] templateData,
             Resource resource, IComponent component) {
         ITemplateParserDelegate delegate = new DefaultParserDelegate(component, JWCID,
                 cycle, componentSpecificationResolver);
@@ -406,14 +373,6 @@ public class FlowAwareTemplateSourceDelegate implements ITemplateSourceDelegate 
             getLog().error("while finding required parameters", e);
         }
         return list;
-    }
-
-    public void setLog(Log log) {
-        this.log = log;
-    }
-
-    public Log getLog() {
-        return log;
     }
 
 }
