@@ -227,7 +227,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
     public void onMultipleAlternateFlow(IRequestCycle cycle) {
         FlowState attachedFlow = getAttachedFlowState();
         FlowTransition flowTransition = getFlowTransition();
-        String nextFlow = flowTransition.getNextFlow();
+        String nextFlow = flowTransition.getNextFlowType();
         /// HACK should be calling flowTransition.getFlowLauncher()
         if (flowTransition.isMorphingFlow()) {
             String page = attachedFlow.morphFlow(nextFlow, flowTransition.getInitialValues());
