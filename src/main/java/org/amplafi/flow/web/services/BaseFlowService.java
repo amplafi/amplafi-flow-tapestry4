@@ -20,6 +20,8 @@ import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowValidationException;
+import org.amplafi.flow.web.FlowResultHandler;
+import org.amplafi.flow.web.FlowWebUtils;
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageRedirectException;
@@ -63,6 +65,8 @@ public abstract class BaseFlowService implements FlowService {
     protected String defaultComplete;
     protected String renderResultDefault;
     protected boolean discardSessionOnExit;
+    private FlowResultHandler resultHandler;
+    private boolean assumeApiCall;
 
     public void setName(String name) {
         this.name = name;
@@ -224,6 +228,46 @@ public abstract class BaseFlowService implements FlowService {
         if (flowState != null) {
             throw new PageRedirectException(flowState.getCurrentPage());
         }
+    }
+
+    protected void renderValidationException(IRequestCycle cycle, FlowValidationException e, String flowType) throws IOException {
+        PrintWriter writer = getWriter(cycle);
+        writer.print("Cannot start " + flowType + " :");
+        writer.println(e.getTrackings());
+        
+        e.printStackTrace(writer);
+    }
+
+    public FlowResultHandler getResultHandler() {
+        return resultHandler;
+    }
+
+    public void setResultHandler(FlowResultHandler resultHandler) {
+        this.resultHandler = resultHandler;
+    }
+
+    /**
+     * @param assumeApiCall the assumeApiCall to set
+     */
+    public void setAssumeApiCall(boolean assumeApiCall) {
+        this.assumeApiCall = assumeApiCall;
+    }
+
+    /**
+     * @return the assumeApiCall
+     */
+    public boolean isAssumeApiCall() {
+        return assumeApiCall;
+    }
+
+    protected void renderHtml(FlowState flowState) {
+        String page = flowState.getCurrentPage();
+        // page should always be not null - if that's not the case, then
+        // check the pageName attribute of flow definitions in the xml files
+        if (page == null) {
+            throw new IllegalStateException("pageName not defined for flow " + flowState.getFlowTypeName());
+        }
+        FlowWebUtils.activatePageIfNotNull(null, page, flowState);
     }
 
 }
