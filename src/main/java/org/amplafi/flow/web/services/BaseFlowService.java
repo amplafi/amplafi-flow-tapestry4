@@ -3,11 +3,14 @@
  */
 package org.amplafi.flow.web.services;
 
+import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.join;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,13 +18,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.amplafi.flow.web.FlowWebUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageRedirectException;
@@ -47,8 +53,8 @@ public abstract class BaseFlowService implements FlowService {
      */
     public static final String ADV_FLOW_ACTIVITY = "fsAdvanceTo";
     /**
-     * "advance" --> go through all remaining FlowActivities until the flow completes.
-     * "asap" --> advance flow until it can be completed.
+     * {@link #ADVANCE_TO_END} "advance" --> go through all remaining FlowActivities until the flow completes.
+     * {@link #AS_FAR_AS_POSSIBLE} "afap" --> advance flow until it can be completed.
      */
     public static final String COMPLETE_FLOW = "fsCompleteFlow";
     private static final String SCRIPT_CONTENT_TYPE = "text/javascript";
@@ -68,15 +74,48 @@ public abstract class BaseFlowService implements FlowService {
     private FlowResultHandler resultHandler;
     private boolean assumeApiCall;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
-    public String getName() {
-        return name;
-    }
+    public void service(IRequestCycle cycle) throws IOException {
+        String flowType = cycle.getParameter(ServicesConstants.FLOW_TYPE);
+        String flowId = cycle.getParameter(FLOW_ID);
+        String renderResult = cycle.getParameter(RENDER_RESULT);
 
+        Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
+        // TODO map cookie to the json flow state.
+        String cookieString = cycle.getParameter(ServicesConstants.COOKIE_OBJECT);
+        if(StringUtils.isNotBlank(cookieString)){
+            initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
+        }
+        // HACK needed until https://issues.apache.org/jira/browse/TAPESTRY-1876
+        // is addressed.
+        String[] keyList = cycle.getParameters(FlowService._KEY_LIST);
+        for(String key: keyList) {
+            String value = cycle.getParameter(key);
+            if ( value != null ) {
+                // we do allow the value to be blank ( value may be existence of parameter)
+                initial.put(key, value);
+            }
+        }
+
+        String referingUriStr = cycle.getInfrastructure().getRequest().getHeader("Referer");
+        if(StringUtils.isNotBlank(referingUriStr)){
+            URI referingUri;
+            try {
+                referingUri = new URI(referingUriStr);
+                initial.put(FSREFERING_URL, referingUri.toString());
+            } catch (URISyntaxException e) {
+                // ignore bad uri
+            }
+        }
+        String complete = cycle.getParameter(COMPLETE_FLOW);
+
+        doActualService(cycle, flowType, flowId, renderResult, initial, complete);
+    }
+    // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
+    public abstract FlowState doActualService(IRequestCycle cycle, String flowType,
+        String flowId, String renderResult, Map<String, String> initial, String complete) throws IOException;
+
+    // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     protected FlowState getFlowState(IRequestCycle cycle, String flowType, String flowId, String renderResult, Map<String, String> initial) throws IOException {
         FlowState flowState = null;
         if ( isNotBlank(flowId)) {
@@ -211,18 +250,25 @@ public abstract class BaseFlowService implements FlowService {
         return discardSessionOnExit;
     }
 
+    // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     protected PrintWriter getWriter(IRequestCycle cycle) throws IOException {
         ContentType contentType = new ContentType(SCRIPT_CONTENT_TYPE);
 
         String encoding = contentType.getParameter("charset");
 
-        if (encoding == null) {
-            encoding = cycle.getEngine().getOutputEncoding();
-            contentType.setParameter("charset", encoding);
+        try {
+            if (encoding == null) {
+                encoding = cycle.getEngine().getOutputEncoding();
+                contentType.setParameter("charset", encoding);
+            }
+            return getResponse().getPrintWriter(contentType);
+        } catch (NullPointerException nullPointerException) {
+            // can happen if the cycle is not available (called in a headless/ non-tapestry way. )
+            return null;
         }
-        return getResponse().getPrintWriter(contentType);
     }
 
+    // TODO -- this should not be necessary any more.
     public void continueFlowState(String flowLookupKey, Map<String, String> propertyChanges) throws PageRedirectException {
         FlowState flowState = getFlowManagement().continueFlowState(flowLookupKey, true, propertyChanges);
         if (flowState != null) {
@@ -230,11 +276,12 @@ public abstract class BaseFlowService implements FlowService {
         }
     }
 
+    // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     protected void renderValidationException(IRequestCycle cycle, FlowValidationException e, String flowType) throws IOException {
         PrintWriter writer = getWriter(cycle);
         writer.print("Cannot start " + flowType + " :");
         writer.println(e.getTrackings());
-        
+
         e.printStackTrace(writer);
     }
 
@@ -270,4 +317,12 @@ public abstract class BaseFlowService implements FlowService {
         FlowWebUtils.activatePageIfNotNull(null, page, flowState);
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
 }
