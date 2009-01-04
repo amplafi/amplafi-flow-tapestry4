@@ -227,7 +227,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             return false;
         }
     }
-    @Cached
+    @Cached(resetAfterRewind=true)
     public String getActualFlowTypeName() {
         String flowTypeName = getFlowTypeName();
         if (isBlank(flowTypeName)) {
