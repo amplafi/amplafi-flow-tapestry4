@@ -12,6 +12,10 @@ import org.apache.tapestry.engine.IEngineService;
  *
  */
 public interface FlowService extends IEngineService {
+    // HACK needed until https://issues.apache.org/jira/browse/TAPESTRY-1876
+    // is addressed.
+    public static final String _KEY_LIST = "_key_List__";
+
     /**
      * Continues a flow.
      *
