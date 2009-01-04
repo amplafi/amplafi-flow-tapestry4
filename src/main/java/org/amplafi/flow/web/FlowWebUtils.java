@@ -69,6 +69,8 @@ public class FlowWebUtils {
                 if (cycle==null) {
                     throw new PageRedirectException(page);
                 } else {
+                    // TO_ANDY PROBLEM activating page this way.... for example canceling a flow doesn't cause the new page to be displayed.
+                    // first noticed this with the SIGNUP verification flow not switching to home page when flow was canceled.
                     IPage appPage = cycle.getPage(page);
                     if ( appPage instanceof IExternalPage) {
                         ((IExternalPage)appPage).activateExternalPage(new Object[] {flowState}, cycle);
