@@ -24,13 +24,13 @@
     <span jwcid="@If" condition="ognl:renderedAsSubmit" renderTag="false">
         <span jwcid="@If" condition="ognl:renderAsButton" renderTag="false">
             <input jwcid="fepSubm" value="ognl:flowLabel" type="submit" alt="ognl:actualFlowTypeName"
-                disabled="ognl:renderAsDisabled" stateful="ognl:statefulSetting"
+                disabled="ognl:renderAsDisabled"
                 class="asButton" action="listener:doEnterFlow"
                 parameters="ognl:parameters"/>
         </span>            
         <span jwcid="@Else" renderTag="false">
             <a href="#" class="ognl:className" jwcid="fepLiSubm" alt="ognl:actualFlowTypeName"
-                disabled="ognl:renderAsDisabled" stateful="ognl:statefulSetting"
+                disabled="ognl:renderAsDisabled"
                 action="listener:doEnterFlow"
                 parameters="ognl:parameters"><span 
                 jwcid="@If" condition="ognl:bodyPartOfLink" renderTag="false"><span jwcid="@RenderBody"/></span>
