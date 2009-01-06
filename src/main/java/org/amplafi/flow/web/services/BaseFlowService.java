@@ -89,11 +89,13 @@ public abstract class BaseFlowService implements FlowService {
         // HACK needed until https://issues.apache.org/jira/browse/TAPESTRY-1876
         // is addressed.
         String[] keyList = cycle.getParameters(FlowService._KEY_LIST);
-        for(String key: keyList) {
-            String value = cycle.getParameter(key);
-            if ( value != null ) {
-                // we do allow the value to be blank ( value may be existence of parameter)
-                initial.put(key, value);
+        if ( keyList != null && keyList.length > 0) {
+            for(String key: keyList) {
+                String value = cycle.getParameter(key);
+                if ( value != null ) {
+                    // we do allow the value to be blank ( value may be existence of parameter)
+                    initial.put(key, value);
+                }
             }
         }
 
