@@ -10,7 +10,6 @@ import net.sf.tacos.annotations.Cached;
 
 import org.amplafi.flow.Flow;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.hivemind.ApplicationRuntimeException;
 import org.apache.tapestry.BaseComponent;
 import org.apache.tapestry.IForm;
 import org.apache.tapestry.TapestryUtils;
@@ -90,7 +89,7 @@ public abstract class BaseFlowComponent extends BaseComponent implements FlowAwa
      * Returns the form that encloses this component.
      *
      * @return the form or null if not in a form.
-     * @throws ApplicationRuntimeException if no form found.
+     * @see org.apache.tapestry.TapestryUtils#getForm(org.apache.tapestry.IRequestCycle, org.apache.tapestry.IComponent)
      */
     @Cached
     public IForm getForm() {

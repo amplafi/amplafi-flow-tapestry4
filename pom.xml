@@ -14,6 +14,9 @@
     <packaging>jar</packaging>
     <name>Flow - Tapestry 4 integration</name>
     <description>Amplafi Flow - Tapestry 4 integration</description>
+    <scm>
+        <developerConnection>scm:svn:${svn-base}/${artifactId}/trunk</developerConnection>
+    </scm>    
     <build>
         <defaultGoal>install</defaultGoal>
         <resources>
@@ -23,14 +26,12 @@
                     <exclude>**/*.java</exclude>
                 </excludes>
             </resource>
-            <!-- need to explicitly reinclude the default directory -->
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
         <plugins>
             <plugin>
-                <!--  !!!!!!!!!!should only be used for non-secret sauce code !!!!!!!! -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <inherited>false</inherited>
@@ -41,7 +42,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!--  !!!!!!!!!!should only be used for non-secret sauce code !!!!!!!! -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <inherited>false</inherited>
@@ -59,7 +59,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <!--  !!!!!!!!!!should only be used for non-secret sauce code !!!!!!!! -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <inherited>false</inherited>
@@ -109,7 +108,7 @@
         </plugins>
     </build>
     <reporting>
-        <outputDirectory>../target/site/${pom.artifactId}</outputDirectory>
+        <!--<outputDirectory>../target/site/${pom.artifactId}</outputDirectory>-->
         <plugins>
             <plugin>
                 <groupId>ch.marcus-schulte.maven</groupId>
@@ -127,7 +126,7 @@
                 <version>0.7.0-SNAPSHOT</version>
                 <configuration>
                     <libraries>
-                        <param>/com/amplafi/flow/web/components/Flow.library</param>
+                        <param>/org/amplafi/flow/web/components/Flow.library</param>
                     </libraries>
                 </configuration>
             </plugin>
