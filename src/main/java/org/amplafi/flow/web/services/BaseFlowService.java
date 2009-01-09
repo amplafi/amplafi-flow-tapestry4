@@ -43,6 +43,7 @@ import org.apache.tapestry.web.WebResponse;
  */
 public abstract class BaseFlowService implements FlowService {
     public static final String FLOW_ID = "fid";
+    public static final String JSON_DESCRIBE = "json/describe";
     protected static final String ADVANCE_TO_END = "advance";
     protected static final String AS_FAR_AS_POSSIBLE = "afap";
     /**
@@ -79,6 +80,11 @@ public abstract class BaseFlowService implements FlowService {
         String flowType = cycle.getParameter(ServicesConstants.FLOW_TYPE);
         String flowId = cycle.getParameter(FLOW_ID);
         String renderResult = cycle.getParameter(RENDER_RESULT);
+
+        if (JSON_DESCRIBE.equals(renderResult)) {
+            describeService(cycle, flowType);
+            return;
+        }
 
         Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
         // TODO map cookie to the json flow state.
@@ -117,6 +123,13 @@ public abstract class BaseFlowService implements FlowService {
     public abstract FlowState doActualService(IRequestCycle cycle, String flowType,
         String flowId, String renderResult, Map<String, String> initial, String complete) throws IOException;
 
+    /**
+     * Render a json description of the flow. This includes parameters (name, type, required).
+     * @param cycle
+     * @param flowType
+     */
+    public abstract void describeService(IRequestCycle cycle, String flowType) throws IOException;
+
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     protected FlowState getFlowState(IRequestCycle cycle, String flowType, String flowId, String renderResult, Map<String, String> initial) throws IOException {
         FlowState flowState = null;
@@ -143,6 +156,7 @@ public abstract class BaseFlowService implements FlowService {
         }
         return flowState;
     }
+
     protected abstract void renderError(IRequestCycle cycle, String message, String renderResult, FlowState flowState) throws IOException;
 
     public void setLinkFactory(LinkFactory linkFactory) {
