@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.sf.tacos.annotations.Cached;
 
+import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
@@ -249,7 +250,8 @@ public abstract class FlowBorder extends BaseFlowComponent {
     public void onPrevious(IRequestCycle cycle) {
         invokeIfNotNull(cycle, getPreviousListener());
         FlowState currentFlowState = getAttachedFlowState();
-        String page = currentFlowState.previous().getPageName();
+        FlowActivity previous = currentFlowState.previous();
+        String page = previous.getPageName();
         FlowWebUtils.activatePageIfNotNull(cycle, page, currentFlowState);
     }
 
@@ -268,7 +270,8 @@ public abstract class FlowBorder extends BaseFlowComponent {
         FlowState currentFlowState = getAttachedFlowState();
         FlowValidationResult result = currentFlowState.getCurrentActivityFlowValidationResult();
         if (result.isValid()) {
-            String page = currentFlowState.next().getPageName();
+            FlowActivity next = currentFlowState.next();
+            String page = next.getPageName();
             FlowWebUtils.activatePageIfNotNull(cycle, page, currentFlowState);
         } else {
             getFlowResultHandler().handleFlowResult(result, this);
