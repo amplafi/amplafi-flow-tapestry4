@@ -218,19 +218,24 @@ public abstract class FlowBorder extends BaseFlowComponent {
     }
 
     public void onOneAlternateFlow(IRequestCycle cycle) {
-        FlowState attachedFlow = getAttachedFlowState();
         FlowTransition flowTransition = getFlowTransitions().get(0);
-        String key = flowTransition.getKey();
-        attachedFlow.setFinishType(key);
-        onFinish(cycle);
+        onAltFinish(cycle, flowTransition);
     }
 
     public void onMultipleAlternateFlow(IRequestCycle cycle) {
-        FlowState attachedFlow = getAttachedFlowState();
         FlowTransition flowTransition = getFlowTransition();
-        String nextFlow = flowTransition.getNextFlowType();
+        onAltFinish(cycle, flowTransition);
+    }
+
+    /**
+     * @param cycle
+     * @param flowTransition
+     */
+    private void onAltFinish(IRequestCycle cycle, FlowTransition flowTransition) {
+        FlowState attachedFlow = getAttachedFlowState();
         /// HACK should be calling flowTransition.getFlowLauncher()
         if (flowTransition.isMorphingFlow()) {
+            String nextFlow = flowTransition.getNextFlowType();
             String page = attachedFlow.morphFlow(nextFlow, flowTransition.getInitialValues());
             FlowWebUtils.activatePageIfNotNull(cycle, page, attachedFlow);
         } else {
