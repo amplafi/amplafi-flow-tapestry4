@@ -130,6 +130,11 @@
             <version>${pom.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.amplafi</groupId>
+            <artifactId>amplafi-sworddance</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
