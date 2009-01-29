@@ -57,7 +57,7 @@ public abstract class FlowTemplateSourceDelegate implements ITemplateSourceDeleg
      * @param charArray
      * @param specificationLocation
      * @param component
-     * @return
+     * @return template
      */
     protected abstract ComponentTemplate constructTemplateInstance(IRequestCycle cycle, char[] charArray, Resource specificationLocation, IComponent component);
 
@@ -66,7 +66,7 @@ public abstract class FlowTemplateSourceDelegate implements ITemplateSourceDeleg
      * @param cycle
      * @param namespace
      * @param location
-     * @return
+     * @return template string
      */
     protected abstract String createTemplate(Flow flow, IRequestCycle cycle, INamespace namespace, Location location);
 
