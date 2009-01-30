@@ -11,19 +11,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
+import static org.amplafi.flow.launcher.FlowLauncher.*;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.amplafi.flow.web.FlowWebUtils;
@@ -31,7 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageRedirectException;
-import org.apache.tapestry.engine.ILink;
 import org.apache.tapestry.services.LinkFactory;
 import org.apache.tapestry.util.ContentType;
 import org.apache.tapestry.web.WebResponse;
@@ -42,24 +40,8 @@ import org.apache.tapestry.web.WebResponse;
  *
  */
 public abstract class BaseFlowService implements FlowService {
-    public static final String FLOW_ID = "fid";
     public static final String JSON_DESCRIBE = "json/describe";
-    protected static final String ADVANCE_TO_END = "advance";
-    protected static final String AS_FAR_AS_POSSIBLE = "afap";
-    /**
-     * advance through the flow until either the flow completes or
-     * the current {@link FlowActivity} is named with the advanceTo value.
-     *
-     * In future it may be considered an error to not have a matching {@link FlowActivity} name
-     */
-    public static final String ADV_FLOW_ACTIVITY = "fsAdvanceTo";
-    /**
-     * {@link #ADVANCE_TO_END} "advance" --> go through all remaining FlowActivities until the flow completes.
-     * {@link #AS_FAR_AS_POSSIBLE} "afap" --> advance flow until it can be completed.
-     */
-    public static final String COMPLETE_FLOW = "fsCompleteFlow";
     private static final String SCRIPT_CONTENT_TYPE = "text/javascript";
-    public static final String FLOW_STATE_JSON_KEY = "flowState";
     private LinkFactory linkFactory;
     private FlowDefinitionsManager flowDefinitionsManager;
     private WebResponse response;
@@ -67,7 +49,7 @@ public abstract class BaseFlowService implements FlowService {
     private Log log;
     private String name;
     /**
-     * if {@link #COMPLETE_FLOW} is not supplied - this is the default value to use.
+     * if {@link org.amplafi.flow.launcher.FlowLauncher#COMPLETE_FLOW} is not supplied - this is the default value to use.
      */
     protected String defaultComplete;
     protected String renderResultDefault;
@@ -94,7 +76,7 @@ public abstract class BaseFlowService implements FlowService {
         }
         // HACK needed until https://issues.apache.org/jira/browse/TAPESTRY-1876
         // is addressed.
-        String[] keyList = cycle.getParameters(FlowService._KEY_LIST);
+        String[] keyList = cycle.getParameters(_KEY_LIST);
         if ( keyList != null && keyList.length > 0) {
             for(String key: keyList) {
                 String value = cycle.getParameter(key);
@@ -176,7 +158,7 @@ public abstract class BaseFlowService implements FlowService {
     }
 
     public FlowManagement getFlowManagement() {
-        return getFlowDefinitionsManager().getSessionFlowManagement();
+        return getFlowDefinitionsManager().getFlowManagement();
     }
 
     public void setLog(Log log) {
@@ -218,28 +200,6 @@ public abstract class BaseFlowService implements FlowService {
             }
         }
         return error;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public ILink getLink(boolean post, Object parameter) {
-        if ( parameter instanceof FlowState ) {
-            return getLink(post, (FlowState)parameter);
-        } else if ( parameter instanceof Map ) {
-            Map<String, String> parameterMap = (Map<String, String>) parameter;
-            return getLink(post, parameterMap);
-        }
-        throw new IllegalArgumentException(parameter + "is not a "+ Map.class+ " nor a "+ FlowState.class);
-    }
-
-    public ILink getLink(boolean post, FlowState flowState) {
-        Map<String,String> map = new HashMap<String, String>();
-        map.put(FLOW_ID, flowState.getLookupKey());
-        return getLink(post, map);
-    }
-
-    public ILink getLink(boolean post, Map<String, String> parameterMap) {
-        return getLinkFactory().constructLink(this, post, parameterMap, false);
     }
 
     public void setDefaultComplete(String defaultComplete) {
