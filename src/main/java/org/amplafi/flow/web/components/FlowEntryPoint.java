@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static org.amplafi.flow.FlowConstants.*;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.launcher.FlowLauncher;
@@ -169,6 +168,13 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     public abstract boolean isReturnToCurrentFlow();
 
     /**
+     *
+     * @return flowState Lookupkey, true (same as {@link #isReturnToCurrentFlow()} )
+     */
+    @Parameter
+    public abstract Object getReturnToFlow();
+
+    /**
      * TODO rationalize this!
      * @return
      * Always show this entry point - even if it's the same as the active one.
@@ -293,13 +299,6 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             } else {
                 values.add(initialValues.toString());
             }
-            //  so the currently active flow can be returned to after the newly started flow completes.
-            // if initialValues is null then modify the launcher's parameters.
-            // only really needed to construct the getActualFlowLauncher()
-            FlowState flowState = getFlowManagement().getCurrentFlowState();
-            if ( isReturnToCurrentFlow() && flowState != null) {
-                FlowUtils.INSTANCE.addInitialValues(values,FSRETURN_TO_FLOW, flowState.getLookupKey());
-            }
         }
         return values;
     }
@@ -307,13 +306,18 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     // only called when rendering ... not from the listener.
     public FlowLauncher getActualFlowLauncher() {
         FlowLauncher launcher = getFlowLauncher();
-        if ( launcher != null ) {
-            FlowState flowState = getFlowManagement().getCurrentFlowState();
-            if ( isReturnToCurrentFlow() && flowState != null) {
-                launcher.putIfAbsent(FSRETURN_TO_FLOW, flowState.getLookupKey());
-            }
-        } else if ( StringUtils.isNotBlank(getActualFlowTypeName())) {
+        if ( launcher == null && StringUtils.isNotBlank(getActualFlowTypeName())) {
             launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), getContainer(), getValues(), getFlowManagement(), null);
+        }
+        if ( launcher != null ) {
+            if ( getReturnToFlow() != null) {
+                launcher.setReturnToFlow(getReturnToFlow());
+            } else if (isReturnToCurrentFlow() ) {
+                FlowState flowState = getFlowManagement().getCurrentFlowState();
+                if ( flowState != null) {
+                    launcher.setReturnToFlow(flowState.getLookupKey());
+                }
+            }
         }
         return launcher;
     }
