@@ -274,7 +274,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
             for(FlowPropertyDefinition definition: flow.getPropertyDefinitions().values()) {
                 String name = definition.getName();
                 if ( activity == null || activity.getPropertyDefinition(name) == definition) {
-                    writeConnection(writer, componentName, matchedParameters, foundParameters, name, definition.getParameterName());
+                    writeFpropAttributeConnections(writer, componentName, matchedParameters, foundParameters, name, definition.getParameterName());
                 }
             }
         }
@@ -282,7 +282,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         // add the FlowActivity-specific properties
         if (activity != null && activity.getPropertyDefinitions() != null ) {
             for(FlowPropertyDefinition definition: activity.getPropertyDefinitions().values()) {
-                writeConnection(writer, componentName, matchedParameters, foundParameters, definition.getName(), definition.getParameterName());
+                writeFpropAttributeConnections(writer, componentName, matchedParameters, foundParameters, definition.getName(), definition.getParameterName());
             }
         }
 
@@ -303,28 +303,37 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         // now add missing required parameters
         for(Map.Entry<String, Parameter> entry: foundParameters.entrySet()) {
             String parameter = entry.getKey();
-            writeConnection(writer, componentName, matchedParameters, foundParameters, parameter, parameter);
+            writeFpropAttributeConnections(writer, componentName, matchedParameters, foundParameters, parameter, parameter);
         }
     }
 
     /**
+     * write the html attributes to the template that will connect flow properties to the tapestry component.
+     * If 'flowPropertyName' is already in the matchedParameters set then nothing is done.
+     *
+     * If the {@link Parameter} has a {@link Parameter#defaultValue()} then the default value will be supplied to the flow code.
+     *
+     * writes attributes that look like: compParameter="fprop:flowProperty" or compParameter="fprop:flowProperty=compname@defaultValue"
+     *
      * @param writer
-     * @param componentName TODO
+     * @param componentName
      * @param matchedParameters
      * @param foundParameters
+     * @param flowPropertyName
+     * @param componentParameterName
      */
-    private void writeConnection(IExtendedMarkupWriter writer, String componentName, Set<String> matchedParameters,
-            Map<String, Parameter> foundParameters, String name, String parameterName) {
-        if (foundParameters.containsKey(name)  && !matchedParameters.contains(name)) {
-            String value = FLOW_PROPERTY_PREFIX + name;
-            String defaultValue = foundParameters.get(name).defaultValue();
+    private void writeFpropAttributeConnections(IExtendedMarkupWriter writer, String componentName, Set<String> matchedParameters,
+            Map<String, Parameter> foundParameters, String flowPropertyName, String componentParameterName) {
+        if (foundParameters.containsKey(flowPropertyName)  && !matchedParameters.contains(flowPropertyName)) {
+            String value = FLOW_PROPERTY_PREFIX + flowPropertyName;
+            String defaultValue = foundParameters.get(flowPropertyName).defaultValue();
             if( isBlank(defaultValue)) {
-                writer.attribute(parameterName, value);
+                writer.attribute(componentParameterName, value);
             } else {
                 // non-blank defaultValue. Need to supply the flowComponent name so that FlowPropertyBinding can have the correct context to work from.
-                writer.attribute(parameterName, value+"="+componentName+"@"+defaultValue);
+                writer.attribute(componentParameterName, value+"="+componentName+"@"+defaultValue);
             }
-            matchedParameters.add(parameterName);
+            matchedParameters.add(componentParameterName);
         }
     }
 
