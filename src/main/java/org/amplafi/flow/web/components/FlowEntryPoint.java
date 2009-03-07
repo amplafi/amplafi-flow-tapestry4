@@ -33,6 +33,7 @@ import org.amplafi.flow.web.FlowWebUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry.IActionListener;
+import org.apache.tapestry.IForm;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.link.DirectLink;
 import org.apache.tapestry.annotations.Component;
@@ -237,6 +238,9 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     public boolean getStatefulSetting() {
         if ( isStatefulBound() ) {
             return isStateful();
+        } else if (isRenderedAsSubmit()) {
+            IForm form = getForm();
+            return form.isStateful();
         } else {
             // for now by default -- always stateless -- in future may change if we are continuing
             // an unpersisted flow.
