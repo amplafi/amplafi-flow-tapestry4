@@ -1,0 +1,31 @@
+                    ------
+                    Amplafi Flow Goals
+                    (Tapestry4 integration)
+                    ------
+                    Patrick Moore
+                    ------
+                    9 Mar 2009
+                    ------
+ 
+Need
+ 
+ Maintaining state when multiple UI screens are needed is difficult and awkward in Tapestry 4 (and in most UI frameworks). 
+ Each page and UI component was burdened with knowing what it needed and knowing what state could be removed from the httpsession.
+ 
+ If the product changed, all existing and new paths through the UI needed to be verified as still being correct. Handling partially entered information,
+which could not be committed to the database yet is awkward and adhoc.
+
+ Tapestry 4 allows any page or component to persist information into the http state, leading to state memory leaks. Getting the complete picture of what, why and who needs
+the information stored in the http session is difficult and time-consuming.
+
+Purpose
+
+ Amplafi-flow-tapestry4 provides an integration with the amplafi-flow-core project that completely eliminates the need for @Persist flags in tapestry4 components.
+All UI state is stored using amplafi-flow-core FlowState objects that are managed independently of each other.
+
+Goals
+
+ * Eliminate need for any session management in UI components or pages.
+ * Eliminate all database access from any UI components.
+ * Eliminate all business logic around verification from UI components.
+ * Handle verification of data that maybe interdependent on each other and gathered on different screens.
