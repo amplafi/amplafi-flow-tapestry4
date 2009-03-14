@@ -13,9 +13,9 @@
         <menu name="Why Amplafi-Flow?">
             <item name="Goals" href="project-purpose/overview.html"/>
         </menu>
-        <menu name="">
-            <item name="Tapestry4 Session State" href="design-notes/model-but-no-controller.html"/>
-            <item name="Connecting Flows to Components" href="design-notes/session-management.html"/>
+        <menu name="Flow Templates">
+            <item name="Tapestry4 Session State" href="session-state/session-state.html"/>
+            <item name="Flow Template Component Generation" href="flow-templates/flow-template-generation.html"/>
         </menu>
         <menu ref="reports"/>
     </body>
