@@ -16,6 +16,8 @@ package org.amplafi.flow.web.resolvers;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.InputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -56,6 +58,7 @@ import org.apache.tapestry.spec.IComponentSpecification;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.*;
+import org.apache.commons.io.IOUtils;
 
 
 /**
@@ -141,6 +144,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
     private ComponentSpecificationResolver componentSpecificationResolver;
     private String debugCondition;
     private String additionalUpdateComponents;
+    private String pageTemplate;
 
     public void setParser(ITemplateParser parser) {
         this.parser = parser;
@@ -158,8 +162,28 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         this.additionalUpdateComponents = additionalUpdateComponents;
     }
 
+    public void setPageTemplateLocation(String path) {
+        final InputStream stream = this.getClass().getResourceAsStream(path);
+        if (stream!=null) {
+            try {
+                pageTemplate = IOUtils.toString(stream);
+            } catch (IOException e) {
+                getLog().info("Can't load template: " + path, e);
+            }
+        }
+    }
+
     @Override
-    protected String createTemplate(Flow flow, IRequestCycle cycle, INamespace containerNamespace, Location location) {
+    protected String createPageTemplate(Flow flow, IRequestCycle cycle, INamespace namespace, Location location) {
+        if (pageTemplate==null) {
+            return "No template defined for " + getClass().getName();
+        } else {
+            return pageTemplate.replace("{FlowName}", flow.getFlowTypeName());
+        }
+    }
+
+    @Override
+    protected String createComponentTemplate(Flow flow, IRequestCycle cycle, INamespace containerNamespace, Location location) {
         String flowName = flow.getFlowTypeName();
         StringWriter sw = new StringWriter();
         IExtendedMarkupWriter writer = new ExtendedMarkupWriterImpl(createMarkupWriter(new PrintWriter(sw)));

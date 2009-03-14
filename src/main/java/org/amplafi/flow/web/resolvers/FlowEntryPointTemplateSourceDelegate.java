@@ -38,11 +38,15 @@ public class FlowEntryPointTemplateSourceDelegate extends FlowTemplateSourceDele
     }
 
     /**
-     * @see org.amplafi.flow.web.resolvers.FlowTemplateSourceDelegate#createTemplate(org.amplafi.flow.Flow, org.apache.tapestry.IRequestCycle, org.apache.tapestry.INamespace, org.apache.hivemind.Location)
+     * @see org.amplafi.flow.web.resolvers.FlowTemplateSourceDelegate#createComponentTemplate(org.amplafi.flow.Flow, org.apache.tapestry.IRequestCycle, org.apache.tapestry.INamespace, org.apache.hivemind.Location)
      */
     @Override
-    protected String createTemplate(Flow flow, IRequestCycle cycle, INamespace namespace, Location location) {
+    protected String createComponentTemplate(Flow flow, IRequestCycle cycle, INamespace namespace, Location location) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected String createPageTemplate(Flow flow, IRequestCycle cycle, INamespace namespace, Location location) {
+        throw new UnsupportedOperationException();
+    }
 }

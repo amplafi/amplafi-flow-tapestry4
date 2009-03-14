@@ -41,7 +41,8 @@ public abstract class FlowTemplateSourceDelegate implements ITemplateSourceDeleg
     public ComponentTemplate findTemplate(IRequestCycle cycle, IComponent component, Locale locale) {
         ComponentTemplate ret = null;
         IComponentSpecification spec = component.getSpecification();
-        if (spec.getComponentClassName().equals(FullFlowComponent.class.getName())) {
+        boolean isFlowPage = FlowAwareSpecResolverDelegate.ID.equals(spec.getPublicId());
+        if (isFlowPage || spec.getComponentClassName().equals(FullFlowComponent.class.getName())) {
             String type = spec.getDescription();
             Flow flow = flowDefinitionsManager.getFlowDefinition(type);
             // build the content for this full flow component
@@ -51,7 +52,9 @@ public abstract class FlowTemplateSourceDelegate implements ITemplateSourceDeleg
             } else if ( CollectionUtils.isEmpty(flow.getActivities())) {
                 content = "<div>[Flow " + type + " has no activites]</div>";
             } else {
-                content = createTemplate(flow, cycle, component.getNamespace(), component.getLocation());
+                content = isFlowPage ?
+                        createPageTemplate(flow, cycle, component.getNamespace(), component.getLocation()) :
+                        createComponentTemplate(flow, cycle, component.getNamespace(), component.getLocation());
             }
             // now that we have the content, enhance the location assigned to the spec
             spec.setLocation(new MemoryMappedLocation(spec.getLocation(), content));
@@ -61,6 +64,8 @@ public abstract class FlowTemplateSourceDelegate implements ITemplateSourceDeleg
         }
         return ret;
     }
+
+    protected abstract String createPageTemplate(Flow flow, IRequestCycle cycle, INamespace namespace, Location location);
 
     /**
      * @param cycle
@@ -78,7 +83,7 @@ public abstract class FlowTemplateSourceDelegate implements ITemplateSourceDeleg
      * @param location
      * @return template string
      */
-    protected abstract String createTemplate(Flow flow, IRequestCycle cycle, INamespace namespace, Location location);
+    protected abstract String createComponentTemplate(Flow flow, IRequestCycle cycle, INamespace namespace, Location location);
 
     public void setLog(Log log) {
         this.log = log;
