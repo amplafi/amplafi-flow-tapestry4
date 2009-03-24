@@ -311,7 +311,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
             for(FlowPropertyDefinition definition: flow.getPropertyDefinitions().values()) {
                 String name = definition.getName();
                 if ( activity == null || activity.getPropertyDefinition(name) == definition) {
-                    writeFpropAttributeConnections(writer, componentName, matchedParameters, foundParameters, name, definition.getParameterName());
+                    writeFpropAttributeConnections(writer, componentName, matchedParameters, foundParameters, name, definition.getUiComponentParameterName());
                 }
             }
         }
@@ -319,7 +319,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         // add the FlowActivity-specific properties
         if (activity != null && activity.getPropertyDefinitions() != null ) {
             for(FlowPropertyDefinition definition: activity.getPropertyDefinitions().values()) {
-                writeFpropAttributeConnections(writer, componentName, matchedParameters, foundParameters, definition.getName(), definition.getParameterName());
+                writeFpropAttributeConnections(writer, componentName, matchedParameters, foundParameters, definition.getName(), definition.getUiComponentParameterName());
             }
         }
 

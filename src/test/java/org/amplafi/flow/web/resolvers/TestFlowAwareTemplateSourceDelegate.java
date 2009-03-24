@@ -249,13 +249,13 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
     private Flow createFlowWithProperties(String componentName) {
         Flow flow = createFlow2(componentName, 1);
         FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl("globaldef1");
-        globalDef.setParameterName("componentGlobaldef1");
+        globalDef.setUiComponentParameterName("componentGlobaldef1");
         flow.addPropertyDefinition(globalDef);
         FlowPropertyDefinitionImpl globalOverlap = new FlowPropertyDefinitionImpl("overlap");
-        globalOverlap.setParameterName("globalOverlapParameter");
+        globalOverlap.setUiComponentParameterName("globalOverlapParameter");
         flow.addPropertyDefinition(globalOverlap);
         FlowPropertyDefinitionImpl overlap  = new FlowPropertyDefinitionImpl("overlap");
-        overlap.setParameterName("componentOverlapParameter");
+        overlap.setUiComponentParameterName("componentOverlapParameter");
         ((FlowActivityImplementor)flow.getActivity(0)).addPropertyDefinitions(overlap);
         return flow;
     }
@@ -278,6 +278,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
     private IComponentSpecification createSimpleCompSpec(String componentName, Class<?> componentClass) throws NoSuchMethodError {
         IComponentSpecification compSpec = createMock(IComponentSpecification.class);
+        expect(compSpec.getPublicId()).andReturn(null);
         expect(compSpec.getComponentClassName()).andReturn(componentClass.getName());
         expect(compSpec.getDescription()).andReturn(componentName);
         Resource res = new ExternalResource("dummy", null);
