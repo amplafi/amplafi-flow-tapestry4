@@ -416,7 +416,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
                 }
             }
         } catch (ClassNotFoundException e) {
-            getLog().error("while finding required parameters", e);
+            getLog().error("while finding required parameters for "+spec, e);
         }
         return list;
     }
