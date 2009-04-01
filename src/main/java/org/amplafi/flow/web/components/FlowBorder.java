@@ -252,7 +252,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
             String page = attachedFlow.morphFlow(nextFlow, flowTransition.getInitialValues());
             FlowWebUtils.activatePageIfNotNull(cycle, page, attachedFlow);
         } else {
-            attachedFlow.setFinishType(flowTransition.getKey());
+            attachedFlow.setFinishType(flowTransition.getMapKey());
             onFinish(cycle);
         }
     }
