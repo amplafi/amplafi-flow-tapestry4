@@ -20,6 +20,7 @@ import static org.apache.commons.lang.StringUtils.join;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -63,6 +64,9 @@ public abstract class BaseFlowService implements FlowService {
      * if {@link org.amplafi.flow.launcher.FlowLauncher#COMPLETE_FLOW} is not supplied - this is the default value to use.
      */
     protected String defaultComplete;
+    /**
+     * the default way the results should be rendered. "html", "json", etc.
+     */
     protected String renderResultDefault;
     protected boolean discardSessionOnExit;
     private FlowResultHandler resultHandler;
@@ -114,7 +118,7 @@ public abstract class BaseFlowService implements FlowService {
     }
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     public abstract FlowState doActualService(IRequestCycle cycle, String flowType,
-        String flowId, String renderResult, Map<String, String> initial, String complete) throws IOException;
+        String flowId, String resultsRenderedAs, Map<String, String> initial, String complete) throws IOException;
 
     /**
      * Render a json description of the flow. This includes parameters (name, type, required).
@@ -124,7 +128,7 @@ public abstract class BaseFlowService implements FlowService {
     public abstract void describeService(IRequestCycle cycle, String flowType) throws IOException;
 
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
-    protected FlowState getFlowState(IRequestCycle cycle, String flowType, String flowId, String renderResult, Map<String, String> initial) throws IOException {
+    protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Writer writer) throws IOException {
         FlowState flowState = null;
         if ( isNotBlank(flowId)) {
             flowState = getFlowManagement().getFlowState(flowId);
@@ -133,24 +137,24 @@ public abstract class BaseFlowService implements FlowService {
 
             Flow flow = getFlowDefinitionsManager().getFlowDefinition(flowType);
             if(flow == null) {
-                renderError(cycle, flowType+": no such flow type", renderResult, null);
+                renderError(writer, flowType+": no such flow type", renderResult, null);
                 return null;
             }
 
             String returnToFlowLookupKey = null;
             flowState = getFlowManagement().startFlowState(flowType, true, initial, returnToFlowLookupKey );
             if ( flowState == null ) {
-                renderError(cycle, flowType+": could not start flow type", renderResult, null);
+                renderError(writer, flowType+": could not start flow type", renderResult, null);
                 return null;
             }
         } else {
-            renderError(cycle, "neither "+ServicesConstants.FLOW_TYPE+" nor "+FLOW_ID+" in parameters", renderResult, null);
+            renderError(writer, "neither "+ServicesConstants.FLOW_TYPE+" nor "+FLOW_ID+" in parameters", renderResult, null);
             return null;
         }
         return flowState;
     }
 
-    protected abstract void renderError(IRequestCycle cycle, String message, String renderResult, FlowState flowState) throws IOException;
+    protected abstract void renderError(Writer writer, String message, String renderResult, FlowState flowState) throws IOException;
 
     public void setLinkFactory(LinkFactory linkFactory) {
         this.linkFactory = linkFactory;
@@ -264,12 +268,11 @@ public abstract class BaseFlowService implements FlowService {
     }
 
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
-    protected void renderValidationException(IRequestCycle cycle, FlowValidationException e, String flowType) throws IOException {
-        PrintWriter writer = getWriter(cycle);
-        writer.print("Cannot start " + flowType + " :");
-        writer.println(e.getTrackings());
+    protected void renderValidationException(FlowValidationException e, String flowType, Writer writer) throws IOException {
+        writer.append("Cannot start ").append(flowType).append(" :\n");
+        writer.append(e.getTrackings().toString());
 
-        e.printStackTrace(writer);
+        writer.append(e.toString());
     }
 
     public FlowResultHandler getResultHandler() {
