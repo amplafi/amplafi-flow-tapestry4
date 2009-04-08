@@ -8,7 +8,6 @@ import org.amplafi.flow.FlowValidationTracking;
 import org.amplafi.flow.web.BaseFlowComponent;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.apache.hivemind.Messages;
-import org.apache.tapestry.IComponent;
 import org.apache.tapestry.IPage;
 import org.apache.tapestry.valid.IValidationDelegate;
 import org.apache.tapestry.valid.ValidationConstraint;
@@ -44,10 +43,10 @@ public class BaseFlowResultHandlerImpl implements FlowResultHandler {
 
     /**
      * @param trackings
-     * @param messages
-     * @return
+     * @param component
+     * @return stringbuilder with messages
      */
-    protected StringBuilder getCombinedFormattedValidationString(List<FlowValidationTracking> trackings, IComponent component) {
+    protected StringBuilder getCombinedFormattedValidationString(List<FlowValidationTracking> trackings, BaseFlowComponent component) {
         IPage page = component.getPage();
         Messages messages = page.getMessages();
         StringBuilder sb = new StringBuilder();
