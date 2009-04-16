@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module id="amplafi.flow.tapestry4" version="0.9.0">
+
+    <implementation service-id="tapestry.parse.TemplateSourceDelegate">
+        Generates the correct template for the flow.
+        <invoke-factory>
+            <construct class="org.amplafi.flow.web.resolvers.FlowAwareTemplateSourceDelegate">
+                <set-service property="parser" service-id="tapestry.parse.TemplateParser"/>
+                <set-service property="componentSpecificationResolver"
+                             service-id="tapestry.page.ComponentSpecificationResolver"/>
+                <set property="debugCondition" value="ognl:page.inDebug"/>
+                <set property="additionalUpdateComponents" value="ognl:{'footer'}"/>
+                <set property="pageTemplateLocation" value="/com/amplafi/web/pages/FlowTemplate.html"/>
+            </construct>
+        </invoke-factory>
+    </implementation>
+
+    <contribution configuration-id="tapestry.form.validator.Validators">
+        <validator name="flow" configurable="false"
+                   class="org.amplafi.flow.web.FlowCompletableValidator"/>
+    </contribution>
+
+    <implementation service-id="tapestry.page.ComponentSpecificationResolver">
+        Locates the specification for a component or page.
+        <invoke-factory model="threaded">
+            <construct class="org.amplafi.flow.web.resolvers.FlowComponentSpecResolver">
+                <set-object property="specificationSource" value="infrastructure:specificationSource"/>
+                <set-service property="delegate" service-id="tapestry.page.SpecificationResolverDelegate"/>
+                <set-object property="applicationId" value="infrastructure:applicationId"/>
+                <set-object property="contextRoot" value="infrastructure:contextRoot"/>
+                <set-object property="classFinder" value="infrastructure:classFinder"/>
+                <set-configuration property="substitutions" configuration-id="tacos.services.ComponentSubstitutions"/>
+                <set-configuration property="templateMap" configuration-id="templateMap"/>
+            </construct>
+        </invoke-factory>
+    </implementation>
+    
+    <service-point id="FlowTemplateMemoryMappedLocationRenderStrategy" interface="org.apache.tapestry.describe.RenderStrategy">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.web.resolvers.MemoryMappedLocationRenderStrategy">
+                <set-configuration property="templateMap" configuration-id="templateMap"/>
+            </construct>
+        </invoke-factory>
+    </service-point>
+    <configuration-point id="templateMap">
+        <schema>
+            <element name="template" key-attribute="class">
+                <attribute name="class" required="true" translator="class"/>
+                <attribute name="suffix" required="true"/>
+                <rules>
+                    <push-attribute attribute="suffix"/>
+                    <invoke-parent method="addElement"/>
+                </rules>
+            </element>
+        </schema>
+    </configuration-point>
+    <contribution configuration-id="templateMap">
+        <template class="org.amplafi.flow.web.components.FullFlowComponent" suffix="FullFlow"/>
+        <template class="org.amplafi.flow.web.components.FlowEntryPoint" suffix="FlowEntry"/>
+    </contribution>
+    
+    <contribution configuration-id="tapestry.describe.RenderStrategies">
+        <!-- TO_ANDY: Why do we need to map LocationImpl?  -->
+        <strategy class="org.apache.hivemind.impl.LocationImpl"
+                  object="service:FlowTemplateMemoryMappedLocationRenderStrategy"/>
+        <strategy class="org.amplafi.flow.web.resolvers.MemoryMappedLocation"
+                  object="service:FlowTemplateMemoryMappedLocationRenderStrategy"/>
+    </contribution>
+
+    <service-point id="FlowPropertyBindingFactory" interface="org.apache.tapestry.binding.BindingFactory">
+        Creates bindings to access the properties of the current flow.
+
+        <invoke-factory>
+            <construct class="org.amplafi.flow.web.bindings.FlowPropertyBindingFactory">
+                <set-object property="validationBindingFactory"
+                            value="service:tapestry.form.validator.ValidatorsBindingFactory"/>
+                <set-object property="valueConverter" value="infrastructure:valueConverter"/>
+            </construct>
+        </invoke-factory>
+
+    </service-point>
+
+    <contribution configuration-id="tapestry.bindings.BindingFactories">
+        <binding prefix="fprop" service-id="FlowPropertyBindingFactory"/>
+    </contribution>
+</module>

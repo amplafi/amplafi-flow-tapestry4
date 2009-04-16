@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<module id="amplafi.flow.tapestry4.hive" version="0.0.1">
+
+    <sub-module descriptor="amplafi.flow.tapestry4.xml"/>
+</module>
