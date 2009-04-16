@@ -8,9 +8,9 @@
                 <set-service property="parser" service-id="tapestry.parse.TemplateParser"/>
                 <set-service property="componentSpecificationResolver"
                              service-id="tapestry.page.ComponentSpecificationResolver"/>
-                <set property="debugCondition" value="ognl:page.inDebug"/>
-                <set property="additionalUpdateComponents" value="ognl:{'footer'}"/>
-                <set property="pageTemplateLocation" value="/com/amplafi/web/pages/FlowTemplate.html"/>
+                <set property="debugCondition" value="${amplafi.flow.tapestry4.pageTemplate.debugCondition}"/>
+                <set property="additionalUpdateComponents" value="${amplafi.flow.tapestry4.pageTemplate.additionalUpdateComponents}"/>
+                <set property="pageTemplateLocation" value="${amplafi.flow.tapestry4.pageTemplate.location}"/>
             </construct>
         </invoke-factory>
     </implementation>
@@ -82,5 +82,10 @@
 
     <contribution configuration-id="tapestry.bindings.BindingFactories">
         <binding prefix="fprop" service-id="FlowPropertyBindingFactory"/>
+    </contribution>
+    <contribution configuration-id="hivemind.FactoryDefaults">
+        <default symbol="amplafi.flow.tapestry4.pageTemplate.location" value="/org/amplafi/flow/web/pages/FlowTemplate.html"/>
+        <default symbol="amplafi.flow.tapestry4.pageTemplate.additionalUpdateComponents" value="ognl:{'footer'}"/>
+        <default symbol="amplafi.flow.tapestry4.pageTemplate.debugCondition" value="ognl:page.inDebug"/>
     </contribution>
 </module>
