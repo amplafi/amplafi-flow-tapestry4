@@ -38,6 +38,7 @@ public abstract class FlowTemplateSourceDelegate implements ITemplateSourceDeleg
 
     private FlowDefinitionsManager flowDefinitionsManager;
     private Log log;
+    @SuppressWarnings("unused")
     public ComponentTemplate findTemplate(IRequestCycle cycle, IComponent component, Locale locale) {
         ComponentTemplate ret = null;
         IComponentSpecification spec = component.getSpecification();
