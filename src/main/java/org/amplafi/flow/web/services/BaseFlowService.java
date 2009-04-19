@@ -27,9 +27,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowConstants;
-import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowUtils;
@@ -55,7 +54,7 @@ public abstract class BaseFlowService implements FlowService {
     public static final String JSON_DESCRIBE = "json/describe";
     private static final String SCRIPT_CONTENT_TYPE = "text/javascript";
     private LinkFactory linkFactory;
-    private FlowDefinitionsManager flowDefinitionsManager;
+    private FlowManager flowManager;
     private WebResponse response;
     private HttpServletRequest httpServletRequest;
     private Log log;
@@ -124,6 +123,7 @@ public abstract class BaseFlowService implements FlowService {
      * Render a json description of the flow. This includes parameters (name, type, required).
      * @param cycle
      * @param flowType
+     * @throws IOException
      */
     public abstract void describeService(IRequestCycle cycle, String flowType) throws IOException;
 
@@ -135,8 +135,7 @@ public abstract class BaseFlowService implements FlowService {
         }
         if ( flowState == null && isNotBlank(flowType)) {
 
-            Flow flow = getFlowDefinitionsManager().getFlowDefinition(flowType);
-            if(flow == null) {
+            if(!getFlowManager().isFlowDefined(flowType)) {
                 renderError(writer, flowType+": no such flow type", renderResult, null);
                 return null;
             }
@@ -164,16 +163,16 @@ public abstract class BaseFlowService implements FlowService {
         return linkFactory;
     }
 
-    public void setFlowDefinitionsManager(FlowDefinitionsManager flowDefinitionsManager) {
-        this.flowDefinitionsManager = flowDefinitionsManager;
+    public void setFlowManager(FlowManager flowManager) {
+        this.flowManager = flowManager;
     }
 
-    public FlowDefinitionsManager getFlowDefinitionsManager() {
-        return flowDefinitionsManager;
+    public FlowManager getFlowManager() {
+        return flowManager;
     }
 
     public FlowManagement getFlowManagement() {
-        return getFlowDefinitionsManager().getFlowManagement();
+        return getFlowManager().getFlowManagement();
     }
 
     public void setLog(Log log) {
