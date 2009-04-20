@@ -28,7 +28,6 @@ import org.apache.tapestry.IAsset;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.ComponentClass;
 import org.apache.tapestry.annotations.Message;
-import org.apache.tapestry.annotations.InjectObject;
 import org.apache.tapestry.form.LinkSubmit;
 
 
@@ -60,7 +59,6 @@ public abstract class FlowControl extends BaseFlowComponent {
     @Message("flow.unnamed-activity")
     public abstract String getUnnamedActivity();
 
-    @InjectObject("service:amplafi.flow.resultHandler")
     public abstract FlowResultHandler getFlowResultHandler();
 
     @Cached(resetAfterRewind=true)

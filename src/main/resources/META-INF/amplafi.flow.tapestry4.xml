@@ -80,6 +80,13 @@
 
     </service-point>
 
+    <!-- provide an alternative <implementation> to handle FlowValidationResults differently for your ui -->
+    <service-point id="FlowResultHandler" interface="org.amplafi.flow.web.FlowResultHandler">
+        <invoke-factory service-id="amplafi.factory.appServicesFactory">
+            <construct class="org.amplafi.flow.web.services.BaseFlowResultHandlerImpl" />
+        </invoke-factory>
+    </service-point>
+    
     <contribution configuration-id="tapestry.bindings.BindingFactories">
         <binding prefix="fprop" service-id="FlowPropertyBindingFactory"/>
     </contribution>

@@ -35,7 +35,6 @@ import org.apache.tapestry.IMarkupWriter;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.IComponent;
 import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.InjectObject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.form.BeanPropertySelectionModel;
 import org.apache.tapestry.listener.ListenerInvoker;
@@ -134,7 +133,6 @@ public abstract class FlowBorder extends BaseFlowComponent {
 
     public abstract IActionListener getUpdateListener();
 
-    @InjectObject("service:amplafi.flow.resultHandler")
     public abstract FlowResultHandler getFlowResultHandler();
 
     public abstract FlowTransition getFlowTransition();
@@ -220,7 +218,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
         invokeIfNotNull(cycle, getFinishListener(), getEndListener());
 
         FlowState currentFlowState = getAttachedFlowState();
-        FlowValidationResult result = currentFlowState.getCurrentActivityFlowValidationResult();
+        FlowValidationResult result = currentFlowState.getFinishFlowValidationResult();
 
         if (result.isValid()) {
             String page = currentFlowState.finishFlow();
