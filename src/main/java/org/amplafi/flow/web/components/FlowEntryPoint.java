@@ -45,6 +45,9 @@ import org.apache.tapestry.engine.ILink;
 import org.apache.tapestry.form.Form;
 import org.apache.tapestry.form.Submit;
 import org.apache.tapestry.form.LinkSubmit;
+
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
 import net.sf.tacos.annotations.Cached;
 import net.sf.tacos.annotations.InjectParameterFlag;
 
@@ -145,6 +148,8 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
      *
      * or
      * &lt;input type="cancel" ...&gt;
+     *
+     * This purposely matches the parameter name for the Tapestry4 Submit component.
      * @return the type value if the user is using &lt;input/&gt;
      */
     @Parameter(defaultValue="'submit'")
@@ -203,12 +208,23 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
 
     /**
      * Used when the container wants to make the show/no show decision.
+     *
+     * Note "condition" is parameter used by Tapestry4's IfBean component.
+     *
+     * Only one of {@link #getCondition()} or {@link #getHidden()} should be used.
+     *
      * @return true if the container is forcing this entrypoint to be visible,
      * false if forcing it to be hidden,
      * null if container is leaving decision to the FlowEntryPoint.
      */
+    @Parameter(aliases="show")
+    public abstract Boolean getCondition();
+    /**
+     * Only one of {@link #getCondition()} or {@link #getHidden()} should be used.
+     * @return true if should be hidden.
+     */
     @Parameter
-    public abstract Boolean getShow();
+    public abstract Boolean getHidden();
 
     public abstract HttpServletResponse getHttpServletResponse();
 
@@ -337,10 +353,20 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     }
 
     public boolean isShowEntryPoint() {
-        if ( getShow() == null ) {
+        Boolean showValue;
+        if ( getHidden() != null ) {
+            showValue = !getHidden();
+            if (getCondition() != null && getCondition() != showValue) {
+                throw new ApplicationIllegalArgumentException(
+                    "show and hidden parameters are contridicting each other -- really should only specify one or the other.");
+            }
+        } else {
+            showValue = getCondition();
+        }
+        if ( showValue == null ) {
             return isAlwaysShow() || !isSameAsActive();
         } else {
-            return getShow() != null && getShow();
+            return showValue;
         }
     }
 
