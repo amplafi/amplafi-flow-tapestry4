@@ -135,16 +135,51 @@
         </dependency>
         <!-- END Tapestry 4.1.x -->
         <dependency>
-            <groupId>hivemind</groupId>
-            <artifactId>hivemind</artifactId>
+            <groupId>net.sf.tacos</groupId>
+            <artifactId>beanform-core</artifactId>
+            <version>0.9</version>
         </dependency>
         <dependency>
             <groupId>net.sf.tacos</groupId>
             <artifactId>tacos-core</artifactId>
+            <version>${tacos4-build}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jboss</groupId>
+                    <artifactId>j2ee</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tapestry</groupId>
+                    <artifactId>tapestry-framework</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ognl</groupId>
+                    <artifactId>ognl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xom</groupId>
+                    <artifactId>xom</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.sf.tacos</groupId>
             <artifactId>tacos-annotations</artifactId>
+            <version>${tacos4-build}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tapestry</groupId>
+                    <artifactId>tapestry-framework</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ognl</groupId>
+                    <artifactId>ognl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
