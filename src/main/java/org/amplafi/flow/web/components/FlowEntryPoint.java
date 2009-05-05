@@ -167,11 +167,6 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     @Override
     @Parameter
     public abstract boolean isStateful();
-    /**
-     * used by {@link FlowEntryPoint} to report what it thinks the value should be.
-     * @param stateful
-     */
-    public abstract void setStateful(boolean stateful);
     @InjectParameterFlag
     public abstract boolean isStatefulBound();
 
