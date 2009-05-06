@@ -13,7 +13,7 @@
  */
 package org.amplafi.flow.web.bindings;
 
-import org.amplafi.flow.web.FlowProvider;
+import org.amplafi.flow.FlowProvider;
 import org.apache.hivemind.Location;
 import org.apache.tapestry.IBinding;
 import org.apache.tapestry.IComponent;
