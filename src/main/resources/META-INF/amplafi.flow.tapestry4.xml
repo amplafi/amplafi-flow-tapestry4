@@ -87,6 +87,11 @@
         </invoke-factory>
     </service-point>
     
+    <service-point id="PageProvider" interface="org.amplafi.flow.web.PageProvider">
+        <invoke-factory service-id="amplafi.factory.appServicesFactory">
+            <construct class="org.amplafi.flow.web.PageProviderImpl" />
+        </invoke-factory>
+    </service-point>
     <contribution configuration-id="tapestry.bindings.BindingFactories">
         <binding prefix="fprop" service-id="FlowPropertyBindingFactory"/>
     </contribution>
