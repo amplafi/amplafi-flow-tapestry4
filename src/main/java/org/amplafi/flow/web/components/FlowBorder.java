@@ -40,6 +40,7 @@ import org.apache.tapestry.form.BeanPropertySelectionModel;
 import org.apache.tapestry.listener.ListenerInvoker;
 
 
+import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.collections.CollectionUtils.*;
 
 /**
@@ -156,14 +157,19 @@ public abstract class FlowBorder extends BaseFlowComponent {
             }
         } else {
             // find the normal finish and put that first
+            FlowTransition defaultTransition = null;
             for(Iterator<FlowTransition> iterator = transitions.iterator(); iterator.hasNext();) {
-                FlowTransition defaultTransition = iterator.next();
-                if ( defaultTransition.getTransitionType() == TransitionType.normal) {
+                FlowTransition transition = iterator.next();
+                if ( transition.getTransitionType() == TransitionType.normal) {
                     iterator.remove();
-                    transitions.add(0, defaultTransition);
+                    defaultTransition = transition;
                     break;
                 }
             }
+            if ( defaultTransition == null) {
+                defaultTransition = new FlowTransition(null, DEFAULT_FSFINISH_TEXT, TransitionType.normal, null);
+            }
+            transitions.add(0, defaultTransition);
         }
         return transitions;
     }
