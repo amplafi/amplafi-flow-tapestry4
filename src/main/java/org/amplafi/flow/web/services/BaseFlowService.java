@@ -128,7 +128,7 @@ public abstract class BaseFlowService implements FlowService {
     public abstract void describeService(IRequestCycle cycle, String flowType) throws IOException;
 
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
-    protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Writer writer) throws IOException {
+    protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Writer writer, boolean currentFlow) throws IOException {
         FlowState flowState = null;
         if ( isNotBlank(flowId)) {
             flowState = getFlowManagement().getFlowState(flowId);
@@ -141,7 +141,7 @@ public abstract class BaseFlowService implements FlowService {
             }
 
             String returnToFlowLookupKey = null;
-            flowState = getFlowManagement().startFlowState(flowType, true, initial, returnToFlowLookupKey );
+            flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey );
             if ( flowState == null ) {
                 renderError(writer, flowType+": could not start flow type", renderResult, null);
                 return null;
