@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,6 +45,7 @@ import org.apache.tapestry.PageRedirectException;
 import org.apache.tapestry.services.LinkFactory;
 import org.apache.tapestry.util.ContentType;
 import org.apache.tapestry.web.WebResponse;
+import org.apache.tapestry.web.WebRequest;
 
 
 /**
@@ -52,9 +54,12 @@ import org.apache.tapestry.web.WebResponse;
  */
 public abstract class BaseFlowService implements FlowService {
     public static final String JSON_DESCRIBE = "json/describe";
+    public static final String USE_CURRENT = "current";
+    
     private static final String SCRIPT_CONTENT_TYPE = "text/javascript";
     private LinkFactory linkFactory;
     private FlowManager flowManager;
+    private WebRequest request;
     private WebResponse response;
     private HttpServletRequest httpServletRequest;
     private Log log;
@@ -72,6 +77,7 @@ public abstract class BaseFlowService implements FlowService {
     private boolean assumeApiCall;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void service(IRequestCycle cycle) throws IOException {
         String flowType = cycle.getParameter(ServicesConstants.FLOW_TYPE);
         String flowId = cycle.getParameter(FLOW_ID);
@@ -88,10 +94,9 @@ public abstract class BaseFlowService implements FlowService {
         if(StringUtils.isNotBlank(cookieString)){
             initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
         }
-        // HACK needed until https://issues.apache.org/jira/browse/TAPESTRY-1876
-        // is addressed.
-        String[] keyList = cycle.getParameters(_KEY_LIST);
-        if ( keyList != null && keyList.length > 0) {
+
+        List<String> keyList = getRequest().getParameterNames();
+        if ( keyList != null && keyList.size() > 0) {
             for(String key: keyList) {
                 String value = cycle.getParameter(key);
                 if ( value != null ) {
@@ -115,6 +120,7 @@ public abstract class BaseFlowService implements FlowService {
 
         doActualService(cycle, flowType, flowId, renderResult, initial, complete);
     }
+
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     public abstract FlowState doActualService(IRequestCycle cycle, String flowType,
         String flowId, String resultsRenderedAs, Map<String, String> initial, String complete) throws IOException;
@@ -140,11 +146,17 @@ public abstract class BaseFlowService implements FlowService {
                 return null;
             }
 
-            String returnToFlowLookupKey = null;
-            flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey );
-            if ( flowState == null ) {
-                renderError(writer, flowType+": could not start flow type", renderResult, null);
-                return null;
+            if (USE_CURRENT.equals(flowId)) {
+                flowState = getFlowManagement().getFirstFlowStateByType(flowType);
+            }
+
+            if (flowState==null) {
+                String returnToFlowLookupKey = null;
+                flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey );
+                if ( flowState == null ) {
+                    renderError(writer, flowType+": could not start flow type", renderResult, null);
+                    return null;
+                }
             }
         } else {
             renderError(writer, "neither "+ServicesConstants.FLOW_TYPE+" nor "+FLOW_ID+" in parameters", renderResult, null);
@@ -189,6 +201,14 @@ public abstract class BaseFlowService implements FlowService {
 
     public WebResponse getResponse() {
         return response;
+    }
+
+    public WebRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(WebRequest request) {
+        this.request = request;
     }
 
     public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
