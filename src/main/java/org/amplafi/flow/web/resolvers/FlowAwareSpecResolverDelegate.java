@@ -16,7 +16,7 @@ import org.apache.hivemind.util.ClasspathResource;
  */
 public class FlowAwareSpecResolverDelegate extends ClasspathSpecResolverDelegate {
 
-    public static String ID = "FlowPage";
+    public static final String ID = "FlowPage";
 
     private String suffix;
     private Class pageClass;

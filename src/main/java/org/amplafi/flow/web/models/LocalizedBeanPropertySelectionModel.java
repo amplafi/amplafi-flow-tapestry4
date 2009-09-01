@@ -22,10 +22,12 @@ import org.apache.tapestry.form.BeanPropertySelectionModel;
 import static org.apache.commons.lang.StringUtils.*;
 
 /**
- * This class adds localization capabilities to BeanPropertySelectionModel
+ * This class adds localization capabilities to BeanPropertySelectionModel.
+ * <p/>
+ * Any option labels that start with {@link #MESSAGE_PREFIX} will be
+ * substituted with their localized version.
  *
  * @author shiva
- *
  */
 @SuppressWarnings("unchecked")
 public class LocalizedBeanPropertySelectionModel extends BeanPropertySelectionModel {
@@ -38,7 +40,7 @@ public class LocalizedBeanPropertySelectionModel extends BeanPropertySelectionMo
      * @param map {@link Map#values()} will be used as the list of options.
      *
      * @param labelField The label field
-     * @param messages
+     * @param messages Provider of localized messages
      */
 
     public LocalizedBeanPropertySelectionModel(Map map, String labelField, Messages messages) {
@@ -49,16 +51,16 @@ public class LocalizedBeanPropertySelectionModel extends BeanPropertySelectionMo
     /**
      * Build a amplafi specific localized bean property selection model.
      *
-     * @param c Collection
+     * @param c Collection used as options
      * @param labelField The label field
-     * @param messages
+     * @param messages Provider of localized messages
      */
     public LocalizedBeanPropertySelectionModel(Collection c, String labelField, Messages messages) {
         super(c, labelField);
         this.messages = messages;
     }
 
-    /**
+    /**                                                   *
      * @return If the label key starts with message:, then corresponding label is returned from resources
      * else we return the key itself
      */

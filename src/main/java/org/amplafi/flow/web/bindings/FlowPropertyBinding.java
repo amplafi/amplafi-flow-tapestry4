@@ -85,8 +85,6 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
 
     private String componentName;
 
-    private IComponent flowComponent;
-
     private IBinding defaultValueBinding;
 
     /**
@@ -128,6 +126,7 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
             } else {
                 this.defaultValue = expression.substring(equalsIndex+1);
             }
+            IComponent flowComponent;
             if ( isNotBlank(componentName)) {
                 flowComponent = root.getComponent(componentName);
             } else {
