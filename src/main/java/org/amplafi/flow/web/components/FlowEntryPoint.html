@@ -6,14 +6,14 @@
     <span jwcid="@If" condition="ognl:! renderedAsSubmit" renderTag="false">
         <span jwcid="@If" condition="ognl:sameAsActive" renderTag="false" volatile="true">
             <a href="#" class="ognl:className" jwcid="entryP@PageLink" page="ognl:activePage" stateful="ognl:statefulSetting"
-                alt="ognl:actualFlowTypeName"><span 
+                title="ognl:actualFlowTypeName"><span 
                 jwcid="@If" condition="ognl:bodyPartOfLink" renderTag="false"><span jwcid="@RenderBody"/></span>
                     <span jwcid="@Else" renderTag="false"><span 
                     jwcid="@Insert" value="ognl:flowLabel">Flow Label</span></span></a>
         </span>
         <span jwcid="@Else" renderTag="false">
                 <a href="#" class="ognl:className" jwcid="fepLink" stateful="ognl:statefulSetting"
-                listener="listener:doEnterFlow" alt="ognl:actualFlowTypeName"
+                listener="listener:doEnterFlow" title="ognl:actualFlowTypeName"
                 disabled="ognl:renderAsDisabled"
                 parameters="ognl:parameters"><span 
                 jwcid="@If" condition="ognl:bodyPartOfLink" renderTag="false"><span jwcid="@RenderBody"/></span>
@@ -29,7 +29,7 @@
                 parameters="ognl:parameters"/>
         </span>            
         <span jwcid="@Else" renderTag="false">
-            <a href="#" class="ognl:className" jwcid="fepLiSubm" alt="ognl:actualFlowTypeName"
+            <a href="#" class="ognl:className" jwcid="fepLiSubm" title="ognl:actualFlowTypeName"
                 disabled="ognl:renderAsDisabled"
                 action="listener:doEnterFlow"
                 parameters="ognl:parameters"><span 
