@@ -12,7 +12,7 @@
         </div>
 
         <div class="flowButtons">
-            <span jwcid="FlowBorder_BlowButtons_NLS@If" condition="ognl:! usingLinkSubmit" renderTag="false">
+            <span jwcid="FlowBorder_FlowButtons_NLS@If" condition="ognl:! usingLinkSubmit" renderTag="false">
                 <span jwcid="iCanc_NLS@If" condition="ognl:hasCancel" renderTag="false">
                     <input type="submit" jwcid="@Submit"
                         value="ognl:cancelText" submitType="cancel" action="listener:onCancel" updateComponents="ognl:componentsToRefresh"/></span>
@@ -21,7 +21,7 @@
                         value="ognl:previousLabel" action="listener:onPrevious" async="ognl:async"
                         updateComponents="ognl:componentsToRefresh"/></span>
             </span>
-            <span jwcid="FlowBorder_BlowButtons_LS@If" condition="ognl:usingLinkSubmit" renderTag="false">
+            <span jwcid="FlowBorder_FlowButtons_LS@If" condition="ognl:usingLinkSubmit" renderTag="false">
                 <span jwcid="iCanc_LS@If" condition="ognl:hasCancel" renderTag="false">
                     <a href="#" jwcid="@LinkSubmit"
                         submitType="cancel" action="listener:onCancel" updateComponents="ognl:componentsToRefresh"><span jwcid="@Insert" value="ognl:cancelText">Cancel</span></a></span>
