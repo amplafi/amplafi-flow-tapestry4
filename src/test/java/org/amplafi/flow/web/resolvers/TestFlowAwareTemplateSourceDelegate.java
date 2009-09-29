@@ -250,10 +250,10 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         Flow flow = createFlow2(componentName, 1);
         FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl("globaldef1");
         globalDef.setUiComponentParameterName("componentGlobaldef1");
-        flow.addPropertyDefinition(globalDef);
+        flow.addPropertyDefinitions(globalDef);
         FlowPropertyDefinitionImpl globalOverlap = new FlowPropertyDefinitionImpl("overlap");
         globalOverlap.setUiComponentParameterName("globalOverlapParameter");
-        flow.addPropertyDefinition(globalOverlap);
+        flow.addPropertyDefinitions(globalOverlap);
         FlowPropertyDefinitionImpl overlap  = new FlowPropertyDefinitionImpl("overlap");
         overlap.setUiComponentParameterName("componentOverlapParameter");
         ((FlowActivityImplementor)flow.getActivity(0)).addPropertyDefinitions(overlap);
