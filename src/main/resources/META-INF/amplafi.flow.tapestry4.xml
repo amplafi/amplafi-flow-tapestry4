@@ -60,7 +60,8 @@
     </contribution>
     
     <contribution configuration-id="tapestry.describe.RenderStrategies">
-        <!-- TO_ANDY: Why do we need to map LocationImpl?  -->
+        <!-- First map LocationImpl because it may refer to virtual files (i.e. DummyFullFlow) and
+         its default render strategy would throw exceptions -->
         <strategy class="org.apache.hivemind.impl.LocationImpl"
                   object="service:FlowTemplateMemoryMappedLocationRenderStrategy"/>
         <strategy class="org.amplafi.flow.web.resolvers.MemoryMappedLocation"
