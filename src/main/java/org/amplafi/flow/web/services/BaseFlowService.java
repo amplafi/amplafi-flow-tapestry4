@@ -106,12 +106,12 @@ public abstract class BaseFlowService implements FlowService {
             }
         }
 
-        String referingUriStr = cycle.getInfrastructure().getRequest().getHeader("Referer");
+        String referingUriStr = httpServletRequest.getHeader("Referer");
         if(StringUtils.isNotBlank(referingUriStr)){
             URI referingUri;
             try {
                 referingUri = new URI(referingUriStr);
-                initial.put(FSREFERING_URL, referingUri.toString());
+                initial.put(FSREFERRING_URL, referingUri.toString());
             } catch (URISyntaxException e) {
                 // ignore bad uri
             }
