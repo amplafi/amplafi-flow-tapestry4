@@ -218,10 +218,14 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
         /* the broadcastProvider is not initialized yet -- has security run yet? */
         FlowState flow = getFlowToUse();
         if ( flow != null ) {
-            // this happens in autostart situations or when the page changes during while a flow is running.
-            String pageName = flow.getCurrentPage();
-            if( pageName != null && !this.getPage().getPageName().equals(pageName)) {
-                throw new PageRedirectException(pageName);
+            // Check to see if the current page is the page that the flow things should be displayed
+            // while a flow is running the page ( not just the active component ) may change.
+            // this happens in autostart situations, when a FlowActivity has a different page than the flow's default pages
+            // or if a flow is morphed into another flow.
+            String flowPageName = flow.getCurrentPage();
+            String pageName = this.getPage().getPageName();
+            if( flowPageName != null && !pageName.equals(flowPageName)) {
+                throw new PageRedirectException(flowPageName);
             }
         }
     }
@@ -251,9 +255,13 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
             List<String> expectedFlows = getExpectedFlows();
             flow = getFlowManagement().getFirstFlowStateByType(expectedFlows);
             if ( flow != null && !flow.getFlowTypeName().equals(getFlowName())) {
-                // only display the flow if this is the 'first' flow of the flows that can be displayed.
+                // only display this FullFlowComponent if handling the flow that is the 'first' flow of the flows displayed on the current page.
+                // however, another FullFlowComponent is handling displaying this flow. So this FullFlowComponent should
+                // quietly do nothing.
                 flow = null;
             } else if ( flow == null && isShouldAutoStart() ) {
+                // no flows on this page are active. This FullFlowComponent is an autoStart so it should do its thing.
+                // and start.
                 StartFromDefinitionFlowLauncher flowLauncher = new StartFromDefinitionFlowLauncher(getFlowName(), getContainer(), getInitialValues(), getFlowManagement(), getFlowName());
                 try {
                     flow = flowLauncher.call();

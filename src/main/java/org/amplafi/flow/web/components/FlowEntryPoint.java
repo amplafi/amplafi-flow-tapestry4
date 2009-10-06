@@ -408,10 +408,11 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
                 ((StartFromDefinitionFlowLauncher)flowLauncher).addInitialValues(initialValues);
             }
         }
+        FlowState flowState = null;
         try {
             finishFlow(finishFlowId);
             if ( flowLauncher != null ) {
-                FlowState flowState = flowLauncher.call();
+                flowState  = flowLauncher.call();
                 pageName = (flowState != null) ? flowState.getCurrentPage() : null;
             }
         } catch (FlowValidationException e) {
@@ -434,7 +435,13 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
         if ( isBlank(pageName) ) {
             return null;
         } else {
-            FlowWebUtils.activatePageIfNotNull(null, pageName, null);
+            FlowState newCurrentFlow = getFlowManagement().getCurrentFlowState();
+            if ( newCurrentFlow != null && newCurrentFlow != flowState ) {
+                pageName = newCurrentFlow.getCurrentPage();
+            } else {
+                newCurrentFlow = flowState;
+            }
+            FlowWebUtils.activatePageIfNotNull(getRequestCycle(), pageName, newCurrentFlow);
             return null;
         }
     }
