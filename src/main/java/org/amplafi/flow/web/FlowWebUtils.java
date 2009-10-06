@@ -65,7 +65,9 @@ public class FlowWebUtils {
      *
      * @param cycle can be null
      * @param page can be the name of a page or an arbitrary uri.
-     * @param flowState TODO
+     * @param flowState
+     * TODO: NEED BETTER HANDLING if the flowState passed has completed/not current flowState.
+     * TODO: might impact the page as well see {@link org.amplafi.flow.web.components.FlowBorder#onFinish(IRequestCycle)} for example. and {@link org.amplafi.flow.web.components.FlowEntryPoint#doEnterFlow(FlowLauncher, String, Iterable)}
      */
     public static void activatePageIfNotNull(IRequestCycle cycle, String page, FlowState flowState) {
         if ( page != null ) {
