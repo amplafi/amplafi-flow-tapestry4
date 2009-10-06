@@ -228,7 +228,14 @@ public abstract class FlowBorder extends BaseFlowComponent {
 
         if (result.isValid()) {
             String page = currentFlowState.finishFlow();
-            FlowWebUtils.activatePageIfNotNull(cycle, page, currentFlowState);
+            // because the new active flow can be very different
+            FlowState newCurrentFlow = getFlowManagement().getCurrentFlowState();
+            if ( newCurrentFlow != null ) {
+                page = newCurrentFlow.getCurrentPage();
+            } else {
+                newCurrentFlow = currentFlowState;
+            }
+            FlowWebUtils.activatePageIfNotNull(cycle, page, newCurrentFlow);
         } else {
             getFlowResultHandler().handleFlowResult(result, this);
         }
