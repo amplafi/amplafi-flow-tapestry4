@@ -81,7 +81,7 @@ public abstract class BaseFlowService implements FlowService {
     public void service(IRequestCycle cycle) throws IOException {
         String flowType = cycle.getParameter(ServicesConstants.FLOW_TYPE);
         String flowId = cycle.getParameter(FLOW_ID);
-        String renderResult = cycle.getParameter(RENDER_RESULT);
+        String renderResult = cycle.getParameter(FSRENDER_RESULT);
 
         if (JSON_DESCRIBE.equals(renderResult)) {
             describeService(cycle, flowType);
