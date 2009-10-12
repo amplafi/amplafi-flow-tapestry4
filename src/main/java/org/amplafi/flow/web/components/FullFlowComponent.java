@@ -19,7 +19,7 @@ import java.util.List;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowDefinitionsManager;
-import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.launcher.StartFromDefinitionFlowLauncher;
@@ -241,7 +241,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
             flow = getFlowManagement().getFlowState(getFlowId());
         }
         if ( flow != null ) {
-            if (flow.getFlowLifecycleState() != FlowLifecycleState.started) {
+            if (flow.getFlowLifecycleState() != FlowStateLifecycle.started) {
                 // this situation arises if the user clears
                 // an flow autostarted
                 flow = null;
@@ -326,7 +326,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
     public IComponent getCurrentBlock() {
         FlowState flow = getFlowToUse();
         if ( flow != null ) {
-            if ( flow.getFlowLifecycleState() != FlowLifecycleState.started) {
+            if ( flow.getFlowLifecycleState() != FlowStateLifecycle.started) {
                 String message = getStartErrorMessage(flow) + "' but flow is not in the 'started' state. Flow state: " + flow.getFlowLifecycleState() + "; Values: " + flow.getFlowValuesMap();
                 throw new IllegalStateException(message);
             }
