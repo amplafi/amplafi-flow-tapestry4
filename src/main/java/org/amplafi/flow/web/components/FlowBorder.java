@@ -437,7 +437,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
 
     @Cached(resetAfterRewind=true)
     public boolean getIncludeFlowControl() {
-        return !(getHideFlowControl() || getAttachedFlowState().getPropertyAsObject(FlowConstants.FSHIDE_FLOW_CONTROL, boolean.class))
+        return !(getHideFlowControl() || getAttachedFlowState().getProperty(FlowConstants.FSHIDE_FLOW_CONTROL, boolean.class))
                 && getAttachedFlowState().getVisibleActivities().size() > 1;
     }
 }

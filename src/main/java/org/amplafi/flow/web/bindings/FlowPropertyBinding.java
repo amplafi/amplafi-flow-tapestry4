@@ -197,7 +197,7 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
         if (flowState != null) {
             addValidation(flowState.getCurrentActivity(), cycle.renderStackPeek());
             try {
-                result = flowState.getPropertyAsObject(key, expected);
+                result = flowState.getProperty(key, expected);
             } catch (RuntimeException e) {
                 if (e.getCause() instanceof ValidatorException) {
                     throw new BindingException(e.getMessage(), this, e.getCause());
@@ -227,7 +227,7 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
         if (flowState == null) {
             throw new IllegalStateException("no attached flow - cannot set value");
         }
-        flowState.setPropertyAsObject(key, value);
+        flowState.setProperty(key, value);
     }
 
     /**
