@@ -47,6 +47,8 @@ import org.apache.tapestry.util.ContentType;
 import org.apache.tapestry.web.WebResponse;
 import org.apache.tapestry.web.WebRequest;
 
+import static com.sworddance.util.CUtilities.*;
+
 
 /**
  * Base implementation for Tapestry services that start / continue flows.
@@ -55,7 +57,7 @@ import org.apache.tapestry.web.WebRequest;
 public abstract class BaseFlowService implements FlowService {
     public static final String JSON_DESCRIBE = "json/describe";
     public static final String USE_CURRENT = "current";
-    
+
     private static final String SCRIPT_CONTENT_TYPE = "text/javascript";
     private LinkFactory linkFactory;
     private FlowManager flowManager;
@@ -106,19 +108,28 @@ public abstract class BaseFlowService implements FlowService {
             }
         }
 
+        String referingUri = getReferingUri();
+        put(initial, FSREFERRING_URL, referingUri);
+        String complete = cycle.getParameter(COMPLETE_FLOW);
+
+        doActualService(cycle, flowType, flowId, renderResult, initial, complete);
+    }
+
+    /**
+     *
+     */
+    private String getReferingUri() {
         String referingUriStr = httpServletRequest.getHeader("Referer");
         if(StringUtils.isNotBlank(referingUriStr)){
             URI referingUri;
             try {
                 referingUri = new URI(referingUriStr);
-                initial.put(FSREFERRING_URL, referingUri.toString());
+                return referingUri.toString();
             } catch (URISyntaxException e) {
                 // ignore bad uri
             }
         }
-        String complete = cycle.getParameter(COMPLETE_FLOW);
-
-        doActualService(cycle, flowType, flowId, renderResult, initial, complete);
+        return null;
     }
 
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
