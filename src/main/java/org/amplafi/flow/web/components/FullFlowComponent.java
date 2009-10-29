@@ -241,7 +241,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
             flow = getFlowManagement().getFlowState(getFlowId());
         }
         if ( flow != null ) {
-            if (flow.getFlowLifecycleState() != FlowStateLifecycle.started) {
+            if (flow.getFlowStateLifecycle() != FlowStateLifecycle.started) {
                 // this situation arises if the user clears
                 // an flow autostarted
                 flow = null;
@@ -326,8 +326,8 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
     public IComponent getCurrentBlock() {
         FlowState flow = getFlowToUse();
         if ( flow != null ) {
-            if ( flow.getFlowLifecycleState() != FlowStateLifecycle.started) {
-                String message = getStartErrorMessage(flow) + "' but flow is not in the 'started' state. Flow state: " + flow.getFlowLifecycleState() + "; Values: " + flow.getFlowValuesMap();
+            if ( flow.getFlowStateLifecycle() != FlowStateLifecycle.started) {
+                String message = getStartErrorMessage(flow) + "' but flow is not in the 'started' state. Flow state: " + flow.getFlowStateLifecycle() + "; Values: " + flow.getFlowValuesMap();
                 throw new IllegalStateException(message);
             }
             int activity = flow.getCurrentActivityIndex();
@@ -336,10 +336,10 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
             if(comp==null) {
                 FlowActivity flowActivity = flow.getCurrentActivity();
                 if(flowActivity == null){
-                    String message = getStartErrorMessage(flow) + "' but current activity (#" + activity + ") is null. Flow state: " + flow.getFlowLifecycleState() + "; Values: " + flow.getFlowValuesMap() ;
+                    String message = getStartErrorMessage(flow) + "' but current activity (#" + activity + ") is null. Flow state: " + flow.getFlowStateLifecycle() + "; Values: " + flow.getFlowValuesMap() ;
                     throw new IllegalStateException(message);
                 } else {
-                    String message = getStartErrorMessage(flow) + "' but there is no component named '" + blockName + "'. This should be the block containing the FlowActivity named '" + flowActivity.getActivityName() + "' (activity #" + activity + ") ";
+                    String message = getStartErrorMessage(flow) + "' but there is no component named '" + blockName + "'. This should be the block containing the FlowActivity named '" + flowActivity.getFlowPropertyProviderName() + "' (activity #" + activity + ") ";
                     if ( flowActivity.isInvisible() ) {
                         throw new IllegalStateException(message+" -- this is an invisible activity");
                     } else {

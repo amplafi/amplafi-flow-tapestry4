@@ -178,13 +178,13 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         if (pageTemplate==null) {
             return "No template defined for " + getClass().getName();
         } else {
-            return pageTemplate.replace("{FlowName}", flow.getFlowTypeName());
+            return pageTemplate.replace("{FlowName}", flow.getFlowPropertyProviderName());
         }
     }
 
     @Override
     protected String createComponentTemplate(Flow flow, IRequestCycle cycle, INamespace containerNamespace, Location location) {
-        String flowName = flow.getFlowTypeName();
+        String flowName = flow.getFlowPropertyProviderName();
         StringWriter sw = new StringWriter();
         IExtendedMarkupWriter writer = new ExtendedMarkupWriterImpl(createMarkupWriter(new PrintWriter(sw)));
         //writer.create("span", JWCID, "allFlow@If", "renderTag", "false", "condition", "ognl:visibleFlow").println();

@@ -153,14 +153,14 @@ public abstract class BaseFlowComponent extends BaseComponent implements FlowAwa
      * generate default message keys where uppercase characters are preceded
      * by a '-' and lowercased.
      *
-     * if {@link Flow#getFlowTypeName()} = 'FooBar' and property = 'LinkTitle'
+     * if {@link Flow#getFlowPropertyProviderName()} = 'FooBar' and property = 'LinkTitle'
      * then the result is 'flow.foo-bar.link-title'
      * @param flow
      * @param property
      * @return the default message key.
      */
     protected String generateDefaultMessageKey(Flow flow, String property) {
-        String flowType = flow.getFlowTypeName();
+        String flowType = flow.getFlowPropertyProviderName();
         StringBuilder sb = new StringBuilder("flow.");
         tweak(flowType, sb);
         sb.append('.');

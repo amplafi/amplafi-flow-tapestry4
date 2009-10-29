@@ -15,10 +15,10 @@
 package org.amplafi.flow.web.resolvers;
 
 
-import org.amplafi.flow.Flow;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.web.components.FlowBorder;
@@ -112,7 +112,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
         trainUsingMemoryLocation(compSpec);
 
-        Flow flow = createSimpleFlow(type);
+        FlowImplementor flow = createSimpleFlow(type);
         trainGetFlowForComponent(type, flow, delegate);
         trainParser(delegate);
         Locale locale = null;
@@ -141,7 +141,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         expect(component.getSpecification()).andReturn(compSpec);
         expect(component.getNamespace()).andReturn(null).anyTimes();
         expect(component.getLocation()).andReturn(null);
-        Flow flow = createFlow2(componentName, 1);
+        FlowImplementor flow = createFlow2(componentName, 1);
         trainGetFlowForComponent(componentName, flow, delegate);
         trainParser(delegate);
         IRequestCycle cycle = createMock(IRequestCycle.class);
@@ -191,7 +191,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         expect(component.getSpecification()).andReturn(compSpec);
         expect(component.getNamespace()).andReturn(null).anyTimes();
         expect(component.getLocation()).andReturn(null);
-        Flow flow = createFlowWithProperties(componentName);
+        FlowImplementor flow = createFlowWithProperties(componentName);
         trainGetFlowForComponent(componentName, flow, delegate);
         trainParser(delegate);
         IRequestCycle cycle = createMock(IRequestCycle.class);
@@ -224,7 +224,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         compSpec.setLocation(isA(Location.class));
     }
 
-    private void trainGetFlowForComponent(String componentName, Flow flow, FlowAwareTemplateSourceDelegate delegate) {
+    private void trainGetFlowForComponent(String componentName, FlowImplementor flow, FlowAwareTemplateSourceDelegate delegate) {
         FlowDefinitionsManager flowDefinitionsManager = createMock(FlowDefinitionsManager.class);
         expect(flowDefinitionsManager.getFlowDefinition(componentName)).andReturn(flow);
         replay(flowDefinitionsManager);
@@ -246,8 +246,8 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         replay(templateParser);
     }
 
-    private Flow createFlowWithProperties(String componentName) {
-        Flow flow = createFlow2(componentName, 1);
+    private FlowImplementor createFlowWithProperties(String componentName) {
+        FlowImplementor flow = createFlow2(componentName, 1);
         FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl("globaldef1");
         globalDef.setUiComponentParameterName("componentGlobaldef1");
         flow.addPropertyDefinitions(globalDef);
@@ -260,13 +260,13 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         return flow;
     }
 
-    private Flow createSimpleFlow(String flowTypeName) {
-        Flow simple = new FlowImpl(flowTypeName);
+    private FlowImplementor createSimpleFlow(String flowTypeName) {
+        FlowImplementor simple = new FlowImpl(flowTypeName);
         return simple;
     }
 
-    private Flow createFlow2(String flowTypeName, int size) {
-        Flow simple = new FlowImpl(flowTypeName);
+    private FlowImplementor createFlow2(String flowTypeName, int size) {
+        FlowImplementor simple = new FlowImpl(flowTypeName);
 
         for (int i = 0; i < size; i++) {
             FlowActivityImpl activity = new FlowActivityImpl();
