@@ -24,6 +24,7 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.web.BaseFlowComponent;
 import org.amplafi.flow.web.FlowResultHandler;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.tapestry.IAsset;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.ComponentClass;
@@ -86,7 +87,8 @@ public abstract class FlowControl extends BaseFlowComponent {
      * @return true if the current activity is disabled.
      */
     public boolean isActivityDisabled() {
-        return !getCurrentActivity().isActivatable();
+        FlowActivity currentActivity = getCurrentActivity();
+        return currentActivity == null || !currentActivity.isActivatable();
     }
 
     /**
@@ -112,7 +114,7 @@ public abstract class FlowControl extends BaseFlowComponent {
      * that the user is currently working on)
      */
     public boolean isActiveActivity() {
-        return getCurrentActivity().equals(getAttachedFlowState().getCurrentActivity());
+        return ObjectUtils.equals(getCurrentActivity(), getAttachedFlowState().getCurrentActivity());
     }
 
     public IAsset getLeftTabAsset() {
