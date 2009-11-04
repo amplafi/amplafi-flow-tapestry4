@@ -176,14 +176,36 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
      * flow when it completes.
      */
     @Parameter(defaultValue="true")
-    public abstract boolean isReturnToCurrentFlow();
+    public abstract Boolean getReturnToCurrentFlow();
 
     /**
      *
-     * @return flowState Lookupkey, true (same as {@link #isReturnToCurrentFlow()} )
+     * @return flowState Lookupkey, true (same as {@link #getReturnToCurrentFlow()} )
      */
     @Parameter
-    public abstract Object getReturnToFlow();
+    public abstract String getReturnToFlow();
+
+    /**
+     * TODO: when called? on render or on listener call?
+     * if on render, flows may have ended.
+     * @return
+     */
+    private String getReturnFlowLookupKey() {
+        String returnFlowLookupKey = getReturnToFlow();
+        if ( isBlank(returnFlowLookupKey) ) {
+            Boolean finishCurrentFlow = getFinishCurrentFlow();
+            Boolean returnToCurrentFlow = getReturnToCurrentFlow();
+            FlowState attachedFlow = getFlowManagement().getCurrentFlowState();
+            if ( attachedFlow != null ) {
+                if ( finishCurrentFlow == null || !finishCurrentFlow) {
+                    if (returnToCurrentFlow != null && returnToCurrentFlow) {
+                        returnFlowLookupKey = attachedFlow.getLookupKey();
+                    }
+                }
+            }
+        }
+        return returnFlowLookupKey;
+    }
 
     /**
      * TODO rationalize this!
@@ -335,14 +357,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), getContainer(), getValues(), getFlowManagement(), null);
         }
         if ( launcher != null ) {
-            if ( getReturnToFlow() != null) {
-                launcher.setReturnToFlow(getReturnToFlow());
-            } else if (isReturnToCurrentFlow() ) {
-                FlowState flowState = getFlowManagement().getCurrentFlowState();
-                if ( flowState != null) {
-                    launcher.setReturnToFlow(flowState.getLookupKey());
-                }
-            }
+            launcher.setReturnToFlow(getReturnFlowLookupKey());
         }
         return launcher;
     }
@@ -488,14 +503,14 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     public boolean isFlowEntryPointIsForm() {
         return "form".equals(getTemplateTagName());
     }
-    public String getFlowToFinish() {
-        if ( getFinishFlowId() != null ) {
-            return getFinishFlowId();
-        } else if ( getFinishCurrentFlow() != null && getFinishCurrentFlow() && getAttachedFlowState()!=null) {
-            return getAttachedFlowState().getLookupKey();
-        } else {
-            return null;
+    private String getFlowToFinish() {
+        String lookupKeyOfFlowToFinish = getFinishFlowId();
+        Boolean finishCurrentFlow = getFinishCurrentFlow();
+        FlowState attachedFlowState = getFlowManagement().getCurrentFlowState();
+        if ( isBlank(lookupKeyOfFlowToFinish) && finishCurrentFlow != null && finishCurrentFlow && attachedFlowState !=null) {
+            lookupKeyOfFlowToFinish = attachedFlowState.getLookupKey();
         }
+        return lookupKeyOfFlowToFinish;
     }
 
     // HACK should probably not modify the parameters
