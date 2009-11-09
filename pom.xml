@@ -15,7 +15,7 @@
     <name>Flow - Tapestry 4 integration</name>
     <description>Amplafi Flow - Tapestry 4 integration</description>
     <scm>
-        <developerConnection>scm:svn:${svn-base}/${artifactId}/trunk</developerConnection>
+        <developerConnection>scm:svn:${svn-base}/${project.artifactId}/trunk</developerConnection>
     </scm>    
     <repositories>
         <repository>
@@ -51,7 +51,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <configuration>
-                    <siteDirectory>${pom.artifactId}/src/site</siteDirectory>
+                    <siteDirectory>${project.artifactId}/src/site</siteDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -84,7 +84,7 @@
         </plugins>
     </build>
     <reporting>
-        <!--<outputDirectory>../target/site/${pom.artifactId}</outputDirectory>-->
+        <!--<outputDirectory>../target/site/${project.artifactId}</outputDirectory>-->
         <plugins>
             <plugin>
                 <groupId>ch.marcus-schulte.maven</groupId>
@@ -113,12 +113,12 @@
         <dependency>
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-flow-core</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-sworddance</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -210,10 +210,6 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
         </dependency>
     </dependencies>
 </project>
