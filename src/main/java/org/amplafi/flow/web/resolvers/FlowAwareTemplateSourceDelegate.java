@@ -30,6 +30,7 @@ import net.sf.tacos.markup.IExtendedMarkupWriter;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.web.FlowWebUtils;
@@ -226,7 +227,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
                 specification = componentSpecificationResolver.getSpecification();
             } catch (ApplicationRuntimeException e) {
                 // couldn't find the component :-( ... normal for invisible components.
-                activity.setInvisible(true);
+                ((FlowActivityImplementor)activity).setInvisible(true);
                 continue;
             }
             String blockName = FlowWebUtils.getBlockName(activity.getIndex());
