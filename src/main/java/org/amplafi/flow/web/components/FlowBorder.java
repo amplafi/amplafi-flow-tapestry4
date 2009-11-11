@@ -27,11 +27,13 @@ import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.TransitionType;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.web.BaseFlowComponent;
+import org.amplafi.flow.web.FlowBorderCustomizer;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.amplafi.flow.web.FlowWebUtils;
 import org.amplafi.flow.web.models.LocalizedBeanPropertySelectionModel;
 import org.apache.tapestry.IActionListener;
 import org.apache.tapestry.IMarkupWriter;
+import org.apache.tapestry.IRender;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.IComponent;
 import org.apache.tapestry.annotations.Component;
@@ -133,6 +135,8 @@ public abstract class FlowBorder extends BaseFlowComponent {
     public abstract void setUpdateListener(IActionListener listener);
 
     public abstract IActionListener getUpdateListener();
+    
+    public abstract FlowBorderCustomizer getFlowBorderCustomizer();
 
     public abstract FlowResultHandler getFlowResultHandler();
 
@@ -433,6 +437,14 @@ public abstract class FlowBorder extends BaseFlowComponent {
         } else {
             return "MultipleAltFlow";
         }
+    }
+    
+    public IRender getShowErrorsRenderer() {
+    	return getFlowBorderCustomizer().getShowErrorsRenderer(this, getForm().getDelegate(), true);
+    }    
+    
+    public IRender getDefaultButtonRenderer() {
+    	return getFlowBorderCustomizer().getDefaultButtonRenderer(this, getDefaultButtonId());
     }
 
     @Cached(resetAfterRewind=true)

@@ -8,7 +8,8 @@
         </div>
 
         <div class="flowBody">
-            <span jwcid="@RenderBody">[Flow Body]</span>
+        	<div jwcid="@Delegator" delegate="ognl:showErrorsRenderer"/>
+            <span jwcid="@RenderBody">[Flow Body]</span>            
         </div>
 
         <div class="flowButtons">
@@ -45,9 +46,8 @@
                         value="ognl:flowTransition" id="selector"
                         action="listener:onMultipleAlternateFlow" updateComponents="ognl:componentsToRefresh"/>
             </span>            
-        </div>
-        <div jwcid="@application:utils/ShowErrors" delegate="ognl:form.delegate" hideFieldErrors="true">[Errors]</div>
-        <span jwcid="@application:ext/DefaultButton" button="ognl:defaultButtonId"/>        
+        </div>        
+        <div jwcid="@Delegator" delegate="ognl:defaultButtonRenderer"/>        
         <div jwcid="flowDebug">[FlowDebug]</div>
     </div>                                                           
 </span>

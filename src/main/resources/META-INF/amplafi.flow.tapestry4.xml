@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module id="amplafi.flow.tapestry4" version="0.9.0">
-
+<!-- Due to usage of amplafi.factory.appServicesFactory, a runtime dep to amplafi-hivemind is implied -->
     <implementation service-id="tapestry.parse.TemplateSourceDelegate">
         Generates the correct template for the flow.
         <invoke-factory>
@@ -87,6 +87,12 @@
             <construct class="org.amplafi.flow.web.services.BaseFlowResultHandlerImpl" />
         </invoke-factory>
     </service-point>
+    
+    <service-point id="FlowBorderCustomizer" interface="org.amplafi.flow.web.FlowBorderCustomizer">
+        <invoke-factory service-id="amplafi.factory.appServicesFactory">
+            <construct class="org.amplafi.flow.web.services.DefaultFlowBorderCustomizer" />
+        </invoke-factory>
+    </service-point>    
     
     <service-point id="PageProvider" interface="org.amplafi.flow.web.PageProvider">
         <invoke-factory service-id="amplafi.factory.appServicesFactory">
