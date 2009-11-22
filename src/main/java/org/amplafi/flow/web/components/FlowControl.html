@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="../../../../../../webapp/css/standard.css"/>
 <span jwcid="$content$">
-    <div jwcid="@If" condition="ognl:attachedFlowState" renderTag="true" class="fl-tabs"> 
+    <div jwcid="attachedFlowState@If" condition="ognl:attachedFlowState" renderTag="true" class="fl-tabs"> 
     <span jwcid="fcontrol@For" source="ognl:activities" index="ognl:index" keyExpression="index"
           value="ognl:currentActivity" renderTag="false">
         <a href="#" jwcid="ls" action="listener:selectActivity" listener="listener:markActivity" parameters="ognl:index"
