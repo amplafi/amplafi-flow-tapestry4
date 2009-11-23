@@ -3,7 +3,7 @@
 <div jwcid="showEntryPoint@If" condition="ognl:showEntryPoint" renderTag="false">
     <div jwcid="guts@Block">
     <div jwcid="renderBody_and_not_bodyPartOfLink@If" condition="ognl:renderBody && !bodyPartOfLink" renderTag="false"><div jwcid="@RenderBody"></div></div>
-    <div jwcid="not_renderedAsSubmit@If" condition="ognl:! renderedAsSubmit" renderTag="false">
+    <div jwcid="not_renderedAsSubmit@If" condition="ognl:! renderedAsSubmit" renderTag="false" volatile="true">
         <div jwcid="sameAsActive_1@If" condition="ognl:sameAsActive" renderTag="false" volatile="true">
             <a href="#" class="ognl:className" jwcid="entryP@PageLink" page="ognl:activePage" stateful="ognl:statefulSetting"
                 title="ognl:flowLabel"><div 
@@ -11,7 +11,7 @@
                     <div jwcid="@Else" renderTag="false"><span 
                     jwcid="@Insert" value="ognl:flowLabel">Flow Label</span></div></a>
         </div>
-        <div jwcid="@Else" renderTag="false" volatile="true">
+        <div jwcid="@Else" renderTag="false">
                 <a href="#" class="ognl:className" jwcid="fepLink" stateful="ognl:statefulSetting"
                 listener="listener:doEnterFlow" title="ognl:flowLabel"
                 disabled="ognl:renderAsDisabled"
@@ -21,8 +21,8 @@
                     jwcid="@Insert" value="ognl:flowLabel">Flow Label</span></div></a>
         </div>
     </div>
-    <div jwcid="renderedAsSubmit_1@If" condition="ognl:renderedAsSubmit" renderTag="false">
-        <div jwcid="renderAsButton_1@If" condition="ognl:renderAsButton" renderTag="false">
+    <div jwcid="@Else" renderTag="false">
+        <div jwcid="renderAsButton_1@If" condition="ognl:renderAsButton" renderTag="false" volatile="true">
             <input jwcid="fepSubm" value="ognl:flowLabel" type="submit" alt="ognl:flowLabel"
                 disabled="ognl:renderAsDisabled"
                 class="asButton" action="listener:doEnterFlow"
@@ -39,7 +39,7 @@
         </div>
     </div>
     </div>
-    <div jwcid="flowEntryPointIsForm_1@If" condition="ognl:flowEntryPointIsForm" renderTag="false">
+    <div jwcid="flowEntryPointIsForm_1@If" condition="ognl:flowEntryPointIsForm" renderTag="false" volatile="true">
         <form jwcid="innerForm">
             <div jwcid="@RenderBlock" block="component:guts"></div>
         </form>
