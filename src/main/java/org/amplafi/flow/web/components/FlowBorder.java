@@ -304,8 +304,11 @@ public abstract class FlowBorder extends BaseFlowComponent {
         FlowValidationResult result = currentFlowState.getCurrentActivityFlowValidationResult();
         if (result.isValid()) {
             FlowActivity next = currentFlowState.next();
-            String page = next.getPageName();
-            FlowWebUtils.activatePageIfNotNull(cycle, page, currentFlowState);
+            if(next != null){
+                //for some reason can be null when using transition
+                String page = next.getPageName();
+                FlowWebUtils.activatePageIfNotNull(cycle, page, currentFlowState);
+            }
         } else {
             getFlowResultHandler().handleFlowResult(result, this);
         }
