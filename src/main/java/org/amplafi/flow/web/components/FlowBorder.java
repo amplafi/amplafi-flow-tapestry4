@@ -135,7 +135,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
     public abstract void setUpdateListener(IActionListener listener);
 
     public abstract IActionListener getUpdateListener();
-    
+
     public abstract FlowBorderCustomizer getFlowBorderCustomizer();
 
     public abstract FlowResultHandler getFlowResultHandler();
@@ -305,7 +305,12 @@ public abstract class FlowBorder extends BaseFlowComponent {
         if (result.isValid()) {
             FlowActivity next = currentFlowState.next();
             if(next != null){
-                //for some reason can be null when using transition
+                // HACK : TO KOSTYA : add more details here! How do you know that there is not another error that you are now hiding?
+                // Please check this again : Some ideas for you to investigate ( and fix! )  - does this relate to the next FA being invisible?
+                // The Next button should not be visible if there is no next FA... Please investigate further.
+                // A Comment like :"for some reason can be null when using transition" - is marginally useful add as many details as you can when you have to put in a HACK
+                // which should be labeled a HACK ( so we can grep for HACK markers in the code ).
+                // P.S. this is what I do all the time... constant cleaning it seems :-)
                 String page = next.getPageName();
                 FlowWebUtils.activatePageIfNotNull(cycle, page, currentFlowState);
             }
@@ -441,11 +446,11 @@ public abstract class FlowBorder extends BaseFlowComponent {
             return "MultipleAltFlow";
         }
     }
-    
+
     public IRender getShowErrorsRenderer() {
     	return getFlowBorderCustomizer().getShowErrorsRenderer(this, getForm().getDelegate(), true);
-    }    
-    
+    }
+
     public IRender getDefaultButtonRenderer() {
     	return getFlowBorderCustomizer().getDefaultButtonRenderer(this, getDefaultButtonId());
     }
