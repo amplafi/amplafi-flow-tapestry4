@@ -19,6 +19,7 @@ import static org.apache.commons.lang.StringUtils.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -68,9 +69,14 @@ import net.sf.tacos.annotations.InjectParameterFlag;
 @ComponentClass(allowBody=true, allowInformalParameters=true)
 public abstract class FlowEntryPoint extends BaseFlowComponent {
     /**
-     *
+     * Alternate component name suffix for default determination of actual flowTypeName.
      */
-    private static final String FLOW_ENTRY_POINT = "FlowEntryPoint";
+    private static final String ENTRY_POINT_SUFFIX = "EntryPoint";
+    /**
+     * Alternate component name suffix for default determination of actual flowTypeName.
+     */
+    private static final String FLOW_ENTRY_POINT_SUFFIX = "FlowEntryPoint";
+    private static final Pattern FLOW_TYPE_NAME_FROM_COMPONENT_NAME = Pattern.compile("^(.+)(?:FlowEntryPoint)?+|(?:EntryPoint)?|(?:\\d+$)");
 
     /**
      * This value will not be available when {@link #doEnterFlow(FlowLauncher, String, Iterable)} is called,
@@ -91,6 +97,9 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
      */
     @Parameter
     public abstract String getFlowTypeName();
+
+    @InjectParameterFlag
+    public abstract boolean isFlowTypeNameBound();
 
     /**
      * Used to initialize the flow. Each string is of the form "flowKey1=flowValue1"
@@ -282,17 +291,27 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     }
     @Cached(resetAfterRewind=true)
     public String getActualFlowTypeName() {
-        String flowTypeName = getFlowTypeName();
+        String flowTypeName = null;
+        if ( isFlowTypeNameBound() ) {
+            flowTypeName = getFlowTypeName();
+            if ( isBlank(flowTypeName)) {
+                // TODO: maybe just log so that name can serve as default?
+                throw new IllegalArgumentException(this+": flowTypeName parameter cannot be set to a null");
+            }
+        }
         if (isBlank(flowTypeName)) {
             String id = getId();
-            int index = id.indexOf(FLOW_ENTRY_POINT);
-            if (index > 0 ) {
-                flowTypeName = id.substring(0, index);
-            } else if ( (index = id.indexOf("EntryPoint")) > 0) {
-                flowTypeName = id.substring(0, index);
-            } else {
-                flowTypeName = id;
+            int index;
+//            Matcher matcher = FLOW_TYPE_NAME_FROM_COMPONENT_NAME.matcher(id);
+//            if ( matcher.find()) {
+//                flowTypeName = matcher.group(1);
+//            } else
+            if ((index = id.indexOf(FLOW_ENTRY_POINT_SUFFIX)) < 0 && (index = id.indexOf(ENTRY_POINT_SUFFIX)) < 0) {
+                for(index = id.length(); Character.isDigit(id.charAt(index-1)) && index > 0; index--) {
+
+                }
             }
+            flowTypeName = id.substring(0, index);
             flowTypeName = capitalize(flowTypeName);
         }
         return flowTypeName;
