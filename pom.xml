@@ -148,6 +148,10 @@
                     <artifactId>tapestry-framework</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.tapestry</groupId>
+                    <artifactId>tapestry-contrib</artifactId>
+                </exclusion>                
+                <exclusion>
                     <groupId>ognl</groupId>
                     <artifactId>ognl</artifactId>
                 </exclusion>
@@ -155,6 +159,14 @@
                     <groupId>xom</groupId>
                     <artifactId>xom</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jaxen</groupId>
+                    <artifactId>jaxen</artifactId>
+                </exclusion>                
             </exclusions>
         </dependency>
         <dependency>
@@ -176,6 +188,61 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- ============================================================= -->
+        <!-- used by tacos -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>1.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>    
+                <exclusion>
+                    <groupId>xom</groupId>
+                    <artifactId>xom</artifactId>
+                </exclusion>              
+            </exclusions>
+        </dependency>
+        <!-- latest version is 1.2.4 -->
+        <dependency>
+            <groupId>xom</groupId>
+            <artifactId>xom</artifactId>
+            <version>1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>    
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+            </exclusions>
+            
+        </dependency>
+        <!-- ============================================================= -->
+        
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
