@@ -311,7 +311,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         if ( flow.getPropertyDefinitions() != null ) {
             for(FlowPropertyDefinition definition: flow.getPropertyDefinitions().values()) {
                 String name = definition.getName();
-                if ( activity == null || activity.getPropertyDefinition(name) == definition) {
+                if ( activity == null || activity.getFlowPropertyDefinition(name) == definition) {
                     writeFpropAttributeConnections(writer, componentName, matchedParameters, foundParameters, name, definition.getUiComponentParameterName());
                 }
             }

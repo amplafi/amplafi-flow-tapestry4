@@ -22,6 +22,7 @@ import net.sf.tacos.annotations.Cached;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowValidationResult;
+import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.BaseFlowComponent;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.apache.commons.lang.ObjectUtils;
@@ -146,16 +147,17 @@ public abstract class FlowControl extends BaseFlowComponent {
         }
 
         FlowState currentFlow = getAttachedFlowState();
-        FlowValidationResult result = currentFlow.getCurrentActivityFlowValidationResult();
-        if (result==null || result.isValid()) {
-            FlowActivity next = currentFlow.selectVisibleActivity(getActivityToGo());
+        int activityToGo = getActivityToGo();
+        try {
+            FlowActivity next = currentFlow.selectVisibleActivity(activityToGo);
             String page = next.getPageName();
             if (page!=null) {
                 getPage().getRequestCycle().activate(page);
             } else {
                 updateComponents(findComponentsToUpdate(getUpdateComponents()));
             }
-        } else {
+        } catch (FlowValidationException flowValidationException) {
+            FlowValidationResult result = flowValidationException.getResult();
             getFlowResultHandler().handleFlowResult(result, this);
         }
     }

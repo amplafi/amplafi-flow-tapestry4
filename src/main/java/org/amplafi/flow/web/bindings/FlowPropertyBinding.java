@@ -262,7 +262,7 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
         if (render instanceof AbstractFormComponent && render instanceof ValidatableField) {
             AbstractFormComponent formComponent = (AbstractFormComponent) render;
             if (formComponent.getBinding(VALIDATORS) == null) {
-                FlowPropertyDefinition definition = activity.getPropertyDefinition(this.key);
+                FlowPropertyDefinition definition = activity.getFlowPropertyDefinition(this.key);
                 String validators = definition == null? null: definition.getValidators();
                 if (validators != null) {
                     IBinding binding = this.validationBindingFactory.createBinding(formComponent, "", validators, null);
