@@ -137,7 +137,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
      *
      */
     public static final String FLOW_BORDER_COMPONENT = "flow:FlowBorder";
-    static final String FLOW_TO_USE = OGNL + "flowToUse";
+    static final String FLOW_TO_USE = OGNL + "flowState";
     static final String ATTACH_OGNL = " " + FlowConstants.ATTACHED_FLOW + "=\"" + FLOW_TO_USE + "\" ";
     private static final String JWCID = "jwcid";
     private static final String[] FIXED_PARAMETERS = { ASYNC, UPDATE_COMPONENTS };

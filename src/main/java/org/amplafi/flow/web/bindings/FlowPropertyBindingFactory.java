@@ -13,7 +13,7 @@
  */
 package org.amplafi.flow.web.bindings;
 
-import org.amplafi.flow.FlowProvider;
+import org.amplafi.flow.FlowStateProvider;
 import org.apache.hivemind.Location;
 import org.apache.tapestry.IBinding;
 import org.apache.tapestry.IComponent;
@@ -45,7 +45,7 @@ public class FlowPropertyBindingFactory extends AbstractBindingFactory {
     }
 
     /**
-     * Create a {@link FlowPropertyBinding} with a specific value and within a specific {@link FlowProvider}.
+     * Create a {@link FlowPropertyBinding} with a specific value and within a specific {@link FlowStateProvider}.
      *
      * @see org.apache.tapestry.binding.BindingFactory#createBinding(IComponent, String, String, Location)
      *
@@ -54,13 +54,13 @@ public class FlowPropertyBindingFactory extends AbstractBindingFactory {
      * @param expression The expression used to access the binding
      * @param location The location of the binding
      * @return A {@link FlowPropertyBinding} object created with the parameters passed in
-     * @throws IllegalArgumentException If the {@code root} parameter does not implement {@link FlowProvider}
+     * @throws IllegalArgumentException If the {@code root} parameter does not implement {@link FlowStateProvider}
      */
     public IBinding createBinding(IComponent root, String bindingDescription,
             String expression, Location location) {
 
         // Validate that the IComponent passed in is a Flow component
-        if(!(root instanceof FlowProvider)) {
+        if(!(root instanceof FlowStateProvider)) {
             throw new IllegalArgumentException(root.getClass()+
                     ": is required to implement FlowProvider interface");
         }

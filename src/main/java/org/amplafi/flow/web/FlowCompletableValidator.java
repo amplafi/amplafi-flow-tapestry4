@@ -27,7 +27,6 @@ import org.apache.tapestry.valid.ValidatorException;
 
 public class FlowCompletableValidator extends BaseValidator {
 
-    @SuppressWarnings("unused")
     @Override
     public void validate(IFormComponent field, ValidationMessages messages, Object object)
             throws ValidatorException {
@@ -49,7 +48,6 @@ public class FlowCompletableValidator extends BaseValidator {
         return true;
     }
 
-    @SuppressWarnings("unused")
     @Override
     public void renderContribution(IMarkupWriter writer, IRequestCycle cycle, FormComponentContributorContext context,
                                    IFormComponent field) {

@@ -101,6 +101,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
     /**
      * Test a flow definition that has no activites.
+     * @param delegate
      *
      */
     @Test(dataProvider="FlowAwareTemplateSourceDelegate")
@@ -126,6 +127,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
     /**
      * This flow has some activities.
+     * @param delegate
      *
      */
     @Test(dataProvider="FlowAwareTemplateSourceDelegate")
@@ -176,6 +178,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
     /**
      * This flow has some activities and properties.
+     * @param delegate
      *
      */
     @Test(dataProvider="FlowAwareTemplateSourceDelegate")
@@ -291,7 +294,8 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         + "endListener=\"ognl:endListener\" cancelListener=\"ognl:cancelListener\" finishListener=\"ognl:finishListener\" "
         + "async=\"ognl:async\" nextListener=\"ognl:nextListener\" previousListener=\"ognl:previousListener\""
         + " fsFlowTransitions=\"fprop:fsFlowTransitions\""
-        + " attachedFlowState=\"ognl:flowToUse\" updateListener=\"fprop:updateListener\""
+        + " attachedFlowState=\"" + FLOW_TO_USE +
+        		"\" updateListener=\"fprop:updateListener\""
         +">\n";
     }
     /**

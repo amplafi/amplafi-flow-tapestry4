@@ -15,7 +15,7 @@ package org.amplafi.flow.web.bindings;
 
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowManagement;
-import org.amplafi.flow.FlowProvider;
+import org.amplafi.flow.FlowStateProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.apache.hivemind.Location;
@@ -48,7 +48,7 @@ import static org.apache.commons.lang.StringUtils.*;
  *
  * @author Patrick Moore
  */
-public class FlowPropertyBinding implements FlowProvider, IBinding {
+public class FlowPropertyBinding implements FlowStateProvider, IBinding {
 
     /**
      *
@@ -193,7 +193,7 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
     protected Object getFlowStateProperty(Class<?> expected) {
         Object result = null;
         // Determine if there is a flow state to get the value from, if not just return defaultValue
-        FlowState flowState = getFlowToUse();
+        FlowState flowState = getFlowState();
         if (flowState != null) {
             addValidation(flowState.getCurrentActivity(), cycle.renderStackPeek());
             try {
@@ -223,7 +223,7 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
     public void setObject(Object value) {
 
         // Check that we have a flow to set the value to
-        FlowState flowState = getFlowToUse();
+        FlowState flowState = getFlowState();
         if (flowState == null) {
             throw new IllegalStateException("no attached flow - cannot set value");
         }
@@ -245,8 +245,8 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
      *
      * @return The FlowState object this binding uses
      */
-    public FlowState getFlowToUse() {
-        return ((FlowProvider)this.root).getFlowToUse();
+    public FlowState getFlowState() {
+        return ((FlowStateProvider)this.root).getFlowState();
     }
 
     /**
@@ -255,7 +255,7 @@ public class FlowPropertyBinding implements FlowProvider, IBinding {
      * @return The FlowManager object this binding uses
      */
     public FlowManagement getFlowManagement() {
-        return ((FlowProvider)this.root).getFlowManagement();
+        return ((FlowStateProvider)this.root).getFlowManagement();
     }
 
     private void addValidation(FlowActivity activity, IRender render) {

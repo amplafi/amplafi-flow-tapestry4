@@ -20,7 +20,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowStateLifecycle;
-import org.amplafi.flow.FlowProvider;
+import org.amplafi.flow.FlowStateProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.launcher.StartFromDefinitionFlowLauncher;
 import org.amplafi.flow.validation.FlowValidationException;
@@ -81,7 +81,7 @@ import java.util.Arrays;
  * should reference a component. FullFlowComponent wires all of the FlowActivity's component's required parameters
  * wired to the FlowActivity using a {@link org.amplafi.flow.web.bindings.FlowPropertyBinding}
  */
-public abstract class FullFlowComponent extends BaseFlowComponent implements FlowProvider,
+public abstract class FullFlowComponent extends BaseFlowComponent implements FlowStateProvider,
         IJSONRender, PageValidateListener {
 
     /**
@@ -185,7 +185,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
 
     // cancel handling needed due to TAPESTRY-1673
     public void doCancelForm() {
-        FlowState state = getFlowToUse();
+        FlowState state = getFlowState();
         if (state!=null) {
             String page = state.cancelFlow();
             FlowWebUtils.activatePageIfNotNull(getPage().getRequestCycle(), page, state);
@@ -213,10 +213,9 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
         }
     }
     @Override
-    @SuppressWarnings("unused")
     public void pageValidate(PageEvent event) {
         /* the broadcastProvider is not initialized yet -- has security run yet? */
-        FlowState flow = getFlowToUse();
+        FlowState flow = getFlowState();
         if ( flow != null ) {
             // Check to see if the current page is the page that the flow things should be displayed
             // while a flow is running the page ( not just the active component ) may change.
@@ -235,7 +234,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
      * @return the flow attached to this FullFlow instance
      */
     @Override
-    public FlowState getFlowToUse() {
+    public FlowState getFlowState() {
         FlowState flow = getAttachedFlowState();
         if ( flow == null && getFlowId() != null ) {
             flow = getFlowManagement().getFlowState(getFlowId());
@@ -316,7 +315,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
      * @return true if this component should be rendered.
      */
     public boolean isVisibleFlow() {
-        FlowState flowToUse = getFlowToUse();
+        FlowState flowToUse = getFlowState();
         return flowToUse != null;
     }
     public String getFlowName() {
@@ -324,7 +323,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
     }
 
     public IComponent getCurrentBlock() {
-        FlowState flow = getFlowToUse();
+        FlowState flow = getFlowState();
         if ( flow != null ) {
             if ( flow.getFlowStateLifecycle() != FlowStateLifecycle.started) {
                 String message = getStartErrorMessage(flow) + "' but flow is not in the 'started' state. Flow state: " + flow.getFlowStateLifecycle() + "; Values: " + flow.getFlowValuesMap();
