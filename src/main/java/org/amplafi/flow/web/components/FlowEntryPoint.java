@@ -231,6 +231,9 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
      */
     @Parameter
     public abstract boolean isRenderBody();
+    @InjectParameterFlag
+    public abstract boolean isRenderBodyBound();
+
 
     /**
      * Used when the container wants to make the show/no show decision.
@@ -318,7 +321,11 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     }
 
     public boolean isBodyPartOfLink() {
-        return "a".equals(getTemplateTagName()) && !isRenderAsButton() && isRenderBody();
+        if ( this.getBodyCount() > 0) {
+            return "a".equals(getTemplateTagName()) && !isRenderAsButton() && (isRenderBody() || !isRenderBodyBound());
+        } else {
+            return false;
+        }
     }
     public abstract IRequestCycle getRequestCycle();
 
