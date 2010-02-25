@@ -14,7 +14,6 @@
 
 package org.amplafi.flow.web.components;
 
-import org.amplafi.flow.web.FlowAware;
 import org.apache.tapestry.IMarkupWriter;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.annotations.Parameter;
@@ -28,7 +27,7 @@ import org.apache.tapestry.valid.ValidatorException;
  * Attaches the passed validators to the current form.
  */
 public abstract class AttachFlowValidators extends AbstractFormComponent
-        implements ValidatableField, FlowAware {
+        implements ValidatableField {
 
     @Parameter
     public abstract Object getValidators();
