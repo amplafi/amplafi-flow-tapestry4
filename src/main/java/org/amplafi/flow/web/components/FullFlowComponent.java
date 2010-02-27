@@ -226,8 +226,8 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
             String flowPageName = flow.getCurrentPage();
             String pageName = this.getPage().getPageName();
             if( flowPageName != null && !pageName.equals(flowPageName)) {
-                if (!(this.getPage() instanceof FlowAwarePage)
-                    || ((FlowAwarePage)this.getPage()).getExpectedFlowDefinitions().contains(flow.getFlowTypeName())) {
+                if (!(this.getPage() instanceof FlowAwarePage) || isEmpty(((FlowAwarePage)this.getPage()).getExpectedFlowDefinitions())
+                    || !((FlowAwarePage)this.getPage()).getExpectedFlowDefinitions().contains(flow.getFlowTypeName())) {
                     throw new PageRedirectException(flowPageName);
                 } else {
                     flow.setCurrentPage(pageName);
