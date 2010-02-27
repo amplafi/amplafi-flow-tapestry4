@@ -216,7 +216,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
     @Override
     public void pageValidate(PageEvent event) {
         /* the broadcastProvider is not initialized yet -- has security run yet? */
-        FlowStateImplementor flow = getFlowState();
+        FlowStateImplementor flow = (FlowStateImplementor) getFlowState();
         if ( flow != null ) {
             // Check to see if the current page is the page that the flow things should be displayed
             // while a flow is running the page ( not just the active component ) may change.
@@ -240,10 +240,9 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
      * note: this method name is used in {@link org.amplafi.flow.web.resolvers.FlowAwareTemplateSourceDelegate}.
      * @return the flow attached to this FullFlow instance
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public <FS extends FlowState> FS getFlowState() {
-        FS flow = (FS) getAttachedFlowState();
+    public FlowState getFlowState() {
+        FlowState flow = getAttachedFlowState();
         if ( flow == null && getFlowId() != null ) {
             flow = getFlowManagement().getFlowState(getFlowId());
         }
@@ -272,7 +271,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
                 getFlowManagement().getLog().debug("Auto starting "+getFlowName()+" on page "+getPage().getPageName()+" activeflows="+getFlowManagement().getFlowStates());
                 StartFromDefinitionFlowLauncher flowLauncher = new StartFromDefinitionFlowLauncher(getFlowName(), getContainer(), getInitialValues(), getFlowManagement(), getFlowName());
                 try {
-                    flow = (FS) flowLauncher.call();
+                    flow = flowLauncher.call();
                 } catch (FlowValidationException e) {
 //                    getFlowResultHandler().handleValidationTrackings(e.getTrackings(), this);
                     return null;
