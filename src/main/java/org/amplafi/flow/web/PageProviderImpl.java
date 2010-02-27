@@ -13,8 +13,10 @@
  */
 package org.amplafi.flow.web;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import org.amplafi.flow.FlowState;
-import org.apache.commons.lang.StringUtils;
+import org.amplafi.flow.impl.FlowStateImplementor;
 import org.apache.tapestry.IPage;
 import org.apache.tapestry.IRequestCycle;
 
@@ -39,14 +41,15 @@ public class PageProviderImpl implements PageProvider {
             currentCyclePage = null;
         }
         if ( currentCyclePage != null) {
-            flowState.setDefaultAfterPage(currentCyclePage.getPageName());
+            String pageName = currentCyclePage.getPageName();
+            flowState.setDefaultAfterPage(pageName);
             // from Sasha (18-June-2008): if a flow can have different
             // pageNames, we don't set a pageName in the xml. Example of such
             // flow is ConfigureExtServices. Think the best place to set
             // pageName to a flow is here, because here we know the
             // currentCyclePage.
-            if (StringUtils.isBlank(flowState.getFlow().getPageName())) {
-                flowState.getFlow().setPageName(currentCyclePage.getPageName());
+            if (isBlank(flowState.getCurrentPage())) {
+                ((FlowStateImplementor)flowState).setCurrentPage(pageName);
             }
         }
     }

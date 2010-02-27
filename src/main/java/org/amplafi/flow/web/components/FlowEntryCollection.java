@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 
+import org.amplafi.flow.launcher.BaseFlowLauncher;
 import org.amplafi.flow.launcher.FlowLauncher;
 import org.amplafi.flow.launcher.StartFromDefinitionFlowLauncher;
 import org.amplafi.flow.web.BaseFlowComponent;
@@ -75,7 +76,7 @@ public abstract class FlowEntryCollection extends BaseFlowComponent {
         List<String> ftNames = getFlowTypeNames();
         if ( !CollectionUtils.isEmpty(ftNames)) {
             for(String flowTypeName: ftNames) {
-                StartFromDefinitionFlowLauncher definition =
+                BaseFlowLauncher definition =
                     new StartFromDefinitionFlowLauncher(flowTypeName, null, getFlowManagement());
                 displayed.add(definition);
             }

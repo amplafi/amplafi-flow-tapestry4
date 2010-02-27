@@ -139,6 +139,9 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
 
     /**
      * title to override the default flow title supplied by flow definition.
+     * alternatively, if {@link #isRenderBody()} is true, then the text encapsulated by the <a>link</a> will
+     * be rendered.
+     *
      * @return the link for the flow.
      */
     @Parameter
@@ -321,8 +324,9 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     }
 
     public boolean isBodyPartOfLink() {
-        if ( this.getBodyCount() > 0) {
-            return "a".equals(getTemplateTagName()) && !isRenderAsButton() && (isRenderBody() || !isRenderBodyBound());
+        if ( this.getBodyCount() > 0  ) {
+            // reconsidered idea that renderBody is true by default when rendering <a> templated links.
+            return "a".equals(getTemplateTagName()) && !isRenderAsButton() && (isRenderBody()/* || !isRenderBodyBound()*/);
         } else {
             return false;
         }

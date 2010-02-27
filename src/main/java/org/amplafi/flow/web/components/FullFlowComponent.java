@@ -22,6 +22,7 @@ import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowStateProvider;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.launcher.StartFromDefinitionFlowLauncher;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.BaseFlowComponent;
@@ -215,16 +216,22 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
     @Override
     public void pageValidate(PageEvent event) {
         /* the broadcastProvider is not initialized yet -- has security run yet? */
-        FlowState flow = getFlowState();
+        FlowStateImplementor flow = getFlowState();
         if ( flow != null ) {
             // Check to see if the current page is the page that the flow things should be displayed
             // while a flow is running the page ( not just the active component ) may change.
             // this happens in autostart situations, when a FlowActivity has a different page than the flow's default pages
             // or if a flow is morphed into another flow.
+
             String flowPageName = flow.getCurrentPage();
             String pageName = this.getPage().getPageName();
             if( flowPageName != null && !pageName.equals(flowPageName)) {
-                throw new PageRedirectException(flowPageName);
+                if (!(this.getPage() instanceof FlowAwarePage)
+                    || ((FlowAwarePage)this.getPage()).getExpectedFlowDefinitions().contains(flow.getFlowTypeName())) {
+                    throw new PageRedirectException(flowPageName);
+                } else {
+                    flow.setCurrentPage(pageName);
+                }
             }
         }
     }
@@ -233,9 +240,10 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
      * note: this method name is used in {@link org.amplafi.flow.web.resolvers.FlowAwareTemplateSourceDelegate}.
      * @return the flow attached to this FullFlow instance
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public FlowState getFlowState() {
-        FlowState flow = getAttachedFlowState();
+    public <FS extends FlowState> FS getFlowState() {
+        FS flow = (FS) getAttachedFlowState();
         if ( flow == null && getFlowId() != null ) {
             flow = getFlowManagement().getFlowState(getFlowId());
         }
@@ -264,7 +272,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
                 getFlowManagement().getLog().debug("Auto starting "+getFlowName()+" on page "+getPage().getPageName()+" activeflows="+getFlowManagement().getFlowStates());
                 StartFromDefinitionFlowLauncher flowLauncher = new StartFromDefinitionFlowLauncher(getFlowName(), getContainer(), getInitialValues(), getFlowManagement(), getFlowName());
                 try {
-                    flow = flowLauncher.call();
+                    flow = (FS) flowLauncher.call();
                 } catch (FlowValidationException e) {
 //                    getFlowResultHandler().handleValidationTrackings(e.getTrackings(), this);
                     return null;

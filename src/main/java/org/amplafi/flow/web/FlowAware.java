@@ -31,10 +31,11 @@ public interface FlowAware {
     public FlowManagement getFlowManagement();
 
     /**
+     * @param <FS>
      * @return the {@link FlowState} attached to this component.
      */
     @Parameter
-    public FlowState getAttachedFlowState();
+    public <FS extends FlowState> FS getAttachedFlowState();
 
     @InjectParameterFlag
     public boolean isAttachedFlowStateBound();
