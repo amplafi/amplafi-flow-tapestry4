@@ -14,7 +14,6 @@
 package org.amplafi.flow.web.bindings;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowStateProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -247,15 +246,6 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
      */
     public FlowState getFlowState() {
         return ((FlowStateProvider)this.root).getFlowState();
-    }
-
-    /**
-     * Get the {@link FlowManagement} object this binding uses.
-     *
-     * @return The FlowManager object this binding uses
-     */
-    public FlowManagement getFlowManagement() {
-        return ((FlowStateProvider)this.root).getFlowManagement();
     }
 
     private void addValidation(FlowActivity activity, IRender render) {
