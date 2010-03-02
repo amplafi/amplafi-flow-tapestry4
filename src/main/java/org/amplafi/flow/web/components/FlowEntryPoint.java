@@ -514,7 +514,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
         }
         FlowLauncher actualFlowLauncher = getActualFlowLauncher();
         if ( isBlank(label) && actualFlowLauncher != null ) {
-            label = actualFlowLauncher.getFlowLabel();
+            label = actualFlowLauncher.getLinkTitle();
         }
         if ( isBlank(label) ) {
             label = isBlank(getActualFlowTypeName())?"{no flow type}":"["+getActualFlowTypeName()+"]";

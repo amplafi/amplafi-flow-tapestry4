@@ -50,7 +50,7 @@ public class FlowLauncherPropertySelectionModel implements IPropertySelectionMod
     }
     @Override
     public String getLabel(int index) {
-        String label = flows.get(index).getFlowLabel();
+        String label = flows.get(index).getLinkTitle();
         if (messages != null && label.startsWith("message:")) {
             label = messages.getMessage(label.substring(8));
         }
