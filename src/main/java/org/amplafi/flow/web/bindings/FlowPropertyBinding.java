@@ -14,6 +14,7 @@
 package org.amplafi.flow.web.bindings;
 
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowStateProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -48,7 +49,7 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author Patrick Moore
  */
 public class FlowPropertyBinding implements FlowStateProvider, IBinding {
-
+    private static final String REQUIRED = "required";
     /**
      *
      */
@@ -251,12 +252,23 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
     private void addValidation(FlowActivity activity, IRender render) {
         if (render instanceof AbstractFormComponent && render instanceof ValidatableField) {
             AbstractFormComponent formComponent = (AbstractFormComponent) render;
-            if (formComponent.getBinding(VALIDATORS) == null) {
+            IBinding binding = formComponent.getBinding(VALIDATORS);
+            if (binding == null) {
                 FlowPropertyDefinition definition = activity.getFlowPropertyDefinition(this.key);
-                String validators = definition == null? null: definition.getValidators();
-                if (validators != null) {
-                    IBinding binding = this.validationBindingFactory.createBinding(formComponent, "", validators, null);
-                    formComponent.setBinding(VALIDATORS, binding);
+                if ( definition != null) {
+                    String validators = definition.getValidators();
+                    if ( definition.getPropertyRequired() == FlowActivityPhase.advance) {
+                        if ( isBlank(validators)) {
+                            validators = REQUIRED;
+                        } else {
+                            // may re-add required if already present - seems like a minor issue
+                            validators = REQUIRED + "," + validators;
+                        }
+                    }
+                    if (isNotBlank(validators)) {
+                        binding = this.validationBindingFactory.createBinding(formComponent, "", validators, null);
+                        formComponent.setBinding(VALIDATORS, binding);
+                    }
                 }
             }
         }
