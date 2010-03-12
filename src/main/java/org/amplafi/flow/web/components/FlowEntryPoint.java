@@ -65,6 +65,8 @@ import net.sf.tacos.annotations.InjectParameterFlag;
  * TODO should preserve the current flow (if the current flow is not be finished),
  * so that the flows can be "stacked". This will help with determining which flows are still active
  * and will allow "call/return" subflow construction.
+ *
+ * TODO: use {@link org.amplafi.flow.launcher.LaunchLinkGenerator}
  */
 @ComponentClass(allowBody=true, allowInformalParameters=true)
 public abstract class FlowEntryPoint extends BaseFlowComponent {

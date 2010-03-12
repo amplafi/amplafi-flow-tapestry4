@@ -12,6 +12,7 @@
                     jwcid="@Insert" value="ognl:flowLabel">Flow Label</span></div></a>
         </div>
         <div jwcid="@Else" renderTag="false">
+                <!-- TODO: not doing submit - should be able to do a LaunchFlowLauncher -->
                 <a href="#" class="ognl:className" jwcid="fepLink" stateful="ognl:statefulSetting"
                 listener="listener:doEnterFlow" title="ognl:flowLabel"
                 disabled="ognl:renderAsDisabled"
