@@ -249,6 +249,16 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
         return ((FlowStateProvider)this.root).getFlowState();
     }
 
+    /**
+     * Important! READ  if validation is not being added OR is added incorrectly ( usually visible because a required field does not have the "required" styling).
+     * If this occurs it is because the first time the binding was evaluated is the ONLY time the FlowPropertyBinding gets a chance to add its validation.
+     * To solve this make sure the @{@link org.apache.tapestry.annotations.Parameter} has caching turned off.
+     *
+     * For Example: @{@link org.apache.tapestry.annotations.Parameter}(required=true, cache=false)
+     *
+     * @param activity
+     * @param render
+     */
     private void addValidation(FlowActivity activity, IRender render) {
         if (render instanceof AbstractFormComponent && render instanceof ValidatableField) {
             AbstractFormComponent formComponent = (AbstractFormComponent) render;
