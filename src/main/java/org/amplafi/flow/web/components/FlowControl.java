@@ -157,7 +157,7 @@ public abstract class FlowControl extends BaseFlowComponent {
                 updateComponents(findComponentsToUpdate(getUpdateComponents()));
             }
         } catch (FlowValidationException flowValidationException) {
-            FlowValidationResult result = flowValidationException.getResult();
+            FlowValidationResult result = flowValidationException.getFlowValidationResult();
             getFlowResultHandler().handleFlowResult(result, this);
         }
     }

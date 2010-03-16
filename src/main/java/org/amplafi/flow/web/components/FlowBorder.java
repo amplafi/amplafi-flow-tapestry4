@@ -26,6 +26,7 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.TransitionType;
 import org.amplafi.flow.FlowValidationResult;
+import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.BaseFlowComponent;
 import org.amplafi.flow.web.FlowBorderCustomizer;
 import org.amplafi.flow.web.FlowResultHandler;
@@ -228,9 +229,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
         invokeIfNotNull(cycle, getFinishListener(), getEndListener());
 
         FlowState currentFlowState = getAttachedFlowState();
-        FlowValidationResult result = currentFlowState.getFinishFlowValidationResult();
-
-        if (result.isValid()) {
+        try {
             String page = currentFlowState.finishFlow();
             // because the new active flow can be very different
             FlowState newCurrentFlow = getFlowManagement().getCurrentFlowState();
@@ -240,7 +239,8 @@ public abstract class FlowBorder extends BaseFlowComponent {
                 newCurrentFlow = currentFlowState;
             }
             FlowWebUtils.activatePageIfNotNull(cycle, page, newCurrentFlow);
-        } else {
+        } catch (FlowValidationException flowValidationException) {
+            FlowValidationResult result = flowValidationException.getFlowValidationResult();
             getFlowResultHandler().handleFlowResult(result, this);
         }
     }
