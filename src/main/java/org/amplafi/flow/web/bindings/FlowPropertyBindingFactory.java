@@ -14,6 +14,7 @@
 package org.amplafi.flow.web.bindings;
 
 import org.amplafi.flow.FlowStateProvider;
+import org.apache.commons.logging.Log;
 import org.apache.hivemind.Location;
 import org.apache.tapestry.IBinding;
 import org.apache.tapestry.IComponent;
@@ -29,6 +30,7 @@ import org.apache.tapestry.binding.BindingSource;
  */
 public class FlowPropertyBindingFactory extends AbstractBindingFactory {
 
+    private Log log;
     /**
      * The Tapestry BindingFactory that the FlowPropertyBinding will use to create bindings
      */
@@ -65,8 +67,10 @@ public class FlowPropertyBindingFactory extends AbstractBindingFactory {
                     ": is required to implement FlowProvider interface");
         }
 
-        return new FlowPropertyBinding( root, bindingDescription, getValueConverter(), location,
+        FlowPropertyBinding binding = new FlowPropertyBinding( root, bindingDescription, getValueConverter(), location,
                 expression, validationBindingFactory, this.bindingSource);
+        binding.setLog(getLog());
+        return binding;
     }
 
     /**
@@ -81,5 +85,19 @@ public class FlowPropertyBindingFactory extends AbstractBindingFactory {
      */
     public BindingSource getBindingSource() {
         return bindingSource;
+    }
+
+    /**
+     * @param log the log to set
+     */
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
+    /**
+     * @return the log
+     */
+    public Log getLog() {
+        return log;
     }
 }

@@ -18,6 +18,7 @@ import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowStateProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.apache.commons.logging.Log;
 import org.apache.hivemind.Location;
 import org.apache.hivemind.util.Defense;
 import org.apache.tapestry.BindingException;
@@ -87,6 +88,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
 
     private IBinding defaultValueBinding;
 
+    private Log log;
     /**
      * Constructor - Set to protected to ensure the use of the {@link FlowPropertyBindingFactory} in creation of this object.
      *
@@ -281,6 +283,8 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
                     }
                 }
             }
+        } else {
+            getLog().debug(activity.getFullActivityInstanceNamespace()+": property binding "+this+": make sure that @Parameter(cache=false) is set because first access is not by a ValidatableField component");
         }
     }
 
@@ -296,5 +300,19 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * @param log the log to set
+     */
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
+    /**
+     * @return the log
+     */
+    public Log getLog() {
+        return log;
     }
 }
