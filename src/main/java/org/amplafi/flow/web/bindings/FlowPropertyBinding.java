@@ -311,7 +311,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
                         }
                         if (htmlOnBlurBinding == null) {
                             /* until we know why we are getting bad animation behavior + empty response.
-                            String htmlOnBlurValue = "javascript:amplafi.util.actOn('"+formId+"');";
+                            String htmlOnBlurValue = "javascript:amplafi.util.actOn(this);";
                             formComponent.setBinding(HTML_ONBLUR, new LiteralBinding("html on blur", valueConverter, location, htmlOnBlurValue));
                              */
                         } else {
