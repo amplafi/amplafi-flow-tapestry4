@@ -29,6 +29,7 @@ import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.binding.BindingConstants;
 import org.apache.tapestry.binding.BindingFactory;
 import org.apache.tapestry.binding.BindingSource;
+import org.apache.tapestry.binding.LiteralBinding;
 import org.apache.tapestry.coerce.ValueConverter;
 import org.apache.tapestry.form.AbstractFormComponent;
 import org.apache.tapestry.form.ValidatableField;
@@ -50,11 +51,16 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author Patrick Moore
  */
 public class FlowPropertyBinding implements FlowStateProvider, IBinding {
+    /**
+     *
+     */
+    private static final String HTML_ONBLUR = "onblur";
     private static final String REQUIRED = "required";
     /**
      *
      */
     private static final String VALIDATORS = "validators";
+    private static final String HTML_CLASS = "class";
 
     private final ValueConverter valueConverter;
 
@@ -264,10 +270,34 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
     private void addValidation(FlowActivity activity, IRender render) {
         if (render instanceof AbstractFormComponent && render instanceof ValidatableField) {
             AbstractFormComponent formComponent = (AbstractFormComponent) render;
-            IBinding binding = formComponent.getBinding(VALIDATORS);
-            if (binding == null) {
-                FlowPropertyDefinition definition = activity.getFlowPropertyDefinition(this.key);
-                if ( definition != null) {
+            String formId = formComponent.getForm().getClientId();
+            FlowPropertyDefinition definition = activity.getFlowPropertyDefinition(this.key);
+            if ( definition != null) {
+                IBinding binding = formComponent.getBinding(VALIDATORS);
+                if (definition.isDynamic()) {
+                    IBinding htmlClassBinding = formComponent.getBinding(HTML_CLASS);
+                    IBinding htmlOnBlurBinding = formComponent.getBinding(HTML_ONBLUR);
+                    String htmlOnBlurValue = "javascript:amplafi.util.actOn('"+formId+"');";
+                    //  see animation.js - the "noanimation" does not work. The animation still happens ( is this because of the refresh ? )
+                    String htmlClassToAdd = "noanimation refresh-"+formId;
+                    String htmlClass = null;
+                    if ( htmlClassBinding == null) {
+                        htmlClass= htmlClassToAdd;
+                    } else if (htmlClassBinding instanceof LiteralBinding) {
+                        htmlClass =(String)htmlClassBinding.getObject(String.class) + " "+htmlClassToAdd;
+                    } else {
+                        getLog().debug(activity.getFullActivityInstanceNamespace()+ ": cannot add class to component="+formComponent);
+                    }
+                    if (htmlClass != null) {
+                        formComponent.setBinding(HTML_CLASS, new LiteralBinding("html class", valueConverter, location, htmlClass));
+                    }
+                    if (htmlOnBlurBinding == null) {
+                        formComponent.setBinding(HTML_ONBLUR, new LiteralBinding("html on blur", valueConverter, location, htmlOnBlurValue));
+                    } else {
+                        getLog().debug(activity.getFullActivityInstanceNamespace()+ ": cannot add onblur to component="+formComponent);
+                    }
+                }
+                if (binding == null) {
                     String validators = definition.getValidators();
                     if ( definition.getPropertyRequired() == FlowActivityPhase.advance) {
                         if ( isBlank(validators)) {
@@ -281,13 +311,12 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
                         binding = this.validationBindingFactory.createBinding(formComponent, "", validators, null);
                         formComponent.setBinding(VALIDATORS, binding);
                     }
+                } else {
+                    getLog().debug(activity.getFullActivityInstanceNamespace()+": property binding "+this+": make sure that @Parameter(cache=false) is set because first access is not by a ValidatableField component");
                 }
             }
-        } else {
-            getLog().debug(activity.getFullActivityInstanceNamespace()+": property binding "+this+": make sure that @Parameter(cache=false) is set because first access is not by a ValidatableField component");
         }
     }
-
     /**
      * @param description the description to set
      */
