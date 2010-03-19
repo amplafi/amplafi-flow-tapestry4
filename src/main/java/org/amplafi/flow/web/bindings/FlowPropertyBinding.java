@@ -20,7 +20,6 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.hivemind.Location;
-import org.apache.hivemind.util.Defense;
 import org.apache.tapestry.BindingException;
 import org.apache.tapestry.IBinding;
 import org.apache.tapestry.IComponent;
@@ -35,7 +34,7 @@ import org.apache.tapestry.form.AbstractFormComponent;
 import org.apache.tapestry.form.ValidatableField;
 import org.apache.tapestry.valid.ValidatorException;
 
-
+import static com.sworddance.util.ApplicationNullPointerException.notNull;
 import static org.apache.commons.lang.StringUtils.*;
 
 /**
@@ -51,6 +50,7 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author Patrick Moore
  */
 public class FlowPropertyBinding implements FlowStateProvider, IBinding {
+    private static final String ALREADY_ADDED_BINDING="_amp_FlowProperty_Binding_Already";
     /**
      *
      */
@@ -110,8 +110,8 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
     protected FlowPropertyBinding(IComponent root, String description, ValueConverter valueConverter, Location location, String expression,
             BindingFactory bindingFactory, BindingSource bindingSource) {
 
-        Defense.notNull(description, "description");
-        Defense.notNull(valueConverter, "valueConverter");
+        notNull(description, "description");
+        notNull(valueConverter, "valueConverter");
 
         this.valueConverter = valueConverter;
         this.location = location;
@@ -119,9 +119,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
         // Save instance variables
         this.root = root;
 
-        if (expression == null) {
-            throw new IllegalArgumentException("no expression to evaluate");
-        }
+        notNull(expression, this,":no expression to evaluate");
         int equalsIndex = expression.indexOf('=');
         // also check to make sure the '=' is not the last character.
         if (equalsIndex >= 0 && equalsIndex < expression.length()-1) {
@@ -169,7 +167,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
 
     @SuppressWarnings("unchecked")
     public Object getObject(Class type) {
-        Defense.notNull(type, "type");
+        notNull(type, this, "type");
 
         Object raw = getFlowStateProperty(type);
 
@@ -270,50 +268,55 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
     private void addValidation(FlowActivity activity, IRender render) {
         if (render instanceof AbstractFormComponent && render instanceof ValidatableField) {
             AbstractFormComponent formComponent = (AbstractFormComponent) render;
-            String formId = formComponent.getForm().getClientId();
-            FlowPropertyDefinition definition = activity.getFlowPropertyDefinition(this.key);
-            if ( definition != null) {
-                IBinding binding = formComponent.getBinding(VALIDATORS);
-                if (definition.isDynamic()) {
-                    IBinding htmlClassBinding = formComponent.getBinding(HTML_CLASS);
-                    IBinding htmlOnBlurBinding = formComponent.getBinding(HTML_ONBLUR);
-                    String htmlOnBlurValue = "javascript:amplafi.util.actOn('"+formId+"');";
-                    //  see animation.js - the "noanimation" does not work. The animation still happens ( is this because of the refresh ? )
-                    String htmlClassToAdd = "noanimation refresh-"+formId;
-                    String htmlClass = null;
-                    if ( htmlClassBinding == null) {
-                        htmlClass= htmlClassToAdd;
-                    } else if (htmlClassBinding instanceof LiteralBinding) {
-                        htmlClass =(String)htmlClassBinding.getObject(String.class) + " "+htmlClassToAdd;
-                    } else {
-                        getLog().debug(activity.getFullActivityInstanceNamespace()+ ": cannot add class to component="+formComponent);
-                    }
-                    if (htmlClass != null) {
-                        formComponent.setBinding(HTML_CLASS, new LiteralBinding("html class", valueConverter, location, htmlClass));
-                    }
-                    if (htmlOnBlurBinding == null) {
-                        formComponent.setBinding(HTML_ONBLUR, new LiteralBinding("html on blur", valueConverter, location, htmlOnBlurValue));
-                    } else {
-                        getLog().debug(activity.getFullActivityInstanceNamespace()+ ": cannot add onblur to component="+formComponent);
-                    }
-                }
-                if (binding == null) {
-                    String validators = definition.getValidators();
-                    if ( definition.getPropertyRequired() == FlowActivityPhase.advance) {
-                        if ( isBlank(validators)) {
-                            validators = REQUIRED;
+            IBinding alreadyBinding = formComponent.getBinding(ALREADY_ADDED_BINDING);
+            if ( alreadyBinding == null) {
+                String formId = formComponent.getForm().getClientId();
+                FlowPropertyDefinition definition = activity.getFlowPropertyDefinition(this.key);
+                if ( definition != null) {
+                    IBinding validatorsBinding = formComponent.getBinding(VALIDATORS);
+                    if (definition.isDynamic()) {
+                        IBinding htmlClassBinding = formComponent.getBinding(HTML_CLASS);
+                        IBinding htmlOnBlurBinding = formComponent.getBinding(HTML_ONBLUR);
+                        String htmlOnBlurValue = "javascript:amplafi.util.actOn('"+formId+"');";
+                        //  see animation.js - the "noanimation" does not work. The animation still happens ( is this because of the refresh ? )
+                        String htmlClassToAdd = "noanimation refresh-"+formId;
+                        String htmlClass = null;
+                        if ( htmlClassBinding == null) {
+                            htmlClass= htmlClassToAdd;
+                        } else if (htmlClassBinding instanceof LiteralBinding) {
+                            htmlClass =(String)htmlClassBinding.getObject(String.class) + " "+htmlClassToAdd;
                         } else {
-                            // may re-add required if already present - seems like a minor issue
-                            validators = REQUIRED + "," + validators;
+                            getLog().debug(activity.getFullActivityInstanceNamespace()+ ": cannot add class to component="+formComponent);
+                        }
+                        if (htmlClass != null) {
+                            formComponent.setBinding(HTML_CLASS, new LiteralBinding("html class", valueConverter, location, htmlClass));
+                        }
+                        if (htmlOnBlurBinding == null) {
+                            formComponent.setBinding(HTML_ONBLUR, new LiteralBinding("html on blur", valueConverter, location, htmlOnBlurValue));
+                        } else {
+                            getLog().debug(activity.getFullActivityInstanceNamespace()+ ": cannot add onblur to component="+formComponent);
                         }
                     }
-                    if (isNotBlank(validators)) {
-                        binding = this.validationBindingFactory.createBinding(formComponent, "", validators, null);
-                        formComponent.setBinding(VALIDATORS, binding);
+                    if (validatorsBinding == null) {
+                        String validators = definition.getValidators();
+                        if ( definition.getPropertyRequired() == FlowActivityPhase.advance) {
+                            if ( isBlank(validators)) {
+                                validators = REQUIRED;
+                            } else {
+                                // may re-add required if already present - seems like a minor issue
+                                validators = REQUIRED + "," + validators;
+                            }
+                        }
+                        if (isNotBlank(validators)) {
+                            validatorsBinding = this.validationBindingFactory.createBinding(formComponent, "", validators, null);
+                            formComponent.setBinding(VALIDATORS, validatorsBinding);
+                        }
+                    } else {
+                        getLog().debug(activity.getFullActivityInstanceNamespace()+": property binding "+this+": make sure that @Parameter(cache=false) is set because first access is not by a ValidatableField component");
                     }
-                } else {
-                    getLog().debug(activity.getFullActivityInstanceNamespace()+": property binding "+this+": make sure that @Parameter(cache=false) is set because first access is not by a ValidatableField component");
                 }
+                // avoid constantly re-adding the bindings
+                formComponent.setBinding(ALREADY_ADDED_BINDING, new LiteralBinding(ALREADY_ADDED_BINDING, valueConverter, location, "true"));
             }
         }
     }
