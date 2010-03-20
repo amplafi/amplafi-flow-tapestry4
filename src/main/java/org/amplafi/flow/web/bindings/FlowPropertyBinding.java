@@ -289,15 +289,13 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
             AbstractFormComponent formComponent = (AbstractFormComponent) render;
             IBinding alreadyBinding = formComponent.getBinding(ALREADY_ADDED_BINDING);
             if ( alreadyBinding == null) {
-                String formId = formComponent.getForm().getClientId();
                 FlowPropertyDefinition definition = activity.getFlowPropertyDefinition(this.key);
                 if ( definition != null) {
                     IBinding validatorsBinding = formComponent.getBinding(VALIDATORS);
                     if (definition.isDynamic()) {
                         IBinding htmlClassBinding = formComponent.getBinding(HTML_CLASS);
                         IBinding htmlOnBlurBinding = formComponent.getBinding(HTML_ONBLUR);
-                        //  see animation.js - the "noanimation" does not work. The animation still happens ( is this because of the refresh ? )
-                        String htmlClassToAdd = "noanimation refresh-"+formId;
+                        String htmlClassToAdd = "refresh-" + formComponent.getClientId();
                         String htmlClass = null;
                         if ( htmlClassBinding == null) {
                             htmlClass= htmlClassToAdd;
@@ -310,10 +308,9 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
                             formComponent.setBinding(HTML_CLASS, new LiteralBinding("html class", valueConverter, location, htmlClass));
                         }
                         if (htmlOnBlurBinding == null) {
-                            /* until we know why we are getting bad animation behavior + empty response.
-                            String htmlOnBlurValue = "javascript:amplafi.util.actOn(this);";
+                            String htmlOnBlurValue = "javascript:amplafi.util.refreshIfChanged(this);";
                             formComponent.setBinding(HTML_ONBLUR, new LiteralBinding("html on blur", valueConverter, location, htmlOnBlurValue));
-                             */
+                            
                         } else {
                             getLog().debug(activity.getFullActivityInstanceNamespace()+ ": cannot add onblur to component="+formComponent);
                         }
@@ -337,6 +334,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
                     }
                 }
                 // avoid constantly re-adding the bindings
+                // HACK: this however results in adding the attribute to all html nodes using a FlowPropertyBinding.
                 formComponent.setBinding(ALREADY_ADDED_BINDING, new LiteralBinding(ALREADY_ADDED_BINDING, valueConverter, location, "true"));
             }
         }
