@@ -264,20 +264,6 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
      *
      * From Andy 19 mar 2010:
      *
-     * - onblur & actOn are annoying because they call the server even when
-     * the value is unchanged. We can finetune it by checking the value or using the onchange event and
-     * amplafi.util.callWhenInactive. In either case it's best to attach the handler to the textbox
-     * through js (and not with the onblur or onchange attribute). I hope
-     * we're able to access the appropriate Tapestry objects to do that
-     * from within FlowProperyBinding (perhaps the requestCycle)
-     *
-     * - the animation is indeed still happening. That's because actOn
-     * doesn't know/care which button
-     * triggered the submit. tapestry.form.submitAsync can accept extra\
-     * parameter and it's possible to define the triggerer (need to see the sources). This eventually
-     * ends up in the ajax submitted content as beventtarget.id which is what setupTransition in
-     * animation.js checks for the noanimation class. We probably want to extend actOn to work on input
-     * controls (by submitting their form)
      *
      * - the responses i see are empty, just <ajax-response></ajax-response>.. not yet know why
      *
@@ -310,7 +296,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
                         if (htmlOnBlurBinding == null) {
                             String htmlOnBlurValue = "javascript:amplafi.util.refreshIfChanged(this);";
                             formComponent.setBinding(HTML_ONBLUR, new LiteralBinding("html on blur", valueConverter, location, htmlOnBlurValue));
-                            
+
                         } else {
                             getLog().debug(activity.getFullActivityInstanceNamespace()+ ": cannot add onblur to component="+formComponent);
                         }
