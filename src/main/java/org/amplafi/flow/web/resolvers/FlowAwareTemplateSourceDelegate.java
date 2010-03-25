@@ -218,6 +218,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         int counter = 0;
         for (FlowActivity activity: flow.getActivities()) {
             String componentName = activity.getComponentName();
+            // Cannot just look at isPossiblyVisible() because that method also looks for a page name.
             if ( StringUtils.isBlank(componentName)) {
                 continue;
             }
@@ -227,6 +228,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
                 specification = componentSpecificationResolver.getSpecification();
             } catch (ApplicationRuntimeException e) {
                 // couldn't find the component :-( ... normal for invisible components.
+                // TODO : isn't it better if we just clear the ComponentName?
                 ((FlowActivityImplementor)activity).setInvisible(true);
                 continue;
             }
