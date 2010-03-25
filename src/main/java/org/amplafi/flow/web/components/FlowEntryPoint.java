@@ -344,9 +344,16 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     @SuppressWarnings("unchecked")
     protected List<String> getValues() {
         List<String> values = null;
+        FlowState currentFlowState = getFlowManagement().getCurrentFlowState();
+        //HACK why isAttachedFlowStateBound() never returns true?
+        if(currentFlowState != null){
+            values = FlowUtils.INSTANCE.createInitialValues(currentFlowState.getExportedValuesMap());
+        }
         Object initialValues = getInitialValues();
         if (initialValues != null ) {
-            values = new ArrayList<String>();
+           if(values == null){
+               values = new ArrayList<String>();
+           }
 //        boolean b = /* !isFormValuesNotUsed() &&*/ isInsideForm();
 //        if (isFlowEntryPointIsForm() || b) {
 //            // WRONG ... ANDY how to get access to the body components?
