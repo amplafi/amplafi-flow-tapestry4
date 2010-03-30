@@ -13,6 +13,10 @@ import org.apache.hivemind.util.ClasspathResource;
 
 /**
  * Creates the template for a tapestry page that will contain a single flow.
+ * Note: Some flows are configured to redirect to specific pages upon activated - in such a
+ * case the created page (from this resolver) will not really be used.
+ * Note: Request parameters are NOT currently used to initialize the flow of the created
+ * page.
  */
 public class FlowAwareSpecResolverDelegate extends ClasspathSpecResolverDelegate {
 
