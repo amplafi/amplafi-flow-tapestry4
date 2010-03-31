@@ -168,7 +168,9 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
     @SuppressWarnings("unchecked")
     public Object getObject(Class type) {
         notNull(type, this, "type");
-
+        // TODO: performance improvement. During cycle.rewinding if the property does not affect an if clause or layout, can we just return some sort of dummy object?
+        // or something innocent? null might not work.
+        // Use case: In MessageEndPointList, the verificationMap is used for determining the html class.
         Object raw = getFlowStateProperty(type);
 
         try {
