@@ -344,16 +344,10 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     @SuppressWarnings("unchecked")
     protected List<String> getValues() {
         List<String> values = null;
-        FlowState currentFlowState = getFlowManagement().getCurrentFlowState();
-        //HACK why isAttachedFlowStateBound() never returns true?
-        if(currentFlowState != null){
-            values = FlowUtils.INSTANCE.createInitialValues(currentFlowState.getExportedValuesMap());
-        }
+
         Object initialValues = getInitialValues();
         if (initialValues != null ) {
-           if(values == null){
-               values = new ArrayList<String>();
-           }
+            values = new ArrayList<String>();
 //        boolean b = /* !isFormValuesNotUsed() &&*/ isInsideForm();
 //        if (isFlowEntryPointIsForm() || b) {
 //            // WRONG ... ANDY how to get access to the body components?
@@ -392,8 +386,15 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     // only called when rendering ... not from the listener.
     public FlowLauncher getActualFlowLauncher() {
         FlowLauncher launcher = getFlowLauncher();
+
         if ( launcher == null && StringUtils.isNotBlank(getActualFlowTypeName())) {
-            launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), getContainer(), getValues(), getFlowManagement(), null);
+            FlowState currentFlowState = getFlowManagement().getCurrentFlowState();
+            Map<String, String> initialFlowState = null;
+            //HACK why isAttachedFlowStateBound() never returns true?
+            if(currentFlowState != null){
+                initialFlowState  = currentFlowState.getExportedValuesMap().getAsFlattenedStringMap();
+            }
+            launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), initialFlowState, getFlowManagement(), null, getContainer(), getValues());
         }
         if ( launcher != null ) {
             launcher.setReturnToFlow(getReturnFlowLookupKey());
@@ -479,7 +480,8 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             pageName = null;
         } finally {
             if ( pageName == null || pageName.equals(this.getPage().getPageName())) {
-                this.updateComponents(findComponentsToUpdate(getUpdateComponents()));
+                List<String> findComponentsToUpdate = findComponentsToUpdate(getUpdateComponents());
+                this.updateComponents(findComponentsToUpdate);
             }
         }
         if ( isBlank(pageName)) {

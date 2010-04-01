@@ -5,6 +5,7 @@
     <div jwcid="renderBody_and_not_bodyPartOfLink@If" condition="ognl:renderBody && !bodyPartOfLink" renderTag="false"><div jwcid="@RenderBody"></div></div>
     <div jwcid="not_renderedAsSubmit@If" condition="ognl:! renderedAsSubmit" renderTag="false" volatile="true">
         <div jwcid="sameAsActive_1@If" condition="ognl:sameAsActive" renderTag="false" volatile="true">
+            <!-- TODO: this seems wrong (no parameter handling,etc. ) -->
             <a href="#" class="ognl:className" jwcid="entryP@PageLink" page="ognl:activePage" stateful="ognl:statefulSetting"
                 title="ognl:flowLabel"><div 
                 jwcid="bodyPartOfLink_1@If" condition="ognl:bodyPartOfLink" renderTag="false"><span jwcid="@RenderBody"></span></div>

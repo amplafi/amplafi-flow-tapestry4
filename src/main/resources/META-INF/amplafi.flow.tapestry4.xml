@@ -88,6 +88,12 @@
         </invoke-factory>
     </service-point>
     
+    <service-point id="ValueFromBindingProvider" interface="org.amplafi.flow.launcher.ValueFromBindingProvider">
+        <invoke-factory service-id="amplafi.factory.appServicesFactory">
+            <construct class="org.amplafi.flow.web.bindings.ValueFromBindingProviderImpl" />
+        </invoke-factory>
+    </service-point>
+    
     <service-point id="FlowBorderCustomizer" interface="org.amplafi.flow.web.FlowBorderCustomizer">
         <invoke-factory service-id="amplafi.factory.appServicesFactory">
             <construct class="org.amplafi.flow.web.services.DefaultFlowBorderCustomizer" />
