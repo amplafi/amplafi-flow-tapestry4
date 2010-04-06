@@ -71,6 +71,10 @@ import net.sf.tacos.annotations.InjectParameterFlag;
 @ComponentClass(allowBody=true, allowInformalParameters=true)
 public abstract class FlowEntryPoint extends BaseFlowComponent {
     /**
+     *
+     */
+    private static final String FL_ENTRYPOINT_HTML_CLASS = "fl-entrypoint";
+    /**
      * Alternate component name suffix for default determination of actual flowTypeName.
      */
     private static final String ENTRY_POINT_SUFFIX = "EntryPoint";
@@ -581,10 +585,23 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     }
 
     public String getClassName() {
-        if (isParameterBound("updateComponents")) {
-            return "fl-entrypoint fl-async "+ObjectUtils.toString(getHtmlClass());
+        if (isDynamic()) {
+            return FL_ENTRYPOINT_HTML_CLASS +
+            		" fl-async noanimation "+ObjectUtils.toString(getHtmlClass());
         } else {
-            return "fl-entrypoint "+ObjectUtils.toString(getHtmlClass());
+            return FL_ENTRYPOINT_HTML_CLASS +
+            		" "+ObjectUtils.toString(getHtmlClass());
+        }
+    }
+
+    @Cached(resetAfterRewind=true)
+    public boolean isDynamic() {
+        if ( isParameterBound("updateComponents") || isAsync() ) {
+            return true;
+        } else {
+            FlowLauncher flowLauncher = getActualFlowLauncher();
+            String flowTypeName = flowLauncher.getFlowTypeName();
+            return this.getFlowManagement().getFlowDefinition(flowTypeName).getVisibleActivities().isEmpty();
         }
     }
 }
