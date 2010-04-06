@@ -173,6 +173,11 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     @Parameter(defaultValue="'submit'")
     public abstract String getType();
 
+    /**
+     * Set to the default page to be displayed if the flow launches successfully, does not complete and does not have its own default page.
+     * Useful when a flow can run on multiple pages.
+     * @return the default page
+     */
     @Parameter
     public abstract String getPageName();
 
@@ -392,13 +397,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
         FlowLauncher launcher = getFlowLauncher();
 
         if ( launcher == null && StringUtils.isNotBlank(getActualFlowTypeName())) {
-            FlowState currentFlowState = getFlowManagement().getCurrentFlowState();
-            Map<String, String> initialFlowState = null;
-            //HACK why isAttachedFlowStateBound() never returns true?
-            if(currentFlowState != null){
-                initialFlowState  = currentFlowState.getExportedValuesMap().getAsFlattenedStringMap();
-            }
-            launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), initialFlowState, getFlowManagement(), null, getContainer(), getValues());
+            launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), null, getFlowManagement(), null, getContainer(), getValues());
         }
         if ( launcher != null ) {
             launcher.setReturnToFlow(getReturnFlowLookupKey());
@@ -458,66 +457,75 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
      * id will be finished.
      * @return pagename of new flow's initial entry point.
      */
+    @SuppressWarnings("unchecked")
     public ILink doEnterFlow(FlowLauncher flowLauncher, String finishFlowId, Iterable<String> initialValues) {
         String pageName = null;
-        if ( flowLauncher != null) {
-            flowLauncher.setFlowManagement(getFlowManagement());
-            if ( initialValues != null && flowLauncher instanceof StartFromDefinitionFlowLauncher) {
-                ((StartFromDefinitionFlowLauncher)flowLauncher).setPropertyRoot(getContainer());
-                ((StartFromDefinitionFlowLauncher)flowLauncher).addInitialValues(initialValues);
-            }
-        }
+        // grab FlowState now because the flow may be finished and no longer be available.
+        FlowState currentFlowState = getFlowManagement().getCurrentFlowState();
         FlowState flowState = null;
+        boolean success = false;
         try {
-            finishFlow(finishFlowId);
-            if ( flowLauncher != null ) {
-                flowState  = flowLauncher.call();
-                pageName = (flowState != null) ? flowState.getCurrentPage() : null;
+            // should this be a force situation and ignore any errors? seems unlikely as Amplafi would want user to be able to save any half-finished changes.
+            if (finishFlowId != null ) {
+                flowState = getFlowManagement().getFlowState(finishFlowId);
+                if ( flowState != null && !flowState.isCompleted()) {
+                    pageName = flowState.finishFlow();
+                }
             }
+            if ( flowLauncher != null) {
+                flowLauncher.setFlowManagement(getFlowManagement());
+                if (flowLauncher instanceof StartFromDefinitionFlowLauncher) {
+                    // if currentFlowState was just finished, we want the final flow state.
+                    if(currentFlowState != null){
+                        Map<String, String> initialFlowState = currentFlowState.getExportedValuesMap().getAsFlattenedStringMap();
+                        flowLauncher.putAll(initialFlowState);
+                    }
+                    if ( initialValues != null) {
+                        ((StartFromDefinitionFlowLauncher)flowLauncher).setPropertyRoot(getContainer());
+                        ((StartFromDefinitionFlowLauncher)flowLauncher).addInitialValues(initialValues);
+                    }
+                }
+            }
+            success = true;
         } catch (FlowValidationException e) {
             getFlowResultHandler().handleValidationTrackings(e.getTrackings(), this);
-            // cleanup
-            FlowState current = getFlowManagement().getCurrentFlowState();
-            if (current!=null) {
-                getFlowManagement().dropFlowState(current);
-            }
-            pageName = null;
-        } finally {
-            if ( pageName == null || pageName.equals(this.getPage().getPageName())) {
-                List<String> findComponentsToUpdate = findComponentsToUpdate(getUpdateComponents());
-                this.updateComponents(findComponentsToUpdate);
-            }
         }
-        if ( isBlank(pageName)) {
-            pageName = getPageName();
+        if (success) {
+            try {
+                if ( flowLauncher != null ) {
+                    flowState  = flowLauncher.call();
+                    pageName = (flowState != null) ? flowState.getCurrentPage() : null;
+                }
+                if ( isBlank(pageName) ) {
+                    // stay on current page if the finishFlow failed.
+                    pageName = getPageName();
+                }
+
+            } catch (FlowValidationException e) {
+                getFlowResultHandler().handleValidationTrackings(e.getTrackings(), this);
+                // HACK: cleanup - this seems really wrong - we should only clean up flow if was the flow started
+                // not just any random flow. - we are relying on luck that the failed flow is the current flow.
+                // the FlowValidationException should have a reference to the flowState.
+                FlowState current = getFlowManagement().getCurrentFlowState();
+                if (current!=null) {
+                    getFlowManagement().dropFlowState(current);
+                }
+                pageName = null;
+            } finally {
+                if ( pageName == null || pageName.equals(this.getPage().getPageName()) || isDynamic()) {
+                    List<String> findComponentsToUpdate = findComponentsToUpdate(getUpdateComponents());
+                    this.updateComponents(findComponentsToUpdate);
+                }
+            }
         }
 
-        if ( isBlank(pageName) ) {
-            return null;
+        FlowState newCurrentFlow = getFlowManagement().getCurrentFlowState();
+        if ( newCurrentFlow != null && newCurrentFlow != flowState ) {
+            pageName = newCurrentFlow.getCurrentPage();
         } else {
-            FlowState newCurrentFlow = getFlowManagement().getCurrentFlowState();
-            if ( newCurrentFlow != null && newCurrentFlow != flowState ) {
-                pageName = newCurrentFlow.getCurrentPage();
-            } else {
-                newCurrentFlow = flowState;
-            }
-            FlowWebUtils.activatePageIfNotNull(getRequestCycle(), pageName, newCurrentFlow);
-            return null;
+            newCurrentFlow = flowState;
         }
-    }
-
-    /**
-     *
-     * @param finishFlowId
-     * @return the page that the completed flow was supposed to return to.
-     */
-    private String finishFlow(String finishFlowId) {
-        if (finishFlowId != null ) {
-            FlowState flowState = getFlowManagement().getFlowState(finishFlowId);
-            if ( flowState != null && !flowState.isCompleted()) {
-                return flowState.finishFlow();
-            }
-        }
+        FlowWebUtils.activatePageIfNotNull(getRequestCycle(), pageName, newCurrentFlow);
         return null;
     }
 
