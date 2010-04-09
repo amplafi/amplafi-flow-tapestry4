@@ -34,6 +34,8 @@ import org.apache.tapestry.form.AbstractFormComponent;
 import org.apache.tapestry.form.ValidatableField;
 import org.apache.tapestry.valid.ValidatorException;
 
+import com.sworddance.util.ApplicationIllegalStateException;
+
 import static com.sworddance.util.ApplicationNullPointerException.notNull;
 import static org.apache.commons.lang.StringUtils.*;
 
@@ -227,14 +229,13 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
      * @throws IllegalStateException If there is no flow attached to the binding
      * @throws BindingException If the value is not assignable to the specified type
      */
+    @SuppressWarnings("null")
     @Override
     public void setObject(Object value) {
 
         // Check that we have a flow to set the value to
         FlowState flowState = getFlowState();
-        if (flowState == null) {
-            throw new IllegalStateException("no attached flow - cannot set value");
-        }
+        ApplicationIllegalStateException.valid(flowState != null, this,": no attached flow - cannot set value");
         flowState.setProperty(key, value);
     }
 
