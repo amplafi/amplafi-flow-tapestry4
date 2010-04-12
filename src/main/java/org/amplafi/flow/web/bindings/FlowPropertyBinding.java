@@ -232,7 +232,6 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
     @SuppressWarnings("null")
     @Override
     public void setObject(Object value) {
-
         // Check that we have a flow to set the value to
         FlowState flowState = getFlowState();
         ApplicationIllegalStateException.valid(flowState != null, this,": no attached flow - cannot set value");
@@ -318,7 +317,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
                             validatorsBinding = this.validationBindingFactory.createBinding(formComponent, "", validators, null);
                             formComponent.setBinding(VALIDATORS, validatorsBinding);
                         }
-                    } else {
+                    } else if ( getLog().isDebugEnabled()){
                         getLog().debug(activity.getFullActivityInstanceNamespace()+": property binding "+this+": make sure that @Parameter(cache=false) is set because first access is not by a ValidatableField component");
                     }
                 }
