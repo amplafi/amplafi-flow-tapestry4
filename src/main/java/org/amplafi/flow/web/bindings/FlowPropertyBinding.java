@@ -234,7 +234,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
     public void setObject(Object value) {
         // Check that we have a flow to set the value to
         FlowState flowState = getFlowState();
-        ApplicationIllegalStateException.valid(flowState != null, this,": no attached flow - cannot set value");
+        ApplicationIllegalStateException.checkState(flowState != null, this,": no attached flow - cannot set value");
         flowState.setProperty(key, value);
     }
 
