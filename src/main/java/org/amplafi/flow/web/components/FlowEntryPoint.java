@@ -405,33 +405,46 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
         return launcher;
     }
 
+    /**
+     * Checks to make sure that the FlowEntryPoint should be shown. Makes sure all needed values are provided.
+     * @return true if {@link #getHidden()} != FALSE && {@link #getCondition()} != FALSE and there is a FlowTypeName or FlowLauncher.
+     */
     public boolean isShowEntryPoint() {
-        Boolean showValue;
-        if ( getHidden() != null ) {
-            showValue = !getHidden();
-            if (getCondition() != null && getCondition() != showValue) {
-                throw new ApplicationIllegalArgumentException(
-                    "show and hidden parameters are contridicting each other -- really should only specify one or the other.");
+        FlowLauncher flowLauncher = getActualFlowLauncher();
+        if ( flowLauncher == null ) {
+            // no valid FlowLauncher means cannot show flowEntry point.
+            // perhaps we should throw exception - however this allows for the external code to have a method that supplies a flowLauncher conditionally.
+            // otherwise we would require condition="ognl:flowLauncher != null" flowLauncher="ognl:flowLauncher"
+            return false;
+        } else {
+            Boolean showValue;
+            Boolean condition = getCondition();
+            Boolean hidden = getHidden();
+            if ( hidden != null ) {
+                showValue = !hidden;
+                if (condition != null && condition != showValue) {
+                    throw new ApplicationIllegalArgumentException(
+                        "show and hidden parameters are contradicting each other -- really should only specify one or the other.");
+                }
+            } else {
+                showValue = condition;
             }
-        } else {
-            showValue = getCondition();
-        }
-        if ( showValue == null ) {
-            return isAlwaysShow() || !isSameAsActive();
-        } else {
-            return showValue;
+            if ( showValue == null ) {
+                return isAlwaysShow() || !isSameAsActive();
+            } else {
+                return showValue;
+            }
         }
     }
-
     public String getActivePage() {
         FlowState flowState = getFlowManagement().getCurrentFlowState();
         return flowState.getCurrentPage();
     }
 
     /**
-     * @return
      * The entry point will not be shown if the currently active flow
      * is the same type as the flow that this entry point is to launch.
+     * @return true if the current flow has the same flow type as the flow that this entry point would launch
      */
     @Cached
     public Boolean isSameAsActive() {
