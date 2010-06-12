@@ -15,9 +15,7 @@
 package org.amplafi.flow.web.services;
 
 import static org.amplafi.flow.FlowConstants.*;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.join;
-
+import static org.apache.commons.lang.StringUtils.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -93,12 +91,12 @@ public abstract class BaseFlowService implements FlowService {
         Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
         // TODO map cookie to the json flow state.
         String cookieString = cycle.getParameter(ServicesConstants.COOKIE_OBJECT);
-        if(StringUtils.isNotBlank(cookieString)){
+        if(isNotBlank(cookieString)){
             initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
         }
 
         List<String> keyList = getRequest().getParameterNames();
-        if ( keyList != null && keyList.size() > 0) {
+        if ( isNotEmpty(keyList) ) {
             for(String key: keyList) {
                 String value = cycle.getParameter(key);
                 if ( value != null ) {
@@ -112,7 +110,11 @@ public abstract class BaseFlowService implements FlowService {
         put(initial, FSREFERRING_URL, referingUri);
         String complete = cycle.getParameter(COMPLETE_FLOW);
 
-        doActualService(cycle, flowType, flowId, renderResult, initial, complete);
+        try {
+            doActualService(cycle, flowType, flowId, renderResult, initial, complete);
+        } catch( Exception e) {
+            getLog().info(referingUri, e);
+        }
     }
 
     /**
