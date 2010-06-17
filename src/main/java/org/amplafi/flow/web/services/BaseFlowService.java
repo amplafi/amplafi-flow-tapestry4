@@ -14,25 +14,31 @@
 
 package org.amplafi.flow.web.services;
 
-import static org.amplafi.flow.FlowConstants.*;
-import static org.apache.commons.lang.StringUtils.*;
+import static com.sworddance.util.CUtilities.isNotEmpty;
+import static com.sworddance.util.CUtilities.put;
+import static org.amplafi.flow.FlowConstants.FSREFERRING_URL;
+import static org.amplafi.flow.FlowConstants.FSRENDER_RESULT;
+import static org.amplafi.flow.launcher.FlowLauncher.COMPLETE_FLOW;
+import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.join;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.amplafi.flow.FlowConstants;
-import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
-import static org.amplafi.flow.launcher.FlowLauncher.*;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.amplafi.flow.web.FlowWebUtils;
@@ -40,12 +46,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageRedirectException;
+import org.apache.tapestry.RedirectException;
 import org.apache.tapestry.services.LinkFactory;
 import org.apache.tapestry.util.ContentType;
-import org.apache.tapestry.web.WebResponse;
 import org.apache.tapestry.web.WebRequest;
-
-import static com.sworddance.util.CUtilities.*;
+import org.apache.tapestry.web.WebResponse;
 
 
 /**
@@ -110,12 +115,16 @@ public abstract class BaseFlowService implements FlowService {
         put(initial, FSREFERRING_URL, referingUri);
         String complete = cycle.getParameter(COMPLETE_FLOW);
 
-        try {
-            doActualService(cycle, flowType, flowId, renderResult, initial, complete);
-        } catch( Exception e) {
-            getLog().info(referingUri, e);
-        }
-    }
+		try {
+			doActualService(cycle, flowType, flowId, renderResult, initial,	complete);
+		} catch (PageRedirectException e) {
+			throw e;
+		} catch (RedirectException e) {
+			throw e;
+		} catch (Exception e) {
+			getLog().info(referingUri, e);
+		}
+	}
 
     /**
      *
