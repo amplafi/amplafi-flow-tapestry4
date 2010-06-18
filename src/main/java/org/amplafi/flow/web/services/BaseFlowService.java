@@ -37,6 +37,7 @@ import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowValidationException;
@@ -164,7 +165,7 @@ public abstract class BaseFlowService implements FlowService {
         if ( flowState == null && isNotBlank(flowType)) {
 
             if(!getFlowManager().isFlowDefined(flowType)) {
-                renderError(writer, flowType+": no such flow type", renderResult, null);
+                renderError(writer, flowType+": no such flow type", renderResult, null, null);
                 return null;
             }
 
@@ -175,19 +176,19 @@ public abstract class BaseFlowService implements FlowService {
             if (flowState==null) {
                 String returnToFlowLookupKey = null;
                 flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey );
-                if ( flowState == null ) {
-                    renderError(writer, flowType+": could not start flow type", renderResult, null);
+                if ( flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
+                    renderError(writer, flowType+": could not start flow type", renderResult, flowState, null);
                     return null;
                 }
             }
         } else {
-            renderError(writer, "neither "+ServicesConstants.FLOW_TYPE+" nor "+FLOW_ID+" in parameters", renderResult, null);
+            renderError(writer, "neither "+ServicesConstants.FLOW_TYPE+" nor "+FLOW_ID+" in parameters", renderResult, null, null);
             return null;
         }
         return flowState;
     }
 
-    protected abstract void renderError(Writer writer, String message, String renderResult, FlowState flowState) throws IOException;
+    protected abstract void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException;
 
     public void setLinkFactory(LinkFactory linkFactory) {
         this.linkFactory = linkFactory;
@@ -310,10 +311,11 @@ public abstract class BaseFlowService implements FlowService {
 
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     protected void renderValidationException(FlowValidationException e, String flowType, Writer writer) throws IOException {
-        writer.append("Cannot start ").append(flowType).append(" :\n");
-        writer.append(e.getTrackings().toString());
-
-        writer.append(e.toString());
+        // TODO: we should be looking at render code.
+        // but could be bad urls from searchbots
+        String m = "Cannot start "+flowType+" :\n"+e.getTrackings();
+        getLog().info(m, e);
+        writer.append(m+e);
     }
 
     public FlowResultHandler getResultHandler() {
