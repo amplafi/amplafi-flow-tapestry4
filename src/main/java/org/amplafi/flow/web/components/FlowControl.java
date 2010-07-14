@@ -89,6 +89,7 @@ public abstract class FlowControl extends BaseFlowComponent {
      */
     public boolean isActivityDisabled() {
         FlowActivity currentActivity = getCurrentActivity();
+        // TODO: isActivatable() is always false because when the flow advances it does not set to true.
         return currentActivity == null || !currentActivity.isActivatable();
     }
 
