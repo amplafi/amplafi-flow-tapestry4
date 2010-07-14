@@ -2,14 +2,9 @@
 <span jwcid="$content$">
     <div jwcid="attachedFlowState@If" condition="ognl:attachedFlowState" renderTag="true" class="fl-tabs"> 
     <span jwcid="fcontrol@For" source="ognl:activities" index="ognl:index" keyExpression="index"
-          value="ognl:currentActivity" renderTag="false">
-        <a href="#" jwcid="ls" action="listener:selectActivity" listener="listener:markActivity" parameters="ognl:index"
-           disabled="ognl:!activityClickable">
-        <span jwcid="@Any" class="ognl:classForSpan">
-            <span jwcid="@Insert" value="ognl:index+1">1</span>.
-            <span jwcid="@Insert" value="ognl:activityTitle">Title of Activity</span>
-        </span>
-        </a>
-    </span>
+          value="ognl:currentActivity" class="ognl:classForSpan"><a
+           href="#" jwcid="ls" action="listener:selectActivity" listener="listener:markActivity" parameters="ognl:index"
+           disabled="ognl:!activityClickable" class="ognl:classForSpan"><span jwcid="@Insert" value="ognl:index+1">1</span>.
+            <span jwcid="@Insert" value="ognl:activityTitle">Title of Activity</span></a></span>
     </div>
 </span>
