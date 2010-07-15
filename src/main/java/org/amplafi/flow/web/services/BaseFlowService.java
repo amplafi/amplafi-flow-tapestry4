@@ -165,7 +165,7 @@ public abstract class BaseFlowService implements FlowService {
         if ( flowState == null && isNotBlank(flowType)) {
 
             if(!getFlowManager().isFlowDefined(flowType)) {
-                renderError(writer, flowType+": no such flow type", renderResult, null, null);
+                renderError(writer, flowType+": no such flow type", renderResult, null, new PageRedirectException("Page404"));
                 return null;
             }
 
