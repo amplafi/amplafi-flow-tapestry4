@@ -46,6 +46,7 @@ import org.amplafi.flow.web.FlowWebUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.IRequestCycle;
+import org.apache.tapestry.PageNotFoundException;
 import org.apache.tapestry.PageRedirectException;
 import org.apache.tapestry.RedirectException;
 import org.apache.tapestry.services.LinkFactory;
@@ -120,6 +121,8 @@ public abstract class BaseFlowService implements FlowService {
 			doActualService(cycle, flowType, flowId, renderResult, initial,	complete);
 		} catch (PageRedirectException e) {
 			throw e;
+	     } catch (PageNotFoundException e) {
+            throw e;
 		} catch (RedirectException e) {
 			throw e;
 		} catch (Exception e) {
@@ -165,7 +168,7 @@ public abstract class BaseFlowService implements FlowService {
         if ( flowState == null && isNotBlank(flowType)) {
 
             if(!getFlowManager().isFlowDefined(flowType)) {
-                renderError(writer, flowType+": no such flow type", renderResult, null, new PageRedirectException("Page404"));
+                renderError(writer, flowType+": no such flow type", renderResult, null, new PageNotFoundException(flowType));
                 return null;
             }
 
@@ -345,7 +348,7 @@ public abstract class BaseFlowService implements FlowService {
         // page should always be not null - if that's not the case, then
         // check the pageName attribute of flow definitions in the xml files
         if (page == null) {
-            throw new IllegalStateException("pageName not defined for flow " + flowState.getFlowTypeName());
+            throw new PageNotFoundException("/missing-page","pageName not defined for flow " + flowState.getFlowTypeName());
         }
         FlowWebUtils.activatePageIfNotNull(null, page, flowState);
     }
