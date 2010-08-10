@@ -266,8 +266,8 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
                 // quietly do nothing.
                 flow = null;
             } else if ( flow == null && isShouldAutoStart() ) {
-                // no flows on this page are active. This FullFlowComponent is an autoStart so it should do its thing.
-                // and start.
+                // no flows on this page are active. This FullFlowComponent is an autoStart so it should do its thing and start.
+                // TODO: by default autoStart should clear all existing flows ( problem if we want to always have a flow active )
                 getFlowManagement().getLog().debug("Auto starting "+getFlowName()+" on page "+getPage().getPageName()+" activeflows="+getFlowManagement().getFlowStates());
                 StartFromDefinitionFlowLauncher flowLauncher = new StartFromDefinitionFlowLauncher(getFlowName(), null, getFlowManagement(), getFlowName(), getContainer(), getInitialValues());
                 try {
