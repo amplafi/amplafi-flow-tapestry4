@@ -60,7 +60,6 @@ import org.apache.tapestry.web.WebResponse;
  *
  */
 public abstract class BaseFlowService implements FlowService {
-    public static final String JSON_DESCRIBE = "json/describe";
     public static final String USE_CURRENT = "current";
 
     private static final String SCRIPT_CONTENT_TYPE = "text/javascript";
@@ -90,7 +89,7 @@ public abstract class BaseFlowService implements FlowService {
         String flowId = cycle.getParameter(FLOW_ID);
         String renderResult = cycle.getParameter(FSRENDER_RESULT);
 
-        if (JSON_DESCRIBE.equals(renderResult)) {
+        if (FlowConstants.JSON_DESCRIBE.equals(renderResult)) {
             describeService(cycle, flowType);
             return;
         }
