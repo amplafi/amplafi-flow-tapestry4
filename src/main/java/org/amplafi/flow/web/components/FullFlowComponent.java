@@ -94,7 +94,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
      * @return true if the flow control widget should be displayed.
      */
     @Parameter
-    public abstract boolean getHideFlowControl();
+    public abstract boolean getFsHideFlowControl();
 
     /**
      * @param listener runs if flow ends somehow ( cancel or finish).

@@ -61,7 +61,7 @@ public abstract class FlowControl extends BaseFlowComponent {
     @Message("flow.unnamed-activity")
     public abstract String getUnnamedActivity();
 
-    public abstract FlowResultHandler getFlowResultHandler();
+    public abstract FlowResultHandler<BaseFlowComponent> getFlowResultHandler();
 
     @Cached(resetAfterRewind=true)
     public List<FlowActivity> getActivities() {

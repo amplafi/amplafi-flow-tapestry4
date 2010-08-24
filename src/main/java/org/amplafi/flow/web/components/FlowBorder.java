@@ -64,7 +64,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
      * @return true if the flow control widget should be displayed.
      */
     @Parameter
-    public abstract boolean getHideFlowControl();
+    public abstract boolean getFsHideFlowControl();
 
     @Override
     @Parameter(defaultValue = "true")
@@ -139,7 +139,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
 
     public abstract FlowBorderCustomizer getFlowBorderCustomizer();
 
-    public abstract FlowResultHandler getFlowResultHandler();
+    public abstract FlowResultHandler<BaseFlowComponent> getFlowResultHandler();
 
     public abstract FlowTransition getFlowTransition();
 
@@ -457,7 +457,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
 
     @Cached(resetAfterRewind=true)
     public boolean getIncludeFlowControl() {
-        return !(getHideFlowControl() || getAttachedFlowState().getProperty(FlowConstants.FSHIDE_FLOW_CONTROL, boolean.class))
+        return !(getFsHideFlowControl() || getAttachedFlowState().getProperty(FlowConstants.FSHIDE_FLOW_CONTROL, boolean.class))
                 && getAttachedFlowState().getVisibleActivities().size() > 1;
     }
 }

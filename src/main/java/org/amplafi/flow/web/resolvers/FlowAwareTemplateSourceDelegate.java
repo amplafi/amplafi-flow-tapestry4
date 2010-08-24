@@ -132,10 +132,6 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
     /**
      *
      */
-    private static final String HIDE_FLOW_CONTROL = "hideFlowControl";
-    /**
-     *
-     */
     public static final String FLOW_BORDER_COMPONENT = "flow:FlowBorder";
     static final String FLOW_TO_USE = OGNL + "flowState";
     static final String ATTACH_OGNL = " " + FlowConstants.ATTACHED_FLOW + "=\"" + FLOW_TO_USE + "\" ";
@@ -246,7 +242,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
 
         writer.create("div",
                 JWCID, FullFlowComponent.FLOW_BORDER_COMPONENT_NAME+"@"+FLOW_BORDER_COMPONENT,
-                HIDE_FLOW_CONTROL, OGNL+HIDE_FLOW_CONTROL,
+                FlowConstants.FSHIDE_FLOW_CONTROL, OGNL+FlowConstants.FSHIDE_FLOW_CONTROL,
                 UPDATE_COMPONENTS, OGNL+UPDATE_COMPONENTS,
                 END_LISTENER, OGNL+END_LISTENER,
                 CANCEL_LISTENER, OGNL+CANCEL_LISTENER,
@@ -261,7 +257,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         if (additionalUpdateComponents!=null) {
             writer.attribute(ADDITIONAL_UPDATE_COMPONENTS, additionalUpdateComponents);
         }
-        Set<String> matchedParameters = new HashSet<String>(Arrays.asList(HIDE_FLOW_CONTROL,
+        Set<String> matchedParameters = new HashSet<String>(Arrays.asList(FlowConstants.FSHIDE_FLOW_CONTROL,
                 UPDATE_COMPONENTS, END_LISTENER, CANCEL_LISTENER, FINISH_LISTENER, NEXT_LISTENER, PREVIOUS_LISTENER, ASYNC,
                 DEBUG, ADDITIONAL_UPDATE_COMPONENTS, "usingLinkSubmit", "disabled"));
 

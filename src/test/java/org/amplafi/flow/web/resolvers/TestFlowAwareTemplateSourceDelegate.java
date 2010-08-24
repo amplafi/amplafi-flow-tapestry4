@@ -17,6 +17,7 @@ package org.amplafi.flow.web.resolvers;
 
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.impl.FlowImpl;
@@ -290,7 +291,11 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
     }
 
     private String getFullFlowBorderTemplate() {
-        return "<div jwcid=\"flowBorder@flow:FlowBorder\" hideFlowControl=\"ognl:hideFlowControl\" updateComponents=\"ognl:updateComponents\" "
+        return "<div jwcid=\"flowBorder@flow:FlowBorder\" " +
+                FlowConstants.FSHIDE_FLOW_CONTROL +
+        		"=\"ognl:" +
+        		FlowConstants.FSHIDE_FLOW_CONTROL +
+        		"\" updateComponents=\"ognl:updateComponents\" "
         + "endListener=\"ognl:endListener\" cancelListener=\"ognl:cancelListener\" finishListener=\"ognl:finishListener\" "
         + "async=\"ognl:async\" nextListener=\"ognl:nextListener\" previousListener=\"ognl:previousListener\""
         + " fsFlowTransitions=\"fprop:fsFlowTransitions\""

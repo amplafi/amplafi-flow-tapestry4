@@ -12,7 +12,7 @@ import org.apache.tapestry.valid.IValidationDelegate;
 import org.apache.tapestry.valid.ValidationConstraint;
 
 
-public class BaseFlowResultHandlerImpl implements FlowResultHandler {
+public class BaseFlowResultHandlerImpl implements FlowResultHandler<BaseFlowComponent> {
 
     @Override
     public void handleFlowResult(FlowValidationResult result, BaseFlowComponent component) {
