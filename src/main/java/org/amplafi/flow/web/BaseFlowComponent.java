@@ -13,21 +13,22 @@
  */
 package org.amplafi.flow.web;
 
-import static org.apache.commons.lang.StringUtils.*;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import net.sf.tacos.annotations.Cached;
 
 import org.amplafi.flow.Flow;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.tapestry.BaseComponent;
 import org.apache.tapestry.IForm;
 import org.apache.tapestry.TapestryUtils;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.services.ResponseBuilder;
+
+import static com.sworddance.util.CUtilities.*;
 
 
 /**
@@ -71,11 +72,11 @@ public abstract class BaseFlowComponent extends BaseComponent implements FlowAwa
      */
     public List<String> findComponentsToUpdate(Object comps) {
         List<String> result = asList(comps);
-        if ( CollectionUtils.isNotEmpty(result)) {
+        if ( isNotEmpty(result)) {
             return result;
         }
         result = asList(getUpdateComponents());
-        if ( CollectionUtils.isNotEmpty(result)) {
+        if ( isNotEmpty(result)) {
             return result;
         } else if (isInsideForm()){
             return Collections.singletonList(getForm().getClientId());

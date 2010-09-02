@@ -215,7 +215,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
         }
         List<String> updateList = new ArrayList<String>();
         updateList.addAll(findComponentsToUpdate(getUpdateComponents()));
-        if (getAdditionalUpdateComponents() != null && !getAdditionalUpdateComponents().isEmpty()) {
+        if ( isNotEmpty(getAdditionalUpdateComponents())) {
             updateList.addAll(getAdditionalUpdateComponents());
         }
         return updateList;
