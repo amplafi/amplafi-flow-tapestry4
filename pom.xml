@@ -269,7 +269,7 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng-build}</version>
-            <classifier>jdk15</classifier>
+
             <scope>test</scope>
             <exclusions>
                 <exclusion>
