@@ -14,14 +14,7 @@
 
 package org.amplafi.flow.web.services;
 
-import static com.sworddance.util.CUtilities.isNotEmpty;
-import static com.sworddance.util.CUtilities.put;
-import static org.amplafi.flow.FlowConstants.FSREFERRING_URL;
-import static org.amplafi.flow.FlowConstants.FSRENDER_RESULT;
-import static org.amplafi.flow.launcher.FlowLauncher.COMPLETE_FLOW;
-import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.join;
+import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,8 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowManagement;
@@ -43,6 +34,7 @@ import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.FlowResultHandler;
 import org.amplafi.flow.web.FlowWebUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.IRequestCycle;
@@ -53,6 +45,11 @@ import org.apache.tapestry.services.LinkFactory;
 import org.apache.tapestry.util.ContentType;
 import org.apache.tapestry.web.WebRequest;
 import org.apache.tapestry.web.WebResponse;
+
+import static org.amplafi.flow.FlowConstants.*;
+import static org.amplafi.flow.launcher.FlowLauncher.*;
+import static org.apache.commons.lang.StringUtils.*;
+import static com.sworddance.util.CUtilities.*;
 
 
 /**
@@ -164,28 +161,29 @@ public abstract class BaseFlowService implements FlowService {
         if ( isNotBlank(flowId)) {
             flowState = getFlowManagement().getFlowState(flowId);
         }
-        if ( flowState == null && isNotBlank(flowType)) {
+        if ( flowState == null ){
+        	if ( isNotBlank(flowType)) {
+	            if(!getFlowManager().isFlowDefined(flowType)) {
+	                renderError(writer, flowType+": no such flow type", renderResult, null, new PageNotFoundException(flowType));
+	                return null;
+	            }
 
-            if(!getFlowManager().isFlowDefined(flowType)) {
-                renderError(writer, flowType+": no such flow type", renderResult, null, new PageNotFoundException(flowType));
-                return null;
-            }
+	            if (USE_CURRENT.equals(flowId)) {
+	                flowState = getFlowManagement().getFirstFlowStateByType(flowType);
+	            }
 
-            if (USE_CURRENT.equals(flowId)) {
-                flowState = getFlowManagement().getFirstFlowStateByType(flowType);
-            }
-
-            if (flowState==null) {
-                String returnToFlowLookupKey = null;
-                flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey );
-                if ( flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
-                    renderError(writer, flowType+": could not start flow type", renderResult, flowState, null);
-                    return null;
-                }
-            }
-        } else {
-            renderError(writer, "neither "+ServicesConstants.FLOW_TYPE+" nor "+FLOW_ID+" in parameters", renderResult, null, null);
-            return null;
+	            if (flowState==null) {
+	                String returnToFlowLookupKey = null;
+	                flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey );
+	                if ( flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
+	                    renderError(writer, flowType+": could not start flow type", renderResult, flowState, null);
+	                    return null;
+	                }
+	            }
+	        } else {
+	            renderError(writer, "neither "+ServicesConstants.FLOW_TYPE+" nor "+FLOW_ID+" in parameters", renderResult, null, null);
+	            return null;
+	        }
         }
         return flowState;
     }
