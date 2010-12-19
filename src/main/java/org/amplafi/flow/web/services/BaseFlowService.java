@@ -31,8 +31,8 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
+import org.amplafi.flow.validation.FlowResultHandler;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.flow.web.FlowResultHandler;
 import org.amplafi.flow.web.FlowWebUtils;
 
 import org.apache.commons.lang.StringUtils;

@@ -3,21 +3,28 @@ package org.amplafi.flow.web.services;
 import java.util.List;
 
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.FlowValidationResult;
-import org.amplafi.flow.FlowValidationTracking;
+import org.amplafi.flow.validation.FlowResultHandler;
+import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.validation.FlowValidationTracking;
 import org.amplafi.flow.web.BaseFlowComponent;
-import org.amplafi.flow.web.FlowResultHandler;
+
+import org.apache.commons.logging.Log;
 import org.apache.hivemind.Messages;
 import org.apache.tapestry.valid.IValidationDelegate;
 import org.apache.tapestry.valid.ValidationConstraint;
 
-
+/**
+ * Intended to be configured as a service.
+ * @author patmoore
+ *
+ */
 public class BaseFlowResultHandlerImpl implements FlowResultHandler<BaseFlowComponent> {
 
+	private Log log;
     @Override
     public void handleFlowResult(FlowValidationResult result, BaseFlowComponent component) {
         FlowState currentFlowState = component.getAttachedFlowState();
-        component.getFlowManagement().getLog().warn(
+        getLog().warn(
                 currentFlowState+" could not complete "+currentFlowState.getCurrentActivityByName()+ " (activity #"+currentFlowState.getCurrentActivityIndex()+ ") flowValidationResult="+result);
         handleValidationTrackings(result.getTrackings(), component);
     }
@@ -58,4 +65,12 @@ public class BaseFlowResultHandlerImpl implements FlowResultHandler<BaseFlowComp
         String formattedMessage = messages.format(tracking.getMessageKey(), tracking.getMessageParameters());
         sb.append(formattedMessage);
     }
+
+	public void setLog(Log log) {
+		this.log = log;
+	}
+
+	public Log getLog() {
+		return log;
+	}
 }

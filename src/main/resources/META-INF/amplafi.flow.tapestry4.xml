@@ -82,7 +82,7 @@
     </service-point>
 
     <!-- provide an alternative <implementation> to handle FlowValidationResults differently for your ui -->
-    <service-point id="FlowResultHandler" interface="org.amplafi.flow.web.FlowResultHandler">
+    <service-point id="FlowResultHandler" interface="org.amplafi.flow.validation.FlowResultHandler">
         <invoke-factory service-id="amplafi.factory.appServicesFactory">
             <construct class="org.amplafi.flow.web.services.BaseFlowResultHandlerImpl" />
         </invoke-factory>
