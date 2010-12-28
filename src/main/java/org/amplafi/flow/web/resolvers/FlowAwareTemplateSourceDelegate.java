@@ -14,10 +14,10 @@
 package org.amplafi.flow.web.resolvers;
 
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.InputStream;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -35,6 +35,8 @@ import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.web.FlowWebUtils;
 import org.amplafi.flow.web.components.FullFlowComponent;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hivemind.ApplicationRuntimeException;
 import org.apache.hivemind.Location;
@@ -56,10 +58,8 @@ import org.apache.tapestry.resolver.ComponentSpecificationResolver;
 import org.apache.tapestry.services.impl.DefaultParserDelegate;
 import org.apache.tapestry.spec.IComponentSpecification;
 
-
 import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.*;
-import org.apache.commons.io.IOUtils;
 
 
 /**
@@ -143,7 +143,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
     private String additionalUpdateComponents;
     private String pageTemplate;
 
-    public void setParser(ITemplateParser parser) {
+    public synchronized void setParser(ITemplateParser parser) {
         this.parser = parser;
     }
 
@@ -166,6 +166,8 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
                 pageTemplate = IOUtils.toString(stream);
             } catch (IOException e) {
                 getLog().info("Can't load template: " + path, e);
+            } finally {
+            	IOUtils.closeQuietly(stream);
             }
         }
     }
