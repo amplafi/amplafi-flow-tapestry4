@@ -14,14 +14,15 @@
 
 package org.amplafi.flow.web.components;
 
-import static org.apache.commons.lang.StringUtils.*;
+import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletResponse;
+import net.sf.tacos.annotations.Cached;
+import net.sf.tacos.annotations.InjectParameterFlag;
 
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowUtils;
@@ -31,12 +32,14 @@ import org.amplafi.flow.validation.FlowResultHandler;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.BaseFlowComponent;
 import org.amplafi.flow.web.FlowWebUtils;
+
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry.IActionListener;
 import org.apache.tapestry.IForm;
 import org.apache.tapestry.IRequestCycle;
-import org.apache.tapestry.link.DirectLink;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.ComponentClass;
 import org.apache.tapestry.annotations.InjectObject;
@@ -44,13 +47,11 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.engine.IEngineService;
 import org.apache.tapestry.engine.ILink;
 import org.apache.tapestry.form.Form;
-import org.apache.tapestry.form.Submit;
 import org.apache.tapestry.form.LinkSubmit;
+import org.apache.tapestry.form.Submit;
+import org.apache.tapestry.link.DirectLink;
 
-import com.sworddance.util.ApplicationIllegalArgumentException;
-
-import net.sf.tacos.annotations.Cached;
-import net.sf.tacos.annotations.InjectParameterFlag;
+import static org.apache.commons.lang.StringUtils.*;
 
 
 /**
@@ -422,10 +423,8 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
             Boolean hidden = getHidden();
             if ( hidden != null ) {
                 showValue = !hidden;
-                if (condition != null && condition != showValue) {
-                    throw new ApplicationIllegalArgumentException(
-                        "show and hidden parameters are contradicting each other -- really should only specify one or the other.");
-                }
+                ApplicationIllegalArgumentException.valid(condition == null || condition.equals(showValue),
+                        "condition ",condition," and not(hidden) ",showValue," parameters are contradicting each other -- really should only specify one or the other.");
             } else {
                 showValue = condition;
             }

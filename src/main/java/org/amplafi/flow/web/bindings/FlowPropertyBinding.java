@@ -15,9 +15,12 @@ package org.amplafi.flow.web.bindings;
 
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
-import org.amplafi.flow.FlowStateProvider;
-import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStateProvider;
+
+import com.sworddance.util.ApplicationIllegalStateException;
+
 import org.apache.commons.logging.Log;
 import org.apache.hivemind.Location;
 import org.apache.tapestry.BindingException;
@@ -34,10 +37,8 @@ import org.apache.tapestry.form.AbstractFormComponent;
 import org.apache.tapestry.form.ValidatableField;
 import org.apache.tapestry.valid.ValidatorException;
 
-import com.sworddance.util.ApplicationIllegalStateException;
-
-import static com.sworddance.util.ApplicationNullPointerException.notNull;
 import static org.apache.commons.lang.StringUtils.*;
+import static com.sworddance.util.ApplicationNullPointerException.*;
 
 /**
  * An implementation of {@link org.apache.tapestry.IBinding} to connect components to flow properties.
@@ -234,7 +235,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
     public void setObject(Object value) {
         // Check that we have a flow to set the value to
         FlowState flowState = getFlowState();
-        ApplicationIllegalStateException.checkState(flowState != null, this,": no attached flow - cannot set value");
+        ApplicationIllegalStateException.notNull(flowState, this,": no attached flow - cannot set value");
         flowState.setProperty(key, value);
     }
 
