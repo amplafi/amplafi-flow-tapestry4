@@ -37,10 +37,12 @@ import org.apache.tapestry.IRender;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageRedirectException;
 import org.apache.tapestry.annotations.Bean;
+import org.apache.tapestry.annotations.EventListener;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.event.PageEvent;
 import org.apache.tapestry.event.PageValidateListener;
 import org.apache.tapestry.json.IJSONWriter;
+import org.apache.tapestry.pageload.EventConnectionVisitor;
 import org.apache.tapestry.valid.IValidationDelegate;
 import org.apache.tapestry.valid.ValidationDelegate;
 
@@ -81,7 +83,20 @@ import java.util.Arrays;
  * Each {@link org.amplafi.flow.FlowActivity} in the {@link Flow}
  * should reference a component. FullFlowComponent wires all of the FlowActivity's component's required parameters
  * wired to the FlowActivity using a {@link org.amplafi.flow.web.bindings.FlowPropertyBinding}
+ * 
+ * TODO {@link EventListener} PROBLEM:
+ * 
+ * It turned out that the {@link EventListener} annotation doesn't work properly when used within 
+ * the {@link FullFlowComponent}. While the events are wired and you can write code for handling them, it looks
+ * like it doesn't submit a form on event being fired. So you can handle an event, but you can't get changes from
+ * client side at the moment. I've narrowed that down to {@link EventConnectionVisitor}.
+ * It looks like the visitor fails to find a form for a component when the component is placed 
+ * within {@link FullFlowComponent}.
+ *  
+ *
+ * 
  */
+
 public abstract class FullFlowComponent extends BaseFlowComponent implements FlowStateProvider,
         IJSONRender, PageValidateListener {
 
