@@ -2,7 +2,7 @@
 <span jwcid="$content$">
     <span jwcid="not_empty_displayedFlows@If" condition="ognl:!displayedFlows.empty" renderTag="false">
         <span jwcid="@Insert" value="ognl:collectionName">Collection Name</span>
-        <ul class="generic_list">
+        <ul class="amplafiActiveFlowList">
             <li jwcid="displayedFlows_for@For" source="ognl:displayedFlows" value="ognl:current" keyExpression="keyExpression" 
                 class="ognl:displayedClass"><span jwcid="flowEntryPoint"/>
             </li>    
