@@ -41,7 +41,6 @@ import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageNotFoundException;
 import org.apache.tapestry.PageRedirectException;
 import org.apache.tapestry.RedirectException;
-import org.apache.tapestry.services.LinkFactory;
 import org.apache.tapestry.util.ContentType;
 import org.apache.tapestry.web.WebRequest;
 import org.apache.tapestry.web.WebResponse;
@@ -60,7 +59,6 @@ public abstract class BaseFlowService implements FlowService {
     public static final String USE_CURRENT = "current";
 
     private static final String SCRIPT_CONTENT_TYPE = "text/javascript";
-    private LinkFactory linkFactory;
     private FlowManager flowManager;
     private WebRequest request;
     private WebResponse response;
@@ -85,9 +83,11 @@ public abstract class BaseFlowService implements FlowService {
         String flowType = cycle.getParameter(ServicesConstants.FLOW_TYPE);
         String flowId = cycle.getParameter(FLOW_ID);
         String renderResult = cycle.getParameter(FSRENDER_RESULT);
+        PrintWriter writer = getWriter(cycle);
 
         if (FlowConstants.JSON_DESCRIBE.equals(renderResult)) {
-            describeService(cycle, flowType);
+            CharSequence description = describeService(flowType, renderResult);
+            writer.append(description);
             return;
         }
 
@@ -149,11 +149,12 @@ public abstract class BaseFlowService implements FlowService {
 
     /**
      * Render a json description of the flow. This includes parameters (name, type, required).
-     * @param cycle
      * @param flowType
+     * @param renderResult TODO
+     * @return TODO
      * @throws IOException
      */
-    public abstract void describeService(IRequestCycle cycle, String flowType) throws IOException;
+    public abstract CharSequence describeService(String flowType, String renderResult) throws IOException;
 
     // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Writer writer, boolean currentFlow) throws IOException {
@@ -189,14 +190,6 @@ public abstract class BaseFlowService implements FlowService {
     }
 
     protected abstract void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException;
-
-    public void setLinkFactory(LinkFactory linkFactory) {
-        this.linkFactory = linkFactory;
-    }
-
-    public LinkFactory getLinkFactory() {
-        return linkFactory;
-    }
 
     public void setFlowManager(FlowManager flowManager) {
         this.flowManager = flowManager;
@@ -309,7 +302,6 @@ public abstract class BaseFlowService implements FlowService {
         }
     }
 
-    // TODO look at eliminating passing of cycle so that calls will be less tapestry specific.
     protected void renderValidationException(FlowValidationException e, String flowType, Writer writer) throws IOException {
         // TODO: we should be looking at render code.
         // but could be bad urls from searchbots
