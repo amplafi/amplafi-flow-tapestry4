@@ -112,6 +112,21 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
      * Used to initialize the flow. Each string is of the form "flowKey1=flowValue1"
      * If 'flowValue' is a FormComponent it usually has a 'value' parameter. That value parameter
      * is used as the value to be assigned to the flow's flowKey1's initial value.
+     *
+     * @return evaluated values.
+     */
+    @Parameter
+    public abstract Object getEvaluatedValues();
+    /**
+     * Used to initialize the flow. Each string is of the form "flowKey1=flowValue1"
+     * These values are explicitly NOT evaluated in the context of the current component. This allows for a
+     * stateless link to be generated, and avoids a submit.
+     *
+     * NOTE: a submit of the current form may still be desirable to preserve the current page's selections and
+     * text changes.
+     *
+     * NOTE: initialValues acts as defaults if {@link #getEvaluatedValues()} is also used
+     *
      * @return assigned initial values.
      */
     @Parameter
@@ -351,31 +366,21 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     // but rather a map. The problem with a map is that tapestry @Component bindings can easily handle lists but
     // can not easily specify maps.
     @Cached(resetAfterRewind=true)
-    @SuppressWarnings("unchecked")
     protected List<String> getValues() {
+        List<String> values = getConvertedValues(getEvaluatedValues());
+        return values;
+    }
+    @Cached(resetAfterRewind=true)
+    protected List<String> getIValues() {
+        List<String> values = getConvertedValues(getInitialValues());
+        return values;
+    }
+    @SuppressWarnings("unchecked")
+    protected List<String> getConvertedValues(Object initialValues) {
         List<String> values = null;
 
-        Object initialValues = getInitialValues();
         if (initialValues != null ) {
             values = new ArrayList<String>();
-//        boolean b = /* !isFormValuesNotUsed() &&*/ isInsideForm();
-//        if (isFlowEntryPointIsForm() || b) {
-//            // WRONG ... ANDY how to get access to the body components?
-//            Form form =(Form) this.getForm();
-//            Map<Object, IComponent> formComponents = form.getComponents();
-//            for(IComponent formComponent: formComponents.values()) {
-//                if ( formComponent != this && formComponent instanceof IFormComponent) {
-//                    IFormComponent iformComponent = (IFormComponent)formComponent;
-//                    String displayName = iformComponent.getName();
-//                    if ( isNotBlank(displayName)) {
-//                        IBinding binding = iformComponent.getBinding("value");
-//                        if ( binding != null) {
-//                            values.add(displayName+"="+displayName);
-//                        }
-//                    }
-//                }
-//            }
-//        }
             if (initialValues instanceof Iterable) {
                 for(String s: (Iterable<String>)initialValues) {
                     values.add(s);
@@ -397,8 +402,12 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     public FlowLauncher getActualFlowLauncher() {
         FlowLauncher launcher = getFlowLauncher();
 
-        if ( launcher == null && StringUtils.isNotBlank(getActualFlowTypeName())) {
-            launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), null, getFlowManagement(), null, getContainer(), getValues());
+        if ( StringUtils.isNotBlank(getActualFlowTypeName())) {
+            if ( launcher == null ) {
+                launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), getIValues(), getFlowManagement(), null, getContainer(), getValues());
+            } else if ( StringUtils.isBlank(launcher.getFlowTypeName()) ) {
+                launcher.setFlowTypeName(getActualFlowTypeName());
+            }
         }
         if ( launcher != null ) {
             launcher.setReturnToFlow(getReturnFlowLookupKey());
@@ -494,7 +503,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
                     }
                     if ( initialValues != null) {
                         ((StartFromDefinitionFlowLauncher)flowLauncher).setPropertyRoot(getContainer());
-                        ((StartFromDefinitionFlowLauncher)flowLauncher).addInitialValues(initialValues);
+                        ((StartFromDefinitionFlowLauncher)flowLauncher).addEvaluatedValues(initialValues);
                     }
                 }
             }
@@ -559,7 +568,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
 
     public boolean isRenderedAsSubmit() {
         if ( isInsideForm() ) {
-            return getInitialValues() != null || "submit".equals(getType());
+            return getEvaluatedValues() != null || "submit".equals(getType());
         } else {
             return false;
         }

@@ -78,23 +78,23 @@ import java.util.Arrays;
  * will be displayed with the third FlowActivity displayed to the user.
  * <p/>
  * Like {@link FlowEntryPoint}, initial values can be passed to the
- * flow with {@link #getInitialValues()}. (see {@link FlowEntryPoint#getInitialValues()}.)
+ * flow with {@link #getInitialValues()}. (see {@link FlowEntryPoint#getEvaluatedValues()}.)
  * <p/>
  * Each {@link org.amplafi.flow.FlowActivity} in the {@link Flow}
  * should reference a component. FullFlowComponent wires all of the FlowActivity's component's required parameters
  * wired to the FlowActivity using a {@link org.amplafi.flow.web.bindings.FlowPropertyBinding}
- * 
+ *
  * TODO {@link EventListener} PROBLEM:
- * 
- * It turned out that the {@link EventListener} annotation doesn't work properly when used within 
+ *
+ * It turned out that the {@link EventListener} annotation doesn't work properly when used within
  * the {@link FullFlowComponent}. While the events are wired and you can write code for handling them, it looks
  * like it doesn't submit a form on event being fired. So you can handle an event, but you can't get changes from
  * client side at the moment. I've narrowed that down to {@link EventConnectionVisitor}.
- * It looks like the visitor fails to find a form for a component when the component is placed 
+ * It looks like the visitor fails to find a form for a component when the component is placed
  * within {@link FullFlowComponent}.
- *  
  *
- * 
+ *
+ *
  */
 
 public abstract class FullFlowComponent extends BaseFlowComponent implements FlowStateProvider,
@@ -182,9 +182,16 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
     public abstract IValidationDelegate getDelegate();
 
     /**
+     * follows same rules as {@link FlowEntryPoint#getEvaluatedValues()}
+     * when starting a flow.
+     * @return  {@link FlowEntryPoint#getEvaluatedValues()}
+     */
+    @Parameter
+    public abstract Iterable<String> getEvaluatedValues();
+    /**
      * follows same rules as {@link FlowEntryPoint#getInitialValues()}
      * when starting a flow.
-     * @return  {@link FlowEntryPoint#getInitialValues()}
+     * @return  {@link FlowEntryPoint#getEvaluatedValues()}
      */
     @Parameter
     public abstract Iterable<String> getInitialValues();
@@ -284,7 +291,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
                 // no flows on this page are active. This FullFlowComponent is an autoStart so it should do its thing and start.
                 // TODO: by default autoStart should clear all existing flows ( problem if we want to always have a flow active )
                 getFlowManagement().getLog().debug("Auto starting "+getFlowName()+" on page "+getPage().getPageName()+" activeflows="+getFlowManagement().getFlowStates());
-                StartFromDefinitionFlowLauncher flowLauncher = new StartFromDefinitionFlowLauncher(getFlowName(), null, getFlowManagement(), getFlowName(), getContainer(), getInitialValues());
+                StartFromDefinitionFlowLauncher flowLauncher = new StartFromDefinitionFlowLauncher(getFlowName(),getInitialValues(), getFlowManagement(), getFlowName(), getContainer(), getEvaluatedValues());
                 try {
                     flow = flowLauncher.call();
                 } catch (FlowValidationException e) {
