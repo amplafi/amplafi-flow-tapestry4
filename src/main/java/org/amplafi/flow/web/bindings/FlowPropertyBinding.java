@@ -20,6 +20,7 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStateProvider;
 
 import com.sworddance.util.ApplicationIllegalStateException;
+import com.sworddance.util.perf.LapTimer;
 
 import org.apache.commons.logging.Log;
 import org.apache.hivemind.Location;
@@ -205,6 +206,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
         Object result = null;
         // Determine if there is a flow state to get the value from, if not just return defaultValue
         FlowState flowState = getFlowState();
+        LapTimer.sLap("FlowPropertyBinding: Getting property ",key);
         if (flowState != null) {
             addValidation(flowState.getCurrentActivity(), cycle.renderStackPeek());
             try {
@@ -217,6 +219,7 @@ public class FlowPropertyBinding implements FlowStateProvider, IBinding {
                 }
             }
         }
+        LapTimer.sLap("FlowPropertyBinding: Got property ",key);
         if (result == null && defaultValueBinding != null) {
             result = defaultValueBinding.getObject(expected);
         }
