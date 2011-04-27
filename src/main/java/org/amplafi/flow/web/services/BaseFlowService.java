@@ -90,7 +90,7 @@ public abstract class BaseFlowService implements FlowService {
 
         if (FlowConstants.JSON_DESCRIBE.equals(renderResult)) {
             // TODO: enable this when working
-            if(false || flowType == null){
+            if(false && flowType == null){
                 Collection<String> flowTypes=null;
                 // TODO: get a list of the different flowTypes
                 //need an instance to call -> FlowDefinitionsManagerImpl.getFlowDefinitions().keySet();
