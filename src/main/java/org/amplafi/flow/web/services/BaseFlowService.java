@@ -16,11 +16,13 @@ package org.amplafi.flow.web.services;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.CharConversionException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +36,7 @@ import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowResultHandler;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.FlowWebUtils;
+import org.amplafi.json.JSONWriter;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -86,11 +89,21 @@ public abstract class BaseFlowService implements FlowService {
         PrintWriter writer = getWriter(cycle);
 
         if (FlowConstants.JSON_DESCRIBE.equals(renderResult)) {
-            CharSequence description = describeService(flowType, renderResult);
-            writer.append(description);
-            return;
+            // TODO: enable this when working
+            if(false || flowType == null){
+                Collection<String> flowTypes=null;
+                // TODO: get a list of the different flowTypes
+                //need an instance to call -> FlowDefinitionsManagerImpl.getFlowDefinitions().keySet();
+                CharSequence flowTypesFormattedWithJson = toJsonArray(flowTypes);
+                writer.append(flowTypesFormattedWithJson);
+                return; 
+            }else {
+                CharSequence description = describeService(flowType, renderResult);
+                writer.append(description);
+                return;
+            }
         }
-
+        
         Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
         // TODO map cookie to the json flow state.
         String cookieString = cycle.getParameter(ServicesConstants.COOKIE_OBJECT);
@@ -125,7 +138,22 @@ public abstract class BaseFlowService implements FlowService {
 			getLog().info(referingUri, e);
 		}
 	}
-
+    
+    /**
+     * TODO: move to a JSON utils class
+     * @param collection
+     * @return
+     */
+    private CharSequence toJsonArray(Collection<String> collection){
+        JSONWriter jsonWriter = new JSONWriter();
+        jsonWriter.array();
+        for(String string : collection){
+            jsonWriter.value(string);
+        }
+        jsonWriter.endArray();
+        return jsonWriter.toString();
+    }
+    
     /**
      *
      */
