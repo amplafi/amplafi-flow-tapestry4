@@ -27,12 +27,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.FlowConstants;
+import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
+import org.amplafi.flow.impl.FlowManagerImpl;
 import org.amplafi.flow.validation.FlowResultHandler;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.FlowWebUtils;
@@ -80,6 +82,8 @@ public abstract class BaseFlowService implements FlowService {
     private FlowResultHandler resultHandler;
     private boolean assumeApiCall;
 
+    private FlowDefinitionsManager flowDefinitionsManager;
+
     @Override
     @SuppressWarnings("unchecked")
     public void service(IRequestCycle cycle) throws IOException {
@@ -89,11 +93,9 @@ public abstract class BaseFlowService implements FlowService {
         PrintWriter writer = getWriter(cycle);
 
         if (FlowConstants.JSON_DESCRIBE.equals(renderResult)) {
-            // TODO: enable this when working
-            if(false && flowType == null){
-                Collection<String> flowTypes=null;
-                // TODO: get a list of the different flowTypes
-                //need an instance to call -> FlowDefinitionsManagerImpl.getFlowDefinitions().keySet();
+            if(flowType == null){
+                // if no flow type then return a json array of all the flow types.
+                Collection<String> flowTypes = flowDefinitionsManager.getFlowDefinitions().keySet();
                 CharSequence flowTypesFormattedWithJson = toJsonArray(flowTypes);
                 writer.append(flowTypesFormattedWithJson);
                 return; 
@@ -138,6 +140,20 @@ public abstract class BaseFlowService implements FlowService {
 			getLog().info(referingUri, e);
 		}
 	}
+    
+    /**
+     * @param flowDefinitionsManager the flowDefinitionsManager to set
+     */
+    public void setFlowDefinitionsManager(FlowDefinitionsManager flowDefinitionsManager) {
+        this.flowDefinitionsManager = flowDefinitionsManager;
+    }
+
+    /**
+     * @return the flowDefinitionsManager
+     */
+    public FlowDefinitionsManager getFlowDefinitionsManager() {
+        return flowDefinitionsManager;
+    }
     
     /**
      * TODO: move to a JSON utils class
