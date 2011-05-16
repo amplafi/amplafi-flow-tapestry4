@@ -14,12 +14,12 @@
 
 package org.amplafi.flow.web.components;
 
-import javax.servlet.http.HttpServletResponse;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.tacos.annotations.Cached;
 import net.sf.tacos.annotations.InjectParameterFlag;
@@ -36,7 +36,6 @@ import org.amplafi.flow.web.FlowWebUtils;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry.IActionListener;
 import org.apache.tapestry.IForm;
 import org.apache.tapestry.IRequestCycle;
@@ -88,6 +87,9 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     /**
      * This value will not be available when {@link #doEnterFlow(FlowLauncher, String, Iterable)} is called,
      * so it will be passed explicitly.
+     *
+     * Do not use this parameter directly. Get the {@link #getActualFlowLauncher()} instead.
+     *
      * @return a previously created FlowLauncher
      */
     @Parameter
@@ -402,15 +404,16 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     public FlowLauncher getActualFlowLauncher() {
         FlowLauncher launcher = getFlowLauncher();
 
-        if ( StringUtils.isNotBlank(getActualFlowTypeName())) {
+        if ( isNotBlank(getActualFlowTypeName())) {
             if ( launcher == null ) {
                 launcher = new StartFromDefinitionFlowLauncher(getActualFlowTypeName(), getIValues(), getFlowManagement(), null, getContainer(), getValues());
-            } else if ( StringUtils.isBlank(launcher.getFlowTypeName()) ) {
+            } else if ( isBlank(launcher.getFlowTypeName()) ) {
                 launcher.setFlowTypeName(getActualFlowTypeName());
             }
         }
         if ( launcher != null ) {
             launcher.setReturnToFlow(getReturnFlowLookupKey());
+            launcher.setFlowManagement(getFlowManagement());
         }
         return launcher;
     }
@@ -497,10 +500,14 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
                 flowLauncher.setFlowManagement(getFlowManagement());
                 if (flowLauncher instanceof StartFromDefinitionFlowLauncher) {
                     // if currentFlowState was just finished, we want the final flow state.
-                    if(currentFlowState != null){
-                        Map<String, String> initialFlowState = currentFlowState.getExportedValuesMap().getAsFlattenedStringMap();
-                        flowLauncher.putAll(initialFlowState);
-                    }
+                    // 23 feb 2011 -- this is causing "bleed through" from one flow to another. making is more difficult for sensitive information to be excluded.
+                    // with the getInitialValues(), getEvaluatedValues() I don't beleve this makes sense any more.
+                    // It seems a more proper way of pulling needed values through would be with those OR
+                    // have the flowState be able to request the property from the getReturnToFlow().
+//                    if(currentFlowState != null){
+//                        Map<String, String> initialFlowState = currentFlowState.getExportedValuesMap().getAsFlattenedStringMap();
+//                        flowLauncher.putAll(initialFlowState);
+//                    }
                     if ( initialValues != null) {
                         ((StartFromDefinitionFlowLauncher)flowLauncher).setPropertyRoot(getContainer());
                         ((StartFromDefinitionFlowLauncher)flowLauncher).addEvaluatedValues(initialValues);
@@ -555,13 +562,13 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
         if ( isBlank(label)) {
             // <input type="submit" value="label"/>
             label = getValue();
-        }
-        FlowLauncher actualFlowLauncher = getActualFlowLauncher();
-        if ( isBlank(label) && actualFlowLauncher != null ) {
-            label = actualFlowLauncher.getLinkTitle();
-        }
-        if ( isBlank(label) ) {
-            label = isBlank(getActualFlowTypeName())?"{no flow type}":"["+getActualFlowTypeName()+"]";
+            FlowLauncher actualFlowLauncher = getActualFlowLauncher();
+            if ( isBlank(label) && actualFlowLauncher != null ) {
+                label = actualFlowLauncher.getLinkTitle();
+            }
+            if ( isBlank(label) ) {
+                label = isBlank(getActualFlowTypeName())?"{no flow type}":"["+getActualFlowTypeName()+"]";
+            }
         }
         return processLabel(label, null);
     }
