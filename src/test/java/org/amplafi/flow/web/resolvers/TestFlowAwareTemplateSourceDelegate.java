@@ -59,7 +59,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         "<span jwcid=\"inF@If\" renderTag=\"false\" condition=\"ognl:insideForm\">" +
         "<span jwcid=\"@RenderBlock\" block=\"component:flowBlock\"/></span>" +
         "<span jwcid=\"orF@Else\" renderTag=\"false\">" +
-        "<form jwcid=\"comp#0FlowForm@Form\" async=\"ognl:async\" clientValidationEnabled=\"true\" class=\"ognl:className\" " +
+        "<form jwcid=\"comp_0FlowForm@Form\" async=\"ognl:async\" clientValidationEnabled=\"true\" class=\"ognl:className\" " +
         "delegate=\"ognl:delegate\" cancel=\"listener:doCancelForm\" refresh=\"listener:doRefreshForm\" stateful=\"ognl:stateful\">" +
         "<span jwcid=\"@RenderBlock\" block=\"component:flowBlock\"/>" + VALIDATORS + "</form></span>";
     private static final String TEMPLATE_SUFFIX =
@@ -133,7 +133,8 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
      */
     @Test(dataProvider="FlowAwareTemplateSourceDelegate")
     public void testSimple2Flow(FlowAwareTemplateSourceDelegate delegate) {
-        String componentName = "comp#0";
+        String componentName = "comp_0";
+        String flowActivityName = FlowActivityImpl.class.getSimpleName();
         ComponentSpecificationResolver csr = createMock(ComponentSpecificationResolver.class);
         delegate.setComponentSpecificationResolver(csr);
         IComponentSpecification compSpec = createSimpleCompSpec(componentName, FullFlowComponent.class);
@@ -159,10 +160,10 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         ComponentTemplate good = delegate.findTemplate(cycle, component, locale);
         assertEqualsExcludingWhitespace(new String(good.getTemplateData()),
                 TEMPLATE_PREFIX +
-                "<div jwcid=\"fc0@Block\"><div jwcid=\"fic0@comp#0\" " +
+                "<div jwcid=\"fc0@Block\"><div jwcid=\"fic_"+flowActivityName+"_0@comp_0\" " +
                 //ATTACH_OGNL+" " +
                 "categorySelection=\"fprop:categorySelection\" " +
-                "fooMessage=\"fprop:fooMessage=fic0@message:foo-message\"literalFling=\"fprop:literalFling=fic0@literal:fling\"" +
+                "fooMessage=\"fprop:fooMessage=fic_"+flowActivityName+"_0@message:foo-message\"literalFling=\"fprop:literalFling=fic_"+flowActivityName+"_0@literal:fling\"" +
                 "/></div>\n" + getFullFlowBorderTemplate() + TEMPLATE_SUFFIX);
     }
     /**
@@ -184,7 +185,8 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
      */
     @Test(dataProvider="FlowAwareTemplateSourceDelegate")
     public void testFlowWithProperties(FlowAwareTemplateSourceDelegate delegate) {
-        String componentName = "comp#0";
+        String flowActivityName = FlowActivityImpl.class.getSimpleName();
+        String componentName = "comp_0";
         ComponentSpecificationResolver csr = createMock(ComponentSpecificationResolver.class);
         delegate.setComponentSpecificationResolver(csr);
         IComponentSpecification compSpec = createSimpleCompSpec(componentName, FullFlowComponent.class);
@@ -210,12 +212,12 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         ComponentTemplate good = delegate.findTemplate(cycle, component, locale);
         assertEqualsExcludingWhitespace(new String(good.getTemplateData()),
                 TEMPLATE_PREFIX +
-                "<div jwcid=\"fc0@Block\"><div jwcid=\"fic0@comp#0\"  "+
+                "<div jwcid=\"fc0@Block\"><div jwcid=\"fic_"+flowActivityName+"_0@comp_0\"  "+
                 //"componentGlobaldef1=\"fprop:globaldef1\"  " +
                 //"componentOverlapParameter=\"fprop:overlap\" " +
                 //ATTACH_OGNL + " " +
                 "categorySelection=\"fprop:categorySelection\" " +
-                "fooMessage=\"fprop:fooMessage=fic0@message:foo-message\"literalFling=\"fprop:literalFling=fic0@literal:fling\"" +
+                "fooMessage=\"fprop:fooMessage=fic_"+flowActivityName+"_0@message:foo-message\"literalFling=\"fprop:literalFling=fic_"+flowActivityName+"_0@literal:fling\"" +
                 "/></div>\n" +
                 getFullFlowBorderTemplate() +
                 TEMPLATE_SUFFIX);
@@ -274,7 +276,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
         for (int i = 0; i < size; i++) {
             FlowActivityImpl activity = new FlowActivityImpl();
-            activity.setComponentName("comp#"+i);
+            activity.setComponentName("comp_"+i);
             simple.addActivity(activity);
         }
         return simple;
