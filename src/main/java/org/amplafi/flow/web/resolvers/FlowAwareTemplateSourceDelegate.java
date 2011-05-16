@@ -213,7 +213,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         writer.create("span", JWCID, "flowBlock@Block").println();
         writer.create("div", JWCID, VISIBLE_FLOW_IF +
                 "@If", "condition", OGNL+"visibleFlow", "renderTag", "false").println();
-        int counter = 0;
+
         for (FlowActivity activity: flow.getActivities()) {
             String componentName = activity.getComponentName();
             // Cannot just look at isPossiblyVisible() because that method also looks for a page name.
@@ -226,20 +226,18 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
                 specification = componentSpecificationResolver.getSpecification();
             } catch (ApplicationRuntimeException e) {
                 // couldn't find the component :-( ... normal for invisible components.
-                // TODO : isn't it better if we just clear the ComponentName?
                 ((FlowActivityImplementor)activity).setInvisible(true);
                 continue;
             }
             String blockName = FlowWebUtils.getBlockName(activity.getIndex());
             writer.create("div", JWCID, blockName + "@Block").println();
-            String flowComponentName = FlowWebUtils.getFlowComponentName(counter);
+            String flowComponentName = "fic_" +activity.getFlowPropertyProviderName().replaceAll("\\s*", "");
             writer.createEmpty("div", JWCID, flowComponentName + "@" + componentName);
 
             HashSet<String> matchedParameters = new HashSet<String>();
             assignFlowParameters(flow, writer, activity, specification, flowComponentName, matchedParameters);
             writer.end();
             writer.println();
-            counter++;
         }
 
         writer.create("div",

@@ -48,9 +48,6 @@ public class FlowWebUtils {
     public static String getBlockName(int activity) {
         return "fc" + activity;
     }
-    public static String getFlowComponentName(int counter) {
-        return "fic" + counter;
-    }
 
     /**
      * if page is not null then activate the page. Also if the page is a IExternalPage, the {@link org.apache.tapestry.IExternalPage#activateExternalPage(Object[], org.apache.tapestry.IRequestCycle)}
