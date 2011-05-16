@@ -13,7 +13,6 @@
  */
 package org.amplafi.flow.web.components;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.amplafi.flow.Flow;
@@ -355,7 +354,7 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
         FlowState flow = getFlowState();
         if ( flow != null ) {
             if ( flow.getFlowStateLifecycle() != FlowStateLifecycle.started) {
-                String message = getStartErrorMessage(flow) + "' but flow is not in the 'started' state. Flow state: " + flow.getFlowStateLifecycle() + "; Values: " + flow.getFlowValuesMap();
+                String message = getStartErrorMessage(flow).append("' but flow is not in the 'started' state. Flow state: ").append(flow.getFlowStateLifecycle()).append("; Values: ").append( flow.getFlowValuesMap()).toString();
                 throw new IllegalStateException(message);
             }
             int activity = flow.getCurrentActivityIndex();
@@ -385,9 +384,9 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
      * @param flow
      * @return message string
      */
-    private String getStartErrorMessage(FlowState flow) {
-        return "On page '" +this.getPage().getPageName()+"' trying to display flow '"+
-                        flow.getFlowTypeName();
+    private StringBuilder getStartErrorMessage(FlowState flow) {
+        return new StringBuilder().append("On page '").append(this.getPage().getPageName()).append("' trying to display flow '")
+                        .append(flow.getFlowTypeName());
     }
 
     /**
@@ -400,17 +399,5 @@ public abstract class FullFlowComponent extends BaseFlowComponent implements Flo
 
     private IComponent getComponentSafe(String id) {
         return (IComponent)getComponents().get(id);
-    }
-
-    /**
-     * @return
-     * List of flow components that were declared to form this flow.
-     */
-    public List<IComponent> getFlowComponents() {
-        List<IComponent> components = new ArrayList<IComponent>();
-        for(int counter = 0; getComponent(FlowWebUtils.getFlowComponentName(counter)) != null; counter++) {
-            components.add(getComponent(FlowWebUtils.getFlowComponentName(counter)));
-        }
-        return components;
     }
 }
