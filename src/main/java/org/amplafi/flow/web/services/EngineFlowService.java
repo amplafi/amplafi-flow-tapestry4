@@ -134,6 +134,10 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 	public String getName() {
 	    return name;
 	}	    
+	
+	public void setName(String name) {
+		this.name = name;
+	}
 	    
 	public void setResponse(WebResponse response) {
 	    this.response = response;
