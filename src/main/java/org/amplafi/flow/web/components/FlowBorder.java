@@ -402,7 +402,7 @@ public abstract class FlowBorder extends BaseFlowComponent {
     }
 
     public boolean isActivityNotCompletable() {
-        return !this.getAttachedFlowState().isCurrentActivityCompletable();
+        return !this.getAttachedFlowState().getCurrentActivityFlowValidationResult().isValid();
     }
     @Cached(resetAfterRewind=true)
     public String getFinishText() {
