@@ -15,11 +15,16 @@
 package org.amplafi.flow.web.services;
 
 
+import static com.sworddance.util.CUtilities.isNotEmpty;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,6 +34,7 @@ import org.amplafi.flow.web.FlowRedirectException;
 import org.amplafi.flow.web.FlowRequest;
 import org.amplafi.flow.web.FlowService;
 import org.amplafi.flow.web.FlowWebUtils;
+import org.amplafi.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageNotFoundException;
@@ -38,6 +44,8 @@ import org.apache.tapestry.engine.IEngineService;
 import org.apache.tapestry.util.ContentType;
 import org.apache.tapestry.web.WebRequest;
 import org.apache.tapestry.web.WebResponse;
+
+import com.sworddance.util.CUtilities;
 
 
 /**
@@ -74,6 +82,14 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 			@Override
 			public String getReferingUri() {
 				return EngineFlowService.this.getReferingUri();
+			}
+
+			@Override
+			public Iterable<String> getIterableParameter(String parameterName) {
+				//HACK cycle.getParameters returns a glued comma separated string for some reason.
+				String[] parameterValues = httpServletRequest.getParameterValues(parameterName);
+//				String[] parameterValues = cycle.getParameters(parameterName);
+				return CUtilities.isEmpty(parameterValues)? Collections.<String>emptyList() : Arrays.asList(parameterValues);
 			}
 		};
 		try {
