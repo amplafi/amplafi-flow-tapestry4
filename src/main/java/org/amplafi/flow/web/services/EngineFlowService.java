@@ -28,8 +28,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.amplafi.flow.FlowNotFoundException;
 import org.amplafi.flow.web.BaseFlowService;
-import org.amplafi.flow.web.FlowNotFoundException;
 import org.amplafi.flow.web.FlowRedirectException;
 import org.amplafi.flow.web.FlowRequest;
 import org.amplafi.flow.web.FlowService;
@@ -62,7 +62,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
     @Override
     @SuppressWarnings("unchecked")
     public void service(final IRequestCycle cycle) throws IOException {
-    	FlowRequest flowRrequest = new FlowRequest() {
+    	FlowRequest flowRequest = new FlowRequest() {
 			
 			@Override
 			public String getParameter(String parameterName) {
@@ -93,7 +93,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 			}
 		};
 		try {
-			service(flowRrequest);
+			service(flowRequest);
 		} catch (PageRedirectException e) {
 			throw e;
 	     } catch (PageNotFoundException e) {
