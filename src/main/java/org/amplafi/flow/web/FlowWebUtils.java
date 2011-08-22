@@ -27,24 +27,6 @@ import org.apache.tapestry.PageRedirectException;
  */
 public class FlowWebUtils {
 
-    // apparently not used.
-//    public static void startFlow(String flowName, Iterable<String> initialValues,
-//                                 FlowManagement flowManagement, IRequestCycle cycle) {
-//        String page = null;
-//        FlowLauncher flowLauncher = new StartFromDefinitionFlowLauncher(flowName, null, initialValues, flowManagement, null);
-//        try {
-//            FlowState flowState = flowLauncher.call();
-//            page = (flowState != null) ? flowState.getCurrentPage() : null;
-//        } catch (FlowValidationException e) {
-//            // TODO
-//            //getFlowResultHandler().handleValidationTrackings(e.getTrackings(), this);
-//        }
-//        if (page!=null) {
-//            ILink link = cycle.getEngine().getInfrastructure().getServiceMap().getService("page").getLink(false, page);
-//            throw new RedirectException(link.getAbsoluteURL());
-//        }
-//    }
-
     public static String getBlockName(int activity) {
         return "fc" + activity;
     }
