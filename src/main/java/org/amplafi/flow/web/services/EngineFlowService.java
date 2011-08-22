@@ -85,6 +85,11 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 //				String[] parameterValues = cycle.getParameters(parameterName);
 				return CUtilities.isEmpty(parameterValues)? Collections.<String>emptyList() : Arrays.asList(parameterValues);
 			}
+
+			@Override
+			public void setStatus(int status) {
+				response.setStatus(status);
+			}
 		};
 		try {
 			service(flowRequest);
