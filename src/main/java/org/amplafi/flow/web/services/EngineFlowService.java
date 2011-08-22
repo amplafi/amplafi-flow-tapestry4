@@ -15,8 +15,6 @@
 package org.amplafi.flow.web.services;
 
 
-import static com.sworddance.util.CUtilities.isNotEmpty;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -24,17 +22,13 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.amplafi.flow.FlowNotFoundException;
+import org.amplafi.flow.impl.BaseFlowRequest;
 import org.amplafi.flow.web.BaseFlowService;
-import org.amplafi.flow.web.FlowRedirectException;
 import org.amplafi.flow.web.FlowRequest;
 import org.amplafi.flow.web.FlowService;
-import org.amplafi.flow.web.FlowWebUtils;
-import org.amplafi.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageNotFoundException;
@@ -62,7 +56,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
     @Override
     @SuppressWarnings("unchecked")
     public void service(final IRequestCycle cycle) throws IOException {
-    	FlowRequest flowRequest = new FlowRequest() {
+    	FlowRequest flowRequest = new BaseFlowRequest() {
 			
 			@Override
 			public String getParameter(String parameterName) {
@@ -96,18 +90,10 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 			service(flowRequest);
 		} catch (PageRedirectException e) {
 			throw e;
-	     } catch (PageNotFoundException e) {
+	    } catch (PageNotFoundException e) {
             throw e;
 		} catch (RedirectException e) {
 			throw e;
-		} catch (FlowNotFoundException e) {
-			throw new PageNotFoundException(e.getMessage());
-		} catch (FlowRedirectException e) {
-			if(e.getFlowState() == null){
-				throw new PageRedirectException(e.getPage());
-			} else {
-			    FlowWebUtils.activatePageIfNotNull(null, e.getPage(), e.getFlowState());
-			}
 		} catch (Exception e) {
 			getLog().info(getReferingUri(), e);
 		}
