@@ -37,7 +37,6 @@ import org.amplafi.flow.web.FlowWebUtils;
 import org.amplafi.flow.web.components.FullFlowComponent;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.hivemind.ApplicationRuntimeException;
 import org.apache.hivemind.Location;
 import org.apache.hivemind.Resource;
@@ -217,27 +216,26 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
         for (FlowActivity activity: flow.getActivities()) {
             String componentName = activity.getComponentName();
             // Cannot just look at isPossiblyVisible() because that method also looks for a page name.
-            if ( StringUtils.isBlank(componentName)) {
-                continue;
-            }
-            IComponentSpecification specification;
-            try {
-                componentSpecificationResolver.resolve(cycle, containerNamespace, componentName, location);
-                specification = componentSpecificationResolver.getSpecification();
-            } catch (ApplicationRuntimeException e) {
-                // couldn't find the component :-( ... normal for invisible components.
-                ((FlowActivityImplementor)activity).setInvisible(true);
-                continue;
-            }
-            String blockName = FlowWebUtils.getBlockName(activity.getIndex());
-            writer.create("div", JWCID, blockName + "@Block").println();
-            String flowComponentName = "fic_" +activity.getFlowPropertyProviderName().replaceAll("\\s*", "");
-            writer.createEmpty("div", JWCID, flowComponentName + "@" + componentName);
+            if ( isNotBlank(componentName)) {
+                IComponentSpecification specification;
+                try {
+                    componentSpecificationResolver.resolve(cycle, containerNamespace, componentName, location);
+                    specification = componentSpecificationResolver.getSpecification();
+                } catch (ApplicationRuntimeException e) {
+                    // couldn't find the component :-( ... normal for invisible components.
+                    ((FlowActivityImplementor)activity).setInvisible(true);
+                    continue;
+                }
+                String blockName = FlowWebUtils.getBlockName(activity.getIndex());
+                writer.create("div", JWCID, blockName + "@Block").println();
+                String flowComponentName = "fic_" +activity.getFlowPropertyProviderName().replaceAll("\\s*", "");
+                writer.createEmpty("div", JWCID, flowComponentName + "@" + componentName);
 
-            HashSet<String> matchedParameters = new HashSet<String>();
-            assignFlowParameters(flow, writer, activity, specification, flowComponentName, matchedParameters);
-            writer.end();
-            writer.println();
+                HashSet<String> matchedParameters = new HashSet<String>();
+                assignFlowParameters(flow, writer, activity, specification, flowComponentName, matchedParameters);
+                writer.end();
+                writer.println();
+            }
         }
 
         writer.create("div",
@@ -408,7 +406,7 @@ public class FlowAwareTemplateSourceDelegate extends FlowTemplateSourceDelegate 
                 Parameter parameter = method.getAnnotation(Parameter.class);
                 if (parameter!=null) {
                     String name = parameter.name();
-                    if (StringUtils.isBlank(name)) {
+                    if (isBlank(name)) {
                         name = AnnotationUtils.getPropertyName(method);
                     }
                     list.put(name, parameter);
