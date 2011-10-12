@@ -185,6 +185,6 @@ public abstract class FlowControl extends BaseFlowComponent {
     }
 
     public String getClassForSpan() {
-        return isActiveActivity() ? "fl-tabactive" : "fl-tab";
+        return isActiveActivity() ? "fl-tab fl-tabactive" : "fl-tab";
     }
 }
