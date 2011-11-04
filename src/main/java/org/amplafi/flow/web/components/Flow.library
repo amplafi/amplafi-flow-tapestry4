@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+Put in your <appname>.application file:
+    <library id="flow" specification-path="/org/amplafi/flow/web/components/Flow.library"/>
+
+then refer to components with "flow:" prefix
+
+   FlowBorder, FlowControl, FlowDebug, FlowEntryPoint, FlowEntryCollection, AttachFlowValidators
+-->
 <!DOCTYPE library-specification PUBLIC
   "-//Apache Software Foundation//Tapestry Specification 4.0//EN"
   "http://tapestry.apache.org/dtd/Tapestry_4_0.dtd">
@@ -7,10 +15,5 @@
     <description>Flow Library</description>
     <meta key="org.apache.tapestry.component-class-packages" value="org.amplafi.flow.web.components"/>
 
-    <!--
-       FlowBorder, FlowControl, FlowDebug, FlowEntryPoint, FlowEntryCollection, AttachFlowValidators
-    -->
-    <!--
-    <library id="contrib" specification-path="/org/apache/tapestry/contrib/Contrib.library"/>
-    -->
+
 </library-specification>

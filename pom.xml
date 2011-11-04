@@ -223,6 +223,10 @@
                     <groupId>xom</groupId>
                     <artifactId>xom</artifactId>
                 </exclusion>              
+                <exclusion>
+                    <groupId>jdom</groupId>
+                    <artifactId>jdom</artifactId>
+                </exclusion>              
             </exclusions>
         </dependency>
         <!-- latest version is 1.2.4 -->
