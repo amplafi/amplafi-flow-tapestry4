@@ -25,8 +25,8 @@ public class HtmlFlowRenderer implements FlowRenderer {
 	}
 
 	@Override
-	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) {
-		throw new IllegalStateException(message, exception);
+	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) throws Exception {
+		throw exception;
 	}
 
 	@Override
