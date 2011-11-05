@@ -67,6 +67,9 @@ public class FlowWebUtils {
                         ((IExternalPage)appPage).activateExternalPage(new Object[] {flowState}, cycle);
                     }
                     cycle.activate(appPage);
+                    //HACK the above codes hasn't visible effect. Redirect doesn't happen.
+                    //Investigate this later, if there will be any problems with redirects.
+                    throw new PageRedirectException(appPage);
                 }
             }
         }
