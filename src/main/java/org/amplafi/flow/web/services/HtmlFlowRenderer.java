@@ -7,6 +7,8 @@ import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.web.FlowRequest;
 import org.amplafi.flow.web.FlowWebUtils;
+
+import org.apache.hivemind.ApplicationRuntimeException;
 import org.apache.tapestry.IRequestCycle;
 
 public class HtmlFlowRenderer implements FlowRenderer {
@@ -25,8 +27,8 @@ public class HtmlFlowRenderer implements FlowRenderer {
 	}
 
 	@Override
-	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) throws Exception {
-		throw exception;
+	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) {
+		throw new ApplicationRuntimeException(exception);
 	}
 
 	@Override
