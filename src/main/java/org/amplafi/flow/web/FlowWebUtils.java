@@ -20,6 +20,7 @@ import org.apache.tapestry.RedirectException;
 import org.apache.tapestry.IPage;
 import org.apache.tapestry.IExternalPage;
 import org.apache.tapestry.PageRedirectException;
+import org.apache.tapestry.services.ResponseBuilder;
 
 
 /**
@@ -31,6 +32,16 @@ public class FlowWebUtils {
         return "fc" + activity;
     }
 
+    /**
+     * @param cycle
+     * @param redirectLocation
+     * @param flowState
+     * @param responseBuilder
+     */
+    public static void activateAndRenderPageIfNotNull(IRequestCycle cycle, String redirectLocation, FlowState flowState,
+        ResponseBuilder responseBuilder) {
+        // TODO: ?? fix build fail
+    }
     /**
      * if page is not null then activate the page. Also if the page is a IExternalPage, the {@link org.apache.tapestry.IExternalPage#activateExternalPage(Object[], org.apache.tapestry.IRequestCycle)}
      * is called with the current flow as the first element of the passed array.
@@ -82,4 +93,5 @@ public class FlowWebUtils {
             cycle.getResponseBuilder().addStatusMessage(null, category, page);
         }
     }
+
 }
