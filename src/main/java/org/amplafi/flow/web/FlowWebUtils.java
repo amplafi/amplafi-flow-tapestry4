@@ -13,19 +13,26 @@
  */
 package org.amplafi.flow.web;
 
+import java.io.IOException;
+
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.launcher.FlowLauncher;
-import org.apache.tapestry.IRequestCycle;
-import org.apache.tapestry.RedirectException;
-import org.apache.tapestry.IPage;
 import org.apache.tapestry.IExternalPage;
+import org.apache.tapestry.IPage;
+import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageRedirectException;
+import org.apache.tapestry.RedirectException;
+import org.apache.tapestry.services.ResponseBuilder;
+
+import com.sworddance.util.ApplicationIllegalStateException;
 
 
 /**
  * Tapestry related utilities for interacting with flows.
  */
 public class FlowWebUtils {
+
+    public static final String REDIRECT_MESSAGE = "redirectMessage";
 
     public static String getBlockName(int activity) {
         return "fc" + activity;
@@ -45,7 +52,7 @@ public class FlowWebUtils {
      * TODO: NEED BETTER HANDLING if the flowState passed has completed/not current flowState.
      * TODO: might impact the page as well see {@link org.amplafi.flow.web.components.FlowBorder#onFinish(IRequestCycle)} for example. and {@link org.amplafi.flow.web.components.FlowEntryPoint#doEnterFlow(FlowLauncher, String, Iterable)}
      */
-    public static void activatePageIfNotNull(IRequestCycle cycle, String page, FlowState flowState) {
+    public static IPage activatePageIfNotNull(IRequestCycle cycle, String page, FlowState flowState) {
         if ( page != null ) {
 
             if (page.startsWith("http")) {
@@ -67,12 +74,27 @@ public class FlowWebUtils {
                         ((IExternalPage)appPage).activateExternalPage(new Object[] {flowState}, cycle);
                     }
                     cycle.activate(appPage);
+                    return appPage;
                     //HACK the above codes hasn't visible effect. Redirect doesn't happen.
                     //Investigate this later, if there will be any problems with redirects.
-                    throw new PageRedirectException(appPage);
+//                    throw new PageRedirectException(appPage);
                 }
             }
         }
+        return null;
+    }
+    
+    public static void activateAndRenderPageIfNotNull(IRequestCycle cycle, String page, FlowState flowState, ResponseBuilder responseBuilder) {
+       IPage appPage = activatePageIfNotNull(cycle, page, flowState);
+       if (responseBuilder == null) {
+           throw new PageRedirectException(page);
+       } else if (appPage != null){
+           try {
+            responseBuilder.renderResponse(cycle);
+        } catch (IOException e) {
+            throw new ApplicationIllegalStateException(e);
+        }
+       }
     }
 
     private static void redirect(IRequestCycle cycle, String page, String category) {

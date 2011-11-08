@@ -10,11 +10,14 @@ import org.amplafi.flow.web.FlowWebUtils;
 
 import org.apache.hivemind.ApplicationRuntimeException;
 import org.apache.tapestry.IRequestCycle;
+import org.apache.tapestry.services.ResponseBuilder;
 
 public class HtmlFlowRenderer implements FlowRenderer {
 
 	private IRequestCycle cycle;
-
+	
+	private ResponseBuilder responseBuilder;
+	
 	@Override
 	public String getRenderResultType() {
 		return FlowConstants.HTML;
@@ -23,7 +26,7 @@ public class HtmlFlowRenderer implements FlowRenderer {
 	@Override
 	public void render(FlowState flowState, Writer writer) {
 		String page = flowState.getCurrentPage();
-		FlowWebUtils.activatePageIfNotNull(cycle, page, flowState);
+		FlowWebUtils.activateAndRenderPageIfNotNull(cycle, page, flowState, responseBuilder);
 	}
 
 	@Override
@@ -43,5 +46,13 @@ public class HtmlFlowRenderer implements FlowRenderer {
 	public void setCycle(IRequestCycle cycle) {
 		this.cycle = cycle;
 	}
+
+    public ResponseBuilder getResponseBuilder() {
+        return responseBuilder;
+    }
+
+    public void setResponseBuilder(ResponseBuilder responseBuilder) {
+        this.responseBuilder = responseBuilder;
+    }
 
 }
