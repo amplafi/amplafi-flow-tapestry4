@@ -30,6 +30,7 @@ import org.amplafi.flow.web.BaseFlowService;
 import org.amplafi.flow.web.FlowRequest;
 import org.amplafi.flow.web.FlowService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.hivemind.ApplicationRuntimeException;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageNotFoundException;
 import org.apache.tapestry.PageRedirectException;
@@ -99,7 +100,18 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
             throw e;
 		} catch (RedirectException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch(ApplicationRuntimeException e){
+		    Throwable rootCause = e.getRootCause();
+            if (rootCause instanceof PageRedirectException) {
+                throw (PageRedirectException) rootCause;
+            } else if (rootCause instanceof PageNotFoundException) {
+                throw (PageNotFoundException) rootCause;
+            } else if (rootCause instanceof RedirectException) {
+                throw (RedirectException) rootCause;
+            } else {
+                getLog().info(getReferingUri(), e);
+            }
+		}catch (Exception e) {
 			getLog().info(getReferingUri(), e);
 		}
 	}
