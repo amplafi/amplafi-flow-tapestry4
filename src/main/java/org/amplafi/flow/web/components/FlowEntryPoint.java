@@ -14,6 +14,7 @@
 
 package org.amplafi.flow.web.components;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ import net.sf.tacos.annotations.InjectParameterFlag;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.launcher.FlowLauncher;
+import org.amplafi.flow.launcher.FlowLauncherLinkGenerator;
+import org.amplafi.flow.launcher.FlowLauncherLinkGeneratorImpl;
 import org.amplafi.flow.launcher.StartFromDefinitionFlowLauncher;
 import org.amplafi.flow.validation.FlowResultHandler;
 import org.amplafi.flow.validation.FlowValidationException;
@@ -48,8 +51,6 @@ import org.apache.tapestry.engine.ILink;
 import org.apache.tapestry.form.Form;
 import org.apache.tapestry.form.LinkSubmit;
 import org.apache.tapestry.form.Submit;
-import org.apache.tapestry.link.DirectLink;
-
 import static org.apache.commons.lang.StringUtils.*;
 
 
@@ -66,7 +67,7 @@ import static org.apache.commons.lang.StringUtils.*;
  * so that the flows can be "stacked". This will help with determining which flows are still active
  * and will allow "call/return" subflow construction.
  *
- * TODO: use {@link org.amplafi.flow.launcher.LaunchLinkGenerator}
+ * TODO: use {@link org.amplafi.flow.launcher.FlowLauncherLinkGenerator}
  */
 @ComponentClass(allowBody=true, allowInformalParameters=true)
 public abstract class FlowEntryPoint extends BaseFlowComponent {
@@ -295,8 +296,10 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
     @Component(inheritInformalParameters=true)
     public abstract Form getInnerForm();
 
-    @Component(id = "fepLink", inheritedBindings = {"async", "updateComponents"})
-    public abstract DirectLink getDirectLink();
+    public URI getDirectNoSubmitUri() {
+        FlowLauncherLinkGenerator flowLauncherLinkGenerator = new FlowLauncherLinkGeneratorImpl("flow");
+        return flowLauncherLinkGenerator.createURI(null, getActualFlowLauncher());
+    }
 
     @Component(id = "fepSubm", inheritedBindings = {"async", "updateComponents"})
     public abstract Submit getSubmit();
