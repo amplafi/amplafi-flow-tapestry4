@@ -56,22 +56,10 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <!--
                     <configuration> <tagBase>https://svn.apache.org/repos/asf/tapestry/tapestry4/tags/</tagBase> </configuration>
                 -->
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-repository-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -198,42 +186,16 @@
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
-            <version>1.1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>    
-                <exclusion>
-                    <groupId>xom</groupId>
-                    <artifactId>xom</artifactId>
-                </exclusion>              
-                <exclusion>
-                    <groupId>jdom</groupId>
-                    <artifactId>jdom</artifactId>
-                </exclusion>              
-            </exclusions>
         </dependency>
         <!-- latest version is 1.2.4 -->
         <dependency>
             <groupId>xom</groupId>
             <artifactId>xom</artifactId>
-            <version>1.1</version>
+            <version>${xom-build}</version>
             <exclusions>
                 <exclusion>
                     <groupId>xerces</groupId>
