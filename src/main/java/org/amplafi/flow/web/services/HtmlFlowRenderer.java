@@ -8,16 +8,20 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.web.FlowRequest;
 import org.amplafi.flow.web.FlowWebUtils;
 
-import org.apache.hivemind.ApplicationRuntimeException;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.services.ResponseBuilder;
 
+/**
+ *
+ * @author patmoore
+ *
+ */
 public class HtmlFlowRenderer implements FlowRenderer {
 
 	private IRequestCycle cycle;
-	
+
 	private ResponseBuilder responseBuilder;
-	
+
 	@Override
 	public String getRenderResultType() {
 		return FlowConstants.HTML;
@@ -31,7 +35,7 @@ public class HtmlFlowRenderer implements FlowRenderer {
 
 	@Override
 	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) {
-		throw new ApplicationRuntimeException(exception);
+	    // rethrowing an exception is bad idea because renderError is called in a catch block
 	}
 
 	@Override

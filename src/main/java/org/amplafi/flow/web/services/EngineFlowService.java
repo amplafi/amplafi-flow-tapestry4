@@ -48,17 +48,17 @@ import com.sworddance.util.CUtilities;
  *
  */
 public abstract class EngineFlowService extends BaseFlowService implements FlowService, IEngineService {
-    
+
 	private WebRequest request;
     private WebResponse response;
 	private String name;
 	private HttpServletRequest httpServletRequest;
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public void service(final IRequestCycle cycle) throws IOException {
-    	FlowRequest flowRequest = new BaseFlowRequest() {
-			
+    	FlowRequest flowRequest = new BaseFlowRequest(this.getRenderResultDefault()) {
+
 			@Override
 			public String getParameter(String parameterName) {
 				return cycle.getParameter(parameterName);
@@ -96,12 +96,12 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 			service(flowRequest);
 		} catch (PageRedirectException e) {
 			throw e;
-	    } catch (PageNotFoundException e) {
+       } catch (PageNotFoundException e) {
             throw e;
 		} catch (RedirectException e) {
 			throw e;
 		} catch(ApplicationRuntimeException e){
-		    Throwable rootCause = e.getRootCause();
+	       Throwable rootCause = e.getRootCause();
             if (rootCause instanceof PageRedirectException) {
                 throw (PageRedirectException) rootCause;
             } else if (rootCause instanceof PageNotFoundException) {
@@ -117,68 +117,68 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 	}
 
 	private String getReferingUri() {
-	    String referingUriStr = httpServletRequest.getHeader("Referer");
-	    if(StringUtils.isNotBlank(referingUriStr)){
-	        URI referingUri;
-	        try {
-	            referingUri = new URI(referingUriStr);
-	            return referingUri.toString();
-	        } catch (URISyntaxException e) {
-	            // ignore bad uri
-	        }
-	    }
-	    return null;
+       String referingUriStr = httpServletRequest.getHeader("Referer");
+       if(StringUtils.isNotBlank(referingUriStr)){
+           URI referingUri;
+           try {
+               referingUri = new URI(referingUriStr);
+               return referingUri.toString();
+           } catch (URISyntaxException e) {
+               // ignore bad uri
+           }
+       }
+       return null;
 	}
-    
+
 	protected PrintWriter getWriter(IRequestCycle cycle) {
-	    ContentType contentType = new ContentType(SCRIPT_CONTENT_TYPE);
-	
-	    String encoding = contentType.getParameter("charset");
-	
-	    try {
-	        if (encoding == null) {
-	            encoding = cycle.getEngine().getOutputEncoding();
-	            contentType.setParameter("charset", encoding);
-	        }
-	        return getResponse().getPrintWriter(contentType);
-	    } catch (NullPointerException nullPointerException) {
-	        // can happen if the cycle is not available (called in a headless/ non-tapestry way. )
-	        return null;
-	    } catch (IOException e) {
-	    	throw new IllegalStateException(e);
-	    }
-	    }
+       ContentType contentType = new ContentType(SCRIPT_CONTENT_TYPE);
+
+       String encoding = contentType.getParameter("charset");
+
+       try {
+           if (encoding == null) {
+               encoding = cycle.getEngine().getOutputEncoding();
+               contentType.setParameter("charset", encoding);
+           }
+           return getResponse().getPrintWriter(contentType);
+       } catch (NullPointerException nullPointerException) {
+           // can happen if the cycle is not available (called in a headless/ non-tapestry way. )
+           return null;
+       } catch (IOException e) {
+       	throw new IllegalStateException(e);
+       }
+    }
 
 	@Override
 	public String getName() {
-	    return name;
-	}	    
-	
+       return name;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	    
+
 	public void setResponse(WebResponse response) {
-	    this.response = response;
+       this.response = response;
 	}
 
 	public WebResponse getResponse() {
-	    return response;
+       return response;
 	}
 
 	public WebRequest getRequest() {
-	    return request;
+       return request;
 	}
 
 	public void setRequest(WebRequest request) {
-	    this.request = request;
+       this.request = request;
 	}
 
 	public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
-	    this.httpServletRequest = httpServletRequest;
+       this.httpServletRequest = httpServletRequest;
 	}
 
 	public HttpServletRequest getHttpServletRequest() {
-	    return httpServletRequest;
+       return httpServletRequest;
 	}
 }
