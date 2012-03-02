@@ -24,13 +24,17 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.amplafi.flow.BaseFlowResponse;
 import org.amplafi.flow.impl.BaseFlowRequest;
 import org.amplafi.flow.web.BaseFlowService;
 import org.amplafi.flow.web.FlowRequest;
+import org.amplafi.flow.web.FlowResponse;
 import org.amplafi.flow.web.FlowService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hivemind.ApplicationRuntimeException;
+import org.apache.http.HttpStatus;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.PageNotFoundException;
 import org.apache.tapestry.PageRedirectException;
@@ -53,6 +57,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
     private WebResponse response;
 	private String name;
 	private HttpServletRequest httpServletRequest;
+	private HttpServletResponse httpServletResponse;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -62,11 +67,6 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 			@Override
 			public String getParameter(String parameterName) {
 				return cycle.getParameter(parameterName);
-			}
-
-			@Override
-			public PrintWriter getWriter() {
-				return EngineFlowService.this.getWriter(cycle);
 			}
 
 			@Override
@@ -87,13 +87,15 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 				return CUtilities.isEmpty(parameterValues)? Collections.<String>emptyList() : Arrays.asList(parameterValues);
 			}
 
-			@Override
-			public void setStatus(int status) {
-				response.setStatus(status);
-			}
 		};
+		
 		try {
-			service(flowRequest);
+			FlowResponse flowResponse = new BaseFlowResponse(getWriter(cycle));
+			service(flowRequest, flowResponse);
+			response.setStatus(flowResponse.hasErrors() ? HttpStatus.SC_BAD_REQUEST : HttpStatus.SC_OK);
+			if (flowResponse.isRedirectSet()) {
+				httpServletResponse.sendRedirect(flowResponse.getRedirect());
+			}
 		} catch (PageRedirectException e) {
 			throw e;
        } catch (PageNotFoundException e) {
@@ -180,5 +182,13 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 
 	public HttpServletRequest getHttpServletRequest() {
        return httpServletRequest;
+	}
+
+	public HttpServletResponse getHttpServletResponse() {
+		return httpServletResponse;
+	}
+
+	public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
+		this.httpServletResponse = httpServletResponse;
 	}
 }
