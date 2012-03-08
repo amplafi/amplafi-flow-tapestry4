@@ -19,15 +19,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.amplafi.flow.BaseFlowResponse;
-import org.amplafi.flow.impl.BaseFlowRequest;
 import org.amplafi.flow.web.BaseFlowService;
 import org.amplafi.flow.web.FlowRequest;
 import org.amplafi.flow.web.FlowResponse;
@@ -44,7 +40,6 @@ import org.apache.tapestry.util.ContentType;
 import org.apache.tapestry.web.WebRequest;
 import org.apache.tapestry.web.WebResponse;
 
-import com.sworddance.util.CUtilities;
 
 
 /**
@@ -60,42 +55,11 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 	private HttpServletResponse httpServletResponse;
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void service(final IRequestCycle cycle) throws IOException {
-    	FlowRequest flowRequest = new BaseFlowRequest(this.getRenderResultDefault()) {
-
-			@Override
-			public String getParameter(String parameterName) {
-				return cycle.getParameter(parameterName);
-			}
-
-			@Override
-			public List<String> getParameterNames() {
-				return request.getParameterNames();
-			}
-
-			@Override
-			public String getReferingUri() {
-				return EngineFlowService.this.getReferingUri();
-			}
-
-			@Override
-			public Iterable<String> getIterableParameter(String parameterName) {
-				//HACK cycle.getParameters returns a glued comma separated string for some reason.
-				String[] parameterValues = httpServletRequest.getParameterValues(parameterName);
-//				String[] parameterValues = cycle.getParameters(parameterName);
-				return CUtilities.isEmpty(parameterValues)? Collections.<String>emptyList() : Arrays.asList(parameterValues);
-			}
-
-		};
-		
+    public void service(final IRequestCycle cycle) throws IOException {		
 		try {
-			FlowResponse flowResponse = new BaseFlowResponse(getWriter(cycle));
+			FlowRequest flowRequest = new EngineFlowRequest(this.getRenderResultDefault(), cycle, request, httpServletRequest, getReferingUri(httpServletRequest));
+			FlowResponse flowResponse = new BaseFlowResponse(getWriter(cycle, response));
 			service(flowRequest, flowResponse);
-			response.setStatus(flowResponse.hasErrors() ? HttpStatus.SC_BAD_REQUEST : HttpStatus.SC_OK);
-			if (flowResponse.isRedirectSet()) {
-				httpServletResponse.sendRedirect(flowResponse.getRedirect());
-			}
 		} catch (PageRedirectException e) {
 			throw e;
        } catch (PageNotFoundException e) {
@@ -111,14 +75,27 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
             } else if (rootCause instanceof RedirectException) {
                 throw (RedirectException) rootCause;
             } else {
-                getLog().info(getReferingUri(), e);
+                getLog().info(getReferingUri(httpServletRequest), e);
             }
 		}catch (Exception e) {
-			getLog().info(getReferingUri(), e);
+			getLog().info(getReferingUri(httpServletRequest), e);
 		}
 	}
 
-	private String getReferingUri() {
+    @Override
+	public void service(FlowRequest flowRequest, FlowResponse flowResponse) {
+		super.service(flowRequest, flowResponse);
+		response.setStatus(flowResponse.hasErrors() ? HttpStatus.SC_BAD_REQUEST : HttpStatus.SC_OK);
+		if (flowResponse.isRedirectSet()) {
+			try {
+				httpServletResponse.sendRedirect(flowResponse.getRedirect());
+			} catch (IOException e) {
+				throw new IllegalStateException("Failed to send flow redirect to: " + flowResponse.getRedirect());
+			}
+		}
+	}
+
+	public static String getReferingUri(HttpServletRequest httpServletRequest) {
        String referingUriStr = httpServletRequest.getHeader("Referer");
        if(StringUtils.isNotBlank(referingUriStr)){
            URI referingUri;
@@ -132,7 +109,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
        return null;
 	}
 
-	protected PrintWriter getWriter(IRequestCycle cycle) {
+	public static PrintWriter getWriter(IRequestCycle cycle, WebResponse response) {
        ContentType contentType = new ContentType(SCRIPT_CONTENT_TYPE);
 
        String encoding = contentType.getParameter("charset");
@@ -142,7 +119,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
                encoding = cycle.getEngine().getOutputEncoding();
                contentType.setParameter("charset", encoding);
            }
-           return getResponse().getPrintWriter(contentType);
+		return response.getPrintWriter(contentType);
        } catch (NullPointerException nullPointerException) {
            // can happen if the cycle is not available (called in a headless/ non-tapestry way. )
            return null;
