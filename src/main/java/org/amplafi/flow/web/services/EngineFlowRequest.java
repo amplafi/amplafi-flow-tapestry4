@@ -55,13 +55,4 @@ public class EngineFlowRequest extends BaseFlowRequest {
 			return CUtilities.isEmpty(parameterValues)? Collections.<String>emptyList() : Arrays.asList(parameterValues);
 		}
 
-		@Override
-		public boolean hasFlowState() {
-			return false;
-		}
-
-		@Override
-		public FlowState getFlowState() {
-			return null;
-		}
 	}
