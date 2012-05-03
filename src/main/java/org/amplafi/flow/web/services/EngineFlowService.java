@@ -55,7 +55,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 	private HttpServletResponse httpServletResponse;
 
     @Override
-    public void service(final IRequestCycle cycle) throws IOException {		
+    public void service(final IRequestCycle cycle) throws IOException {
 		try {
 			FlowRequest flowRequest = new EngineFlowRequest(this.getRenderResultDefault(), cycle, request, httpServletRequest, getReferingUri(httpServletRequest));
 			FlowResponse flowResponse = new BaseFlowResponse(getWriter(cycle, response));
@@ -85,7 +85,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
     @Override
 	public void service(FlowRequest flowRequest, FlowResponse flowResponse) {
 		super.service(flowRequest, flowResponse);
-		response.setStatus(flowResponse.hasErrors() ? HttpStatus.SC_BAD_REQUEST : HttpStatus.SC_OK);
+		httpServletResponse.setStatus(flowResponse.hasErrors() ? HttpStatus.SC_BAD_REQUEST : HttpStatus.SC_OK);
 		if (flowResponse.isRedirectSet()) {
 			try {
 				httpServletResponse.sendRedirect(flowResponse.getRedirect());
