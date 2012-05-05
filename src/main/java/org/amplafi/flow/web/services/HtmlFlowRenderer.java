@@ -43,8 +43,7 @@ public class HtmlFlowRenderer implements FlowRenderer {
 	@Override
 	public void render(FlowResponse flowResponse) {
 		FlowState flowState = flowResponse.getFlowState();
-		String page = flowState.getCurrentPage();
-		FlowWebUtils.activateAndRenderPageIfNotNull(cycle, page, flowState, responseBuilder);		
+		FlowWebUtils.activateAndRenderPageIfNotNull(cycle, flowState != null ? flowState.getCurrentPage() : null, flowState, responseBuilder);		
 	}
 
 	@Override
