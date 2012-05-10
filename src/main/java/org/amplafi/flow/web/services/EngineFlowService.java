@@ -88,7 +88,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
 		httpServletResponse.setStatus(flowResponse.hasErrors() ? HttpStatus.SC_BAD_REQUEST : HttpStatus.SC_OK);
 		if (flowResponse.isRedirectSet()) {
 			try {
-				httpServletResponse.sendRedirect(flowResponse.getRedirect());
+				httpServletResponse.sendRedirect(flowResponse.getRedirect().toASCIIString());
 			} catch (IOException e) {
 				throw new IllegalStateException("Failed to send flow redirect to: " + flowResponse.getRedirect());
 			}
