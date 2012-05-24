@@ -492,7 +492,7 @@ public abstract class FlowEntryPoint extends BaseFlowComponent {
         FlowState flowState = null;
         boolean success = false;
         try {
-            // should this be a force situation and ignore any errors? seems unlikely as Amplafi would want user to be able to save any half-finished changes.
+            // should this be a force situation and ignore any errors? seems unlikely as we would want user to be able to save any half-finished changes.
             if (finishFlowId != null ) {
                 flowState = getFlowManagement().getFlowState(finishFlowId);
                 if ( flowState != null && !flowState.isCompleted()) {
