@@ -58,7 +58,7 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
     public void service(final IRequestCycle cycle) throws IOException {
 		try {
 			FlowRequest flowRequest = new EngineFlowRequest(this.getRenderResultDefault(), cycle, request, httpServletRequest, getReferingUri(httpServletRequest));
-			FlowResponse flowResponse = new BaseFlowResponse(getWriter(cycle, response));
+			FlowResponse flowResponse = new BaseFlowResponse(getWriter());
 			service(flowRequest, flowResponse);
 		} catch (PageRedirectException e) {
 			throw e;
@@ -109,20 +109,14 @@ public abstract class EngineFlowService extends BaseFlowService implements FlowS
        return null;
 	}
 
-	public static PrintWriter getWriter(IRequestCycle cycle, WebResponse response) {
+	public PrintWriter getWriter() {
        ContentType contentType = new ContentType(SCRIPT_CONTENT_TYPE);
-
        String encoding = contentType.getParameter("charset");
-
+       if (encoding == null) {
+    	   contentType.setParameter("charset", "utf-8");
+       }
        try {
-           if (encoding == null) {
-               encoding = cycle.getEngine().getOutputEncoding();
-               contentType.setParameter("charset", encoding);
-           }
 		return response.getPrintWriter(contentType);
-       } catch (NullPointerException nullPointerException) {
-           // can happen if the cycle is not available (called in a headless/ non-tapestry way. )
-           return null;
        } catch (IOException e) {
        	throw new IllegalStateException(e);
        }
