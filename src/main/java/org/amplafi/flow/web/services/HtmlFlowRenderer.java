@@ -1,5 +1,7 @@
 package org.amplafi.flow.web.services;
 
+import java.io.Writer;
+
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
@@ -42,12 +44,21 @@ public class HtmlFlowRenderer implements FlowRenderer {
 
 	@Override
 	public void render(FlowResponse flowResponse) {
-		FlowState flowState = flowResponse.getFlowState();
-		FlowWebUtils.activateAndRenderPageIfNotNull(cycle, flowState != null ? flowState.getCurrentPage() : null, flowState, responseBuilder);		
+		render(flowResponse.getFlowState());		
+	}
+
+	private void render(FlowState flowState) {
+		FlowWebUtils.activateAndRenderPageIfNotNull(cycle, flowState != null ? flowState.getCurrentPage() : null, flowState, responseBuilder);
 	}
 
 	@Override
 	public void describeFlow(FlowResponse flowResponse, String flowType) {
+	}
+
+	@Override
+	public void render(Writer writer, FlowState flowState, String errorMessage,
+			Exception exception) {
+		render(flowState);
 	}
 
 }
