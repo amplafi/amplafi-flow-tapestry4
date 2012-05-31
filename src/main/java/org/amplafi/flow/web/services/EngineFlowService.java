@@ -46,6 +46,7 @@ import org.apache.tapestry.web.WebResponse;
  * Base implementation for Tapestry services that start / continue flows.
  *
  */
+@Deprecated
 public abstract class EngineFlowService extends BaseFlowService implements FlowService, IEngineService {
 
 	private WebRequest request;
