@@ -180,6 +180,9 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
     /**
      * This flow has some activities and properties.
+     *
+     * TODO: This test fails due to some order dependency in a map or set.
+     * the expected string lists the same output attributes but the actual some times has a different attribute order.
      * @param delegate
      *
      */
