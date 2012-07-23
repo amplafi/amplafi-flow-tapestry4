@@ -99,6 +99,10 @@
     </reporting>
     <dependencies>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-flow-core</artifactId>
             <version>${project.version}</version>
