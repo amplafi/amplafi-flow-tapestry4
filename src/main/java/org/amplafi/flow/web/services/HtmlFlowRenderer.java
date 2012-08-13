@@ -52,7 +52,7 @@ public class HtmlFlowRenderer implements FlowRenderer {
 	}
 
 	@Override
-	public void describeFlow(FlowResponse flowResponse, String flowType) {
+	public void describeFlow(Writer writer, String flowType) {
 	}
 
 	@Override
