@@ -5,7 +5,6 @@ import java.io.Writer;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.web.FlowResponse;
 import org.amplafi.flow.web.FlowWebUtils;
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.services.ResponseBuilder;
@@ -41,11 +40,6 @@ public class HtmlFlowRenderer implements FlowRenderer {
     public void setResponseBuilder(ResponseBuilder responseBuilder) {
         this.responseBuilder = responseBuilder;
     }
-
-	@Override
-	public void render(FlowResponse flowResponse) {
-		render(flowResponse.getFlowState());		
-	}
 
 	private void render(FlowState flowState) {
 		FlowWebUtils.activateAndRenderPageIfNotNull(cycle, flowState != null ? flowState.getCurrentPage() : null, flowState, responseBuilder);
