@@ -54,6 +54,7 @@ import java.util.Locale;
  */
 public class TestFlowAwareTemplateSourceDelegate extends Assert {
 
+    private static final String CATEGORY_SELECTION_FPROP_CATEGORY_SELECTION = "categorySelection=\"fprop:categorySelection\" ";
     private static final String VALIDATORS = "<span jwcid=\"@flow:AttachFlowValidators\" validators=\"validators:flow\"/>";
     private static final String TEMPLATE_FORM =
         "<span jwcid=\"inF@If\" renderTag=\"false\" condition=\"ognl:insideForm\">" +
@@ -158,13 +159,7 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         replay(component, csr, compSpec);
         Locale locale = null;
         ComponentTemplate good = delegate.findTemplate(cycle, component, locale);
-        assertEqualsExcludingWhitespace(new String(good.getTemplateData()),
-                TEMPLATE_PREFIX +
-                "<div jwcid=\"fc0@Block\"><div jwcid=\"fic_"+flowActivityName+"_0@comp_0\" " +
-                //ATTACH_OGNL+" " +
-                "categorySelection=\"fprop:categorySelection\" " +
-                "fooMessage=\"fprop:fooMessage=fic_"+flowActivityName+"_0@message:foo-message\"literalFling=\"fprop:literalFling=fic_"+flowActivityName+"_0@literal:fling\"" +
-                "/></div>\n" + getFullFlowBorderTemplate() + TEMPLATE_SUFFIX);
+        checkTemplate(flowActivityName, good);
     }
     /**
      * @param csr
@@ -213,17 +208,37 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
         replay(component, csr, compSpec, cycle);
         Locale locale = null;
         ComponentTemplate good = delegate.findTemplate(cycle, component, locale);
-        assertEqualsExcludingWhitespace(new String(good.getTemplateData()),
-                TEMPLATE_PREFIX +
-                "<div jwcid=\"fc0@Block\"><div jwcid=\"fic_"+flowActivityName+"_0@comp_0\"  "+
-                //"componentGlobaldef1=\"fprop:globaldef1\"  " +
-                //"componentOverlapParameter=\"fprop:overlap\" " +
-                //ATTACH_OGNL + " " +
-                "categorySelection=\"fprop:categorySelection\" " +
-                "fooMessage=\"fprop:fooMessage=fic_"+flowActivityName+"_0@message:foo-message\"literalFling=\"fprop:literalFling=fic_"+flowActivityName+"_0@literal:fling\"" +
-                "/></div>\n" +
-                getFullFlowBorderTemplate() +
-                TEMPLATE_SUFFIX);
+        checkTemplate(flowActivityName, good);
+    }
+    private void checkTemplate(String flowActivityName, ComponentTemplate good) {
+        String fling = getFlingStr(flowActivityName);
+        String foo = getFooString(flowActivityName);
+        String[] choice= new String[] {
+            fling,
+            foo,
+            CATEGORY_SELECTION_FPROP_CATEGORY_SELECTION
+        };
+        int[][] c = { new int[] { 0,1,2 }, new int[] {0,2,1 }, new int[] { 1,0,2 }, new int[] { 1, 2, 0}, new int[] {2,1,0}, new int[] {2,0,1}};
+        AssertionError last = null;
+        for (int[] element : c) {
+            try {
+                last = null;
+                assertEqualsExcludingWhitespace(new String(good.getTemplateData()),
+                    TEMPLATE_PREFIX + "<div jwcid=\"fc0@Block\"><div jwcid=\"fic_" + flowActivityName + "_0@comp_0\" " + choice[element[0]] + choice[element[1]] + choice[element[2]] +"/></div>\n" + getFullFlowBorderTemplate() + TEMPLATE_SUFFIX);
+                break;
+            } catch(AssertionError e) {
+                last = e;
+            }
+        }
+        if ( last != null ) {
+            throw last;
+        }
+    }
+    private String getFooString(String flowActivityName) {
+        return "fooMessage=\"fprop:fooMessage=fic_" + flowActivityName + "_0@message:foo-message\"literal";
+    }
+    private String getFlingStr(String flowActivityName) {
+        return "Fling=\"fprop:literalFling=fic_"+flowActivityName+"_0@literal:fling\"";
     }
 
     private void trainUsingMemoryLocation(IComponentSpecification compSpec) {
