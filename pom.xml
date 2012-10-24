@@ -10,7 +10,7 @@
         <groupId>org.amplafi</groupId>
         <artifactId>amplafi-opensource-parent</artifactId>
         <version>1.0.2</version>
-        <relativePath>../amplafi-opensource-parent/pom.xml</relativePath>
+        <relativePath>${parent-path}/pom.xml</relativePath>
     </parent>
     <packaging>jar</packaging>
     <name>Flow - Tapestry 4 integration</name>
@@ -256,4 +256,21 @@
             </exclusions>
         </dependency>
     </dependencies>
+    <profiles>
+		<profile>
+	      <id>no-git-modules</id>
+	      <activation>
+	      	<activeByDefault>true</activeByDefault>
+	      </activation>
+	      <properties>
+	      	<parent-path>../amplafi-opensource-parent</parent-path>
+	      </properties>
+	    </profile>
+	    <profile>
+			<id>git-modules</id>
+			<properties>
+	      		<parent-path>./</parent-path>
+	        </properties>
+	    </profile>
+	</profiles>
 </project>
