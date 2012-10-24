@@ -219,12 +219,13 @@ public class TestFlowAwareTemplateSourceDelegate extends Assert {
             CATEGORY_SELECTION_FPROP_CATEGORY_SELECTION
         };
         int[][] c = { new int[] { 0,1,2 }, new int[] {0,2,1 }, new int[] { 1,0,2 }, new int[] { 1, 2, 0}, new int[] {2,1,0}, new int[] {2,0,1}};
+        String goodTemplateString = new String(good.getTemplateData());
         AssertionError last = null;
         for (int[] element : c) {
             try {
                 last = null;
-                assertEqualsExcludingWhitespace(new String(good.getTemplateData()),
-                    TEMPLATE_PREFIX + "<div jwcid=\"fc0@Block\"><div jwcid=\"fic_" + flowActivityName + "_0@comp_0\" " + choice[element[0]] + choice[element[1]] + choice[element[2]] +"/></div>\n" + getFullFlowBorderTemplate() + TEMPLATE_SUFFIX);
+                String templateString = TEMPLATE_PREFIX + "<div jwcid=\"fc0@Block\"><div jwcid=\"fic_" + flowActivityName + "_0@comp_0\" " + choice[element[0]] + choice[element[1]] + choice[element[2]] +"/></div>\n" + getFullFlowBorderTemplate() + TEMPLATE_SUFFIX;
+                assertEqualsExcludingWhitespace(goodTemplateString, templateString);
                 break;
             } catch(AssertionError e) {
                 last = e;
