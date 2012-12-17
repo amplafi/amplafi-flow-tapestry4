@@ -27,7 +27,7 @@ import org.apache.tapestry.annotations.Parameter;
  * Marks a page or component that can access flow information.
  */
 public interface FlowAware {
-    @InjectState(FlowManagement.USER_INFORMATION)
+    @InjectState("sessionFlows")
     public FlowManagement getFlowManagement();
 
     /**
